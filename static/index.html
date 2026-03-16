@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>זוגיסט 💑</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#FF4D8D;--purple:#7B2FFF;--yellow:#FFD93D;--teal:#00E5CC;--dark:#0D0D1A;--card:#1A1A2E;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:var(--dark);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 70% 20%,rgba(123,47,255,.15) 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(255,77,141,.15) 0%,transparent 50%);pointer-events:none;z-index:0;}
+#app{width:100%;max-width:420px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;z-index:1;}
+.screen{width:100%;display:none;flex-direction:column;align-items:center;gap:18px;}
+.screen.active{display:flex;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.logo{font-size:52px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center;}
+.tagline{font-size:16px;color:rgba(255,255,255,.6);text-align:center;}
+.card{background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:14px;}
+input{width:100%;padding:16px 20px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:14px;color:#fff;font-size:18px;font-family:'Heebo',sans-serif;text-align:center;outline:none;transition:border-color .2s;}
+input:focus{border-color:var(--pink);}
+input::placeholder{color:rgba(255,255,255,.3);}
+.btn{width:100%;padding:18px;border:none;border-radius:16px;font-size:18px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;transition:transform .15s;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.btn-secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--dark);}
+.gender-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.gender-btn{padding:14px;border:2px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.06);color:#fff;font-size:20px;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+.gender-btn.selected{border-color:var(--pink);background:rgba(255,77,141,.15);color:var(--pink);}
+.code-display{font-size:52px;font-weight:900;letter-spacing:12px;text-align:center;color:var(--yellow);padding:16px;}
+.waiting-dots span{display:inline-block;animation:bounce 1.2s infinite;color:var(--pink);font-size:28px;}
+.waiting-dots span:nth-child(2){animation-delay:.2s}.waiting-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}}
+.intro-card{background:var(--card);border-radius:24px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:16px;}
+.intro-emoji{font-size:56px;line-height:1;}
+.intro-title{font-size:26px;font-weight:900;}
+.intro-desc{font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;}
+.intro-rules{display:flex;flex-direction:column;gap:10px;text-align:right;}
+.intro-rule{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.8);background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;}
+.intro-rule-icon{font-size:18px;flex-shrink:0;}
+.intro-points{background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);border-radius:14px;padding:14px;font-size:13px;color:var(--yellow);font-weight:700;text-align:center;}
+.countdown-wrap{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.countdown-num{font-size:120px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation:cdPop .9s ease infinite;}
+@keyframes cdPop{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.countdown-label{font-size:18px;color:rgba(255,255,255,.5);}
+.stage-header{text-align:center;width:100%;}
+.stage-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:10px;background:rgba(255,255,255,.1);color:var(--yellow);letter-spacing:1px;}
+.stage-title{font-size:28px;font-weight:900;margin-bottom:6px;}
+.stage-subtitle{font-size:14px;color:rgba(255,255,255,.5);}
+.question-card{background:var(--card);border-radius:24px;padding:28px 24px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.1);}
+.q-num{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:12px;letter-spacing:1px;}
+.q-text{font-size:22px;font-weight:700;line-height:1.4;margin-bottom:24px;}
+.answer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-yes{background:linear-gradient(135deg,#00E676,#00BFA5);color:var(--dark);font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;transition:transform .15s;font-family:'Heebo',sans-serif;}
+.btn-no{background:linear-gradient(135deg,#FF5252,#D50000);color:#fff;font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;transition:transform .15s;font-family:'Heebo',sans-serif;}
+.btn-yes:active,.btn-no:active{transform:scale(.95);}
+.waiting-answer{padding:20px;text-align:center;color:rgba(255,255,255,.5);font-size:15px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.result-reveal{width:100%;display:flex;flex-direction:column;gap:12px;}
+.p-ans{background:var(--card);border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,.08);}
+.p-name{font-size:14px;color:rgba(255,255,255,.6);}
+.p-val{font-size:18px;font-weight:900;}
+.match-banner{text-align:center;padding:14px;border-radius:16px;font-size:17px;font-weight:700;}
+.match-yes{background:rgba(0,230,118,.15);color:#00E676;border:1px solid rgba(0,230,118,.3);}
+.match-no{background:rgba(255,82,82,.15);color:#FF5252;border:1px solid rgba(255,82,82,.3);}
+.story-card{background:rgba(255,255,255,.04);border-radius:14px;padding:14px 18px;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.07);text-align:right;}
+.score-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--card);border-radius:14px;border:1px solid rgba(255,255,255,.06);}
+.sc-item{text-align:center;}
+.sc-name{font-size:12px;color:rgba(255,255,255,.5);}
+.sc-val{font-size:28px;font-weight:900;color:var(--yellow);}
+.sc-vs{font-size:16px;color:rgba(255,255,255,.3);font-weight:700;}
+.buzz-btn{width:100%;padding:40px;border-radius:28px;font-size:28px;font-weight:900;font-family:'Heebo',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--yellow),#FF9800);color:var(--dark);transition:transform .1s;box-shadow:0 8px 30px rgba(255,217,61,.3);}
+.buzz-btn:active{transform:scale(.95);}
+.buzz-btn.disabled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);box-shadow:none;cursor:not-allowed;}
+.buzz-status{text-align:center;font-size:18px;padding:16px;font-weight:700;}
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s;}
+.dot.done{background:var(--pink)}.dot.cur{background:var(--yellow);transform:scale(1.3)}
+.s4-self-label{font-size:20px;font-weight:700;color:var(--yellow);margin-bottom:16px;display:block;}
+.final-screen{text-align:center;width:100%;}
+.trophy{font-size:80px;animation:wobble 1s ease infinite alternate;display:block;}
+@keyframes wobble{from{transform:rotate(-5deg) scale(1)}to{transform:rotate(5deg) scale(1.1)}}
+.winner-text{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--yellow),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0;}
+.final-scores{width:100%;display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.final-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-radius:16px;background:var(--card);border:1px solid rgba(255,255,255,.08);}
+.final-row.win{border-color:var(--yellow);background:rgba(255,217,61,.08);}
+.confetti{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;overflow:hidden;}
+.cp{position:absolute;border-radius:2px;animation:cf linear forwards;}
+@keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.err{color:#FF5252;font-size:14px;text-align:center;}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- HOME -->
+<div class="screen active" id="sc-home">
+  <div class="logo">זוגיסט 💑</div>
+  <div class="tagline">משחק היכרות תחרותי לזוגות</div>
+  <div class="card">
+    <span style="font-size:14px;color:rgba(255,255,255,.5)">השם שלך</span>
+    <input id="inp-name" placeholder="איך קוראים לך?" maxlength="16">
+    <span style="font-size:14px;color:rgba(255,255,255,.5)">המגדר שלך</span>
+    <div class="gender-row">
+      <button class="gender-btn" id="gb-m" onclick="setGender('m')">גבר 👦</button>
+      <button class="gender-btn" id="gb-f" onclick="setGender('f')">אישה 👧</button>
+    </div>
+    <button class="btn btn-primary" onclick="createRoom()">✨ צור חדר חדש</button>
+    <button class="btn btn-secondary" onclick="toggleJoin()">🔗 הצטרף לחדר</button>
+  </div>
+  <div id="join-wrap" style="display:none;width:100%;flex-direction:column;gap:12px;">
+    <input id="inp-code" placeholder="קוד 4 ספרות" maxlength="4" style="font-size:32px;letter-spacing:8px;font-weight:900;">
+    <button class="btn btn-teal" onclick="joinRoom()">🚀 בוא נשחק!</button>
+  </div>
+  <div id="home-err" class="err"></div>
+</div>
+<!-- WAITING -->
+<div class="screen" id="sc-wait">
+  <div class="logo" style="font-size:36px;">ממתין לשחקן השני...</div>
+  <div style="background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-size:14px;color:rgba(255,255,255,.5)">שתף את הקוד הזה</div>
+    <div class="code-display" id="disp-code">----</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.4)">השני מכניס את הקוד ומצטרף</div>
+  </div>
+  <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
+</div>
+<!-- MODE SELECT (shown to P1 after P2 joins) -->
+<div class="screen" id="sc-mode">
+  <div class="logo" style="font-size:36px;">בחר/י מצב משחק</div>
+  <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+    <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode('full')">
+      <span style="font-size:28px;">🎮</span>
+      <span><strong>משחק מלא</strong><br><small style="font-weight:400;opacity:.7">כל 4 השלבים ברצף</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(1)">
+      <span style="font-size:28px;">🤔</span>
+      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">שאלות כן/לא על הרגלים ואישיות</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(2)">
+      <span style="font-size:28px;">⚡</span>
+      <span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">טריוויה – מי לוחץ ראשון עונה</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(3)">
+      <span style="font-size:28px;">🔥</span>
+      <span><strong>דעות חמות</strong><br><small style="font-weight:400;opacity:.7">סקאלה 1–5 על הצהרות שנויות במחלוקת</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(4)">
+      <span style="font-size:28px;">🃏</span>
+      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">ענה על עצמך ונחש את השני/ה</small></span>
+    </button>
+  </div>
+</div>
+<!-- WAIT MODE (P2 waits while P1 picks mode) -->
+<div class="screen" id="sc-wait-mode">
+  <div class="logo" style="font-size:36px;">⏳ רגע...</div>
+  <div style="background:var(--card);border-radius:20px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:52px;">🎮</div>
+    <div style="font-size:20px;font-weight:700;" id="wait-mode-p1name">שחקן 1</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);">בוחר/ת את סוג המשחק...</div>
+    <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
+  </div>
+</div>
+<!-- MODE ANNOUNCE (shown to both after P1 picks mode) -->
+<div class="screen" id="sc-mode-announce">
+  <div style="background:var(--card);border-radius:24px;padding:32px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;">סוג המשחק שנבחר</div>
+    <div style="font-size:72px;line-height:1;" id="ma-emoji">🎮</div>
+    <div style="font-size:30px;font-weight:900;" id="ma-title">משחק מלא</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);line-height:1.5;" id="ma-desc"></div>
+    <div id="ma-btn-area" style="margin-top:8px;"></div>
+  </div>
+</div>
+<!-- COUNTDOWN -->
+<div class="screen" id="sc-countdown">
+  <div class="countdown-wrap">
+    <div class="countdown-num" id="cd-num">3</div>
+    <div class="countdown-label" id="cd-label">מתחילים!</div>
+  </div>
+</div>
+<!-- INTRO 1 -->
+<div class="screen" id="sc-intro1">
+  <div class="intro-card">
+    <div class="intro-emoji">🤔</div>
+    <div class="intro-title">מי אנחנו?</div>
+    <div class="intro-desc">שלב ההכרות – ענו בנפרד ותגלו כמה אתם מסכימים!</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">📝</span><span>10 שאלות על הרגלים ואישיות</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד – בלי לראות את תשובת השני</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🎉</span><span>אחרי שניכם ענו – רואים יחד את התוצאה</span></div>
+    </div>
+    <div class="intro-points">🏆 הסכמתם? ראשון +2 | שני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
+    <div id="intro1-start"></div>
+  </div>
+</div>
+<!-- INTRO 2 -->
+<div class="screen" id="sc-intro2">
+  <div class="intro-card">
+    <div class="intro-emoji">⚡</div>
+    <div class="intro-title">מהיר יותר!</div>
+    <div class="intro-desc">שלב הבזק – מי יודע יותר, ומי יודע מהר יותר?</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון עונה</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">👀</span><span>השני רואה את התשובה הנכונה ושופט אם השותף צדק</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">⚠️</span><span>טעות = נקודה לצד השני!</span></div>
+    </div>
+    <div class="intro-points">🏆 נכון = +2 לך | לא נכון = +1 לשני</div>
+    <div id="intro2-start"></div>
+  </div>
+</div>
+<!-- INTRO 3 -->
+<div class="screen" id="sc-intro3">
+  <div class="intro-card">
+    <div class="intro-emoji">🔥</div>
+    <div class="intro-title">דעות חמות</div>
+    <div class="intro-desc">שלב הדעות – מסכים או לא? נגלה כמה אתם חושבים דומה!</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">💬</span><span>10 הצהרות שנויות במחלוקת</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד בוחר בנפרד בסקאלה של 1–5 (1=מתנגד לחלוטין, 5=מסכים מאוד)</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🎭</span><span>אחר כך רואים יחד – הסכמתם? 👀</span></div>
+    </div>
+    <div class="intro-points">🏆 סקאלה 1–5: פגיעה בול +3 | מרחק 1: +1 | מרחק 2: 0 | מרחק 3: -1 | מרחק 4: -2<br>⚡ תיזהרו! השחקן שענה מהר יותר יכול לקבל בונוס או קנס בהתאם לפער בין התשובות!</div>
+    <div id="intro3-start"></div>
+  </div>
+</div>
+<!-- INTRO 4 -->
+<div class="screen" id="sc-intro4">
+  <div class="intro-card">
+    <div class="intro-emoji">🃏</div>
+    <div class="intro-title">אני מכיר אותך</div>
+    <div class="intro-desc">שלב הניחושים – כמה אתם באמת מכירים אחד את השני?</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">✍️</span><span>קודם עונים על עצמכם</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🔮</span><span>אחר כך מנחשים מה השני בחר</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">😲</span><span>גלו מי הכי מכיר את מי!</span></div>
+    </div>
+    <div class="intro-points">🏆 ניחשת נכון ראשונ/ה: +2 | ניחשת נכון שני/ה: +1 | טעות: 0</div>
+    <div id="intro4-start"></div>
+  </div>
+</div>
+<!-- STAGE 1 -->
+<div class="screen" id="sc-s1">
+  <div class="stage-header"><div class="stage-badge">שלב 1 מתוך 4</div><div class="stage-title">🤔 מי אנחנו?</div><div class="stage-subtitle">ענו בנפרד – נראה כמה אתם מסכימים</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s1n1">שחקן 1</div><div class="sc-val" id="s1v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s1n2">שחקן 2</div><div class="sc-val" id="s1v2">0</div></div>
+  </div>
+  <div class="question-card" id="s1-qcard">
+    <div class="q-num" id="s1-qnum"></div>
+    <div class="dots" id="s1-dots"></div>
+    <div class="q-text" id="s1-qtext"></div>
+    <div id="s1-btns"></div>
+  </div>
+  <div id="s1-reveal" style="display:none;width:100%;">
+    <div class="result-reveal" id="s1-rev-content"></div>
+    <button class="btn btn-primary" id="s1-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(1)">הבא ➡️</button>
+    <div id="s1-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+  </div>
+</div>
+<!-- STAGE 2 -->
+<div class="screen" id="sc-s2">
+  <div class="stage-header"><div class="stage-badge">שלב 2 מתוך 4</div><div class="stage-title">⚡ מהיר יותר!</div><div class="stage-subtitle">מי שלוחץ ראשון עונה</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s2n1">שחקן 1</div><div class="sc-val" id="s2v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s2n2">שחקן 2</div><div class="sc-val" id="s2v2">0</div></div>
+  </div>
+  <div class="question-card">
+    <div class="q-num" id="s2-qnum"></div>
+    <div class="dots" id="s2-dots"></div>
+    <div class="q-text" id="s2-qtext"></div>
+    <div style="font-size:13px;color:rgba(255,255,255,.4)" id="s2-hint"></div>
+  </div>
+  <button class="buzz-btn" id="buzz-btn" onclick="buzz()">⚡ אני יודע!</button>
+  <div class="buzz-status" id="buzz-status"></div>
+  <div id="s2-judge-area" style="display:none;width:100%;">
+    <div style="background:rgba(255,255,255,.06);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;">
+      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px;">התשובה הנכונה:</div>
+      <div id="s2-correct-ans" style="font-size:22px;font-weight:900;color:var(--yellow);"></div>
+    </div>
+    <div style="font-size:15px;color:rgba(255,255,255,.7);text-align:center;margin-bottom:10px;" id="s2-judge-label"></div>
+    <div class="answer-row">
+      <button class="btn-yes" id="s2-judge-yes" onclick="judgeS2(true)">צודק ✅</button>
+      <button class="btn-no" id="s2-judge-no" onclick="judgeS2(false)">לא צודק ❌</button>
+    </div>
+  </div>
+  <div id="s2-wait-area" style="display:none;width:100%;"><div class="waiting-answer">⏳ ממתין לשחקן השני לשפוט...</div></div>
+</div>
+<!-- STAGE 3 -->
+<div class="screen" id="sc-s3">
+  <div class="stage-header"><div class="stage-badge">שלב 3 מתוך 4</div><div class="stage-title">🔥 דעות חמות</div><div class="stage-subtitle">מסכים או לא? נגלה יחד</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s3n1">שחקן 1</div><div class="sc-val" id="s3v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s3n2">שחקן 2</div><div class="sc-val" id="s3v2">0</div></div>
+  </div>
+  <div class="question-card" id="s3-qcard">
+    <div class="q-num" id="s3-qnum"></div>
+    <div class="dots" id="s3-dots"></div>
+    <div class="q-text" id="s3-qtext"></div>
+    <div id="s3-btns"></div>
+  </div>
+  <div id="s3-reveal" style="display:none;width:100%;">
+    <div class="result-reveal" id="s3-rev-content"></div>
+    <button class="btn btn-primary" id="s3-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(3)">הבא ➡️</button>
+    <div id="s3-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+  </div>
+</div>
+<!-- STAGE 4 -->
+<div class="screen" id="sc-s4">
+  <div class="stage-header"><div class="stage-badge">שלב 4 מתוך 4</div><div class="stage-title">🃏 אני מכיר אותך</div><div class="stage-subtitle">ענה/י על עצמך + נחש/י את השני</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s4n1">שחקן 1</div><div class="sc-val" id="s4v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s4n2">שחקן 2</div><div class="sc-val" id="s4v2">0</div></div>
+  </div>
+  <div id="s4-qarea" style="width:100%;">
+    <div class="question-card">
+      <div class="q-num" id="s4-qnum"></div>
+      <div class="dots" id="s4-dots"></div>
+      <div class="q-text" id="s4-qtext"></div>
+      <span class="s4-self-label" id="s4-self-label">קודם ענה על עצמך:</span>
+      <div id="s4-ans-area"></div>
+    </div>
+  </div>
+  <div id="s4-guess-area" style="display:none;width:100%;">
+    <div class="question-card">
+      <div class="q-text" id="s4-guess-text"></div>
+      <div style="font-size:14px;color:var(--teal);margin-bottom:16px;" id="s4-guess-label"></div>
+      <div id="s4-guess-opts"></div>
+    </div>
+  </div>
+  <div id="s4-reveal" style="display:none;width:100%;">
+    <div class="result-reveal" id="s4-rev-content"></div>
+    <button class="btn btn-primary" id="s4-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(4)">הבא ➡️</button>
+    <div id="s4-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+  </div>
+</div>
+<!-- FINAL -->
+<div class="screen" id="sc-final">
+  <div class="final-screen">
+    <span class="trophy">🏆</span>
+    <div class="winner-text" id="final-winner"></div>
+    <div style="color:rgba(255,255,255,.5);font-size:15px;">תוצאות המשחק</div>
+    <div class="final-scores" id="final-scores"></div>
+    <button class="btn btn-primary" onclick="restartGame()">🔄 משחק חדש</button>
+  </div>
+</div>
+</div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+const ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
+
+/* ── STATE ── */
+let myName='', myGender='', myNum=0;
+let gameMode='full';
+let gN={p1:'שחקן 1',p2:'שחקן 2'};
+let gG={p1:'m',p2:'m'};
+let S1Q=[], S2Q=[], S3Q=[], S4Q=[];
+let rStage=-1, rReveal=false;
+let currentQ=0;
+
+/* ── BEFOREUNLOAD ── */
+window.addEventListener('beforeunload',e=>{
+  if(myNum>0&&rStage>0&&rStage<5){
+    e.preventDefault();
+    e.returnValue='רענון הדף יסגור את המשחק';
+    return 'רענון הדף יסגור את המשחק';
+  }
+});
+
+/* ── DOM UTILS ── */
+const $=id=>document.getElementById(id);
+function showSc(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+function mkDots(id,tot,cur){
+  const c=$(id);if(!c)return;c.innerHTML='';
+  for(let i=0;i<tot;i++){const d=document.createElement('div');d.className='dot'+(i<cur?' done':i===cur?' cur':'');c.appendChild(d);}
+}
+function syncScores(sc){
+  if(!sc)return;
+  ['s1','s2','s3','s4'].forEach(s=>{
+    const n1=$(s+'n1'),n2=$(s+'n2'),v1=$(s+'v1'),v2=$(s+'v2');
+    if(n1)n1.textContent=gN.p1;if(n2)n2.textContent=gN.p2;
+    if(v1)v1.textContent=sc.p1;if(v2)v2.textContent=sc.p2;
+  });
+}
+function fireConfetti(){
+  const c=$('confetti');c.innerHTML='';
+  const cols=['#FF4D8D','#7B2FFF','#FFD93D','#00E5CC','#FF9800'];
+  for(let i=0;i<60;i++){
+    const p=document.createElement('div');p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}vw;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*2+1.5}s;animation-delay:${Math.random()}s;width:${Math.random()*10+6}px;height:${Math.random()*10+6}px`;
+    c.appendChild(p);
+  }
+  setTimeout(()=>c.innerHTML='',4000);
+}
+
+/* ── GENDER HELPERS ── */
+const gOf=num=>gG[num===1?'p1':'p2']||'m';
+const nOf=num=>gN[num===1?'p1':'p2'];
+const heStr=num=>gOf(num)==='f'?'היא':'הוא';
+const choseStr=num=>gOf(num)==='f'?'בחרה':'בחר';
+const thoughtStr=num=>gOf(num)==='f'?'חשבה':'חשב';
+const prefersStr=num=>gOf(num)==='f'?'מעדיפה':'מעדיף';
+const answeredStr=num=>gOf(num)==='f'?'ענתה':'ענה';
+const selfStr=num=>gOf(num)==='f'?'עצמה':'עצמו';
+const selfLabel=num=>gOf(num)==='f'?'קודם ענה/י על עצמך:':'קודם ענה על עצמך:';
+const judgeLabel=num=>`האם ${nOf(num)} ${gOf(num)==='f'?'צודקת':'צודק'}?`;
+const judgeBtnYes=num=>gOf(num)==='f'?'צודקת ✅':'צודק ✅';
+const judgeBtnNo=num=>gOf(num)==='f'?'לא צודקת ❌':'לא צודק ❌';
+const lchatzta=num=>gOf(num)==='f'?'לחצת ראשונה':'לחצת ראשון';
+const answerVerb=num=>gOf(num)==='f'?'ענה/י:':'ענה:';
+const winnerStr=num=>gOf(num)==='f'?`🏆 ${nOf(num)} ניצחה!`:`🏆 ${nOf(num)} ניצח!`;
+
+function buildS1Q(item,mn){
+  const g=gOf(mn);
+  const base=g==='f'?item.f:item.m;
+  return item.wo?`${base} עם ${nOf(mn===1?2:1)}?`:`${base}?`;
+}
+
+function s4Story(gn,an,gi,ai,opts,readerNum){
+  if(gi===ai)return null;
+  const guessedOpt=opts[gi], actualOpt=opts[ai];
+  if(readerNum===gn){
+    return `ניסית לנחש ש${nOf(an)} ${choseStr(an)} ${guessedOpt}, אבל ${heStr(an)} ${choseStr(an)} ${actualOpt}`;
+  } else {
+    return `${nOf(gn)} ${thoughtStr(gn)} שאת/ה ${prefersStr(an)} ${guessedOpt}, אבל בחרת ${actualOpt}`;
+  }
+}
+
+/* ── MODE ANNOUNCE ── */
+function showModeAnnounce(mode,p1name){
+  const modes={
+    'full':{emoji:'🎮',title:'משחק מלא',desc:'כל 4 השלבים ברצף'},
+    '1':{emoji:'🤔',title:'מי אנחנו?',desc:'שאלות כן/לא על הרגלים ואישיות'},
+    '2':{emoji:'⚡',title:'מהיר יותר!',desc:'טריוויה – מי לוחץ ראשון עונה'},
+    '3':{emoji:'🔥',title:'דעות חמות',desc:'סקאלה 1–5 על הצהרות שנויות במחלוקת'},
+    '4':{emoji:'🃏',title:'אני מכיר אותך',desc:'ענה/י על עצמך ונחש/י את השני/ה'}
+  };
+  const m=modes[String(mode)]||modes['full'];
+  $('ma-emoji').textContent=m.emoji;
+  $('ma-title').textContent=m.title;
+  $('ma-desc').textContent=m.desc;
+  $('ma-btn-area').innerHTML=myNum===1
+    ?'<button class="btn btn-primary" onclick="startGameFromAnnounce()">בואו נתחיל! 🚀</button>'
+    :'<div class="waiting-answer">ממתינ/ה ל'+(p1name||'שחקן 1')+' להתחיל...</div>';
+  showSc('sc-mode-announce');
+}
+
+/* ── COUNTDOWN ── */
+function startCountdown(stageNum,onDone){
+  showSc('sc-countdown');
+  const names={1:'מי אנחנו 🤔',2:'מהיר יותר ⚡',3:'דעות חמות 🔥',4:'אני מכיר אותך 🃏'};
+  $('cd-label').textContent=names[stageNum]||'';
+  let n=3;$('cd-num').textContent=n;
+  const iv=setInterval(()=>{n--;if(n>0){$('cd-num').textContent=n;}else{clearInterval(iv);onDone();}},1000);
+}
+
+/* ── RENDER INTRO start area ── */
+function renderIntroStart(stageNum){
+  const el=$('intro'+stageNum+'-start');
+  if(!el)return;
+  if(myNum===1){
+    el.innerHTML=`<button class="btn btn-primary" onclick="p1StartStage(${stageNum})">בואו נתחיל! ➡️</button>`;
+  } else {
+    el.innerHTML=`<div class="waiting-answer">ממתין לשחקן 1 להתחיל...</div>`;
+  }
+}
+
+/* ── GENDER PICKER ── */
+window.setGender=function(g){
+  myGender=g;
+  $('gb-m').classList.toggle('selected',g==='m');
+  $('gb-f').classList.toggle('selected',g==='f');
+};
+
+window.toggleJoin=function(){
+  const w=$('join-wrap');w.style.display=w.style.display==='none'?'flex':'none';
+};
+
+/* ── WEBSOCKET ACTIONS ── */
+window.createRoom=function(){
+  const name=$('inp-name').value.trim();
+  if(!name){$('home-err').textContent='הכנס/י שם קודם!';return;}
+  if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
+  myName=name;myNum=1;
+  ws.send(JSON.stringify({type:'create_room',name,gender:myGender}));
+};
+
+window.joinRoom=function(){
+  const name=$('inp-name').value.trim();
+  const code=$('inp-code').value.trim();
+  if(!name){$('home-err').textContent='הכנס/י שם קודם!';return;}
+  if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
+  if(code.length!==4){$('home-err').textContent='קוד לא תקין';return;}
+  myName=name;myNum=2;
+  ws.send(JSON.stringify({type:'join_room',name,gender:myGender,code}));
+};
+
+window.chooseMode=function(mode){
+  ws.send(JSON.stringify({type:'choose_mode',mode}));
+};
+
+window.startGameFromAnnounce=function(){
+  ws.send(JSON.stringify({type:'start_game'}));
+};
+
+window.p1StartStage=function(stageNum){
+  ws.send(JSON.stringify({type:'start_stage',stage:stageNum}));
+};
+
+window.p1AdvQ=function(stage){
+  ws.send(JSON.stringify({type:'next_question',stage}));
+};
+
+window.answerS1=function(ans){
+  $('s1-btns').innerHTML='<div class="waiting-answer">ממתין לתשובת השני... ⏳</div>';
+  ws.send(JSON.stringify({type:'answer_s1',answer:ans}));
+};
+
+window.buzz=function(){
+  const btn=$('buzz-btn');
+  if(btn.classList.contains('disabled'))return;
+  btn.className='buzz-btn disabled';
+  ws.send(JSON.stringify({type:'buzz'}));
+};
+
+window.judgeS2=function(correct){
+  $('s2-judge-area').style.display='none';
+  ws.send(JSON.stringify({type:'judge_s2',correct}));
+};
+
+window.answerS3=function(val){
+  $('s3-btns').innerHTML='<div class="waiting-answer">ממתין לתשובת השני... ⏳</div>';
+  ws.send(JSON.stringify({type:'answer_s3',value:val}));
+};
+
+window.answerS4=function(idx){
+  ws.send(JSON.stringify({type:'answer_s4',idx}));
+};
+
+window.guessS4=function(idx){
+  ws.send(JSON.stringify({type:'guess_s4',idx}));
+  $('s4-guess-area').style.display='none';
+  $('s4-rev-content').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
+  $('s4-reveal').style.display='block';
+};
+
+window.restartGame=function(){
+  ws.send(JSON.stringify({type:'restart'}));
+};
+
+/* ── RENDER FUNCTIONS ── */
+function renderS1Q(q,qdata){
+  $('s1-qnum').textContent='שאלה '+(q+1)+' מתוך '+S1Q.length;
+  $('s1-qtext').textContent=buildS1Q(qdata,myNum);
+  mkDots('s1-dots',S1Q.length,q);
+  $('s1-qcard').style.display='block';
+  $('s1-btns').innerHTML='<div class="answer-row"><button class="btn-yes" onclick="answerS1(\'yes\')">כן ✅</button><button class="btn-no" onclick="answerS1(\'no\')">לא ❌</button></div>';
+  $('s1-reveal').style.display='none';
+}
+
+function showRevealS1(msg){
+  const {q,qdata,answers,pts1,pts2,match}=msg;
+  const s1qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(qdata,myNum)+'</div>';
+  let banner=match
+    ?'🎉 התאמה! '+nOf(pts1>=2?1:2)+' +2 | '+nOf(pts1>=2?2:1)+' +1'
+    :'🔥 לא הסכמתם – 0 נקודות לשניכם';
+  $('s1-rev-content').innerHTML=s1qTxt+
+    '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+(answers.p1==='yes'?'כן ✅':'לא ❌')+(pts1>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts1+'</small>':'')+'</span></div>'+
+    '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+(answers.p2==='yes'?'כן ✅':'לא ❌')+(pts2>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts2+'</small>':'')+'</span></div>'+
+    '<div class="match-banner '+(match?'match-yes':'match-no')+'">'+banner+'</div>';
+  $('s1-qcard').style.display='none';
+  $('s1-reveal').style.display='block';
+  $('s1-next').style.display=myNum===1?'block':'none';
+  $('s1-wait-next').style.display=myNum===2?'block':'none';
+}
+
+function renderS2Q(q,qdata,total){
+  $('s2-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
+  $('s2-qtext').textContent=qdata.q;
+  $('s2-hint').textContent='רמז: '+qdata.h;
+  $('buzz-status').textContent='';
+  $('s2-judge-area').style.display='none';
+  $('s2-wait-area').style.display='none';
+  const btn=$('buzz-btn');btn.className='buzz-btn';btn.textContent='⚡ אני יודע!';
+  mkDots('s2-dots',total,q);
+}
+
+function showBuzzResult(msg){
+  const {buzzer,buzzer_name,buzzer_gender}=msg;
+  const btn=$('buzz-btn');btn.className='buzz-btn disabled';
+  if(buzzer===myNum){
+    $('buzz-status').innerHTML='<span style="color:var(--yellow)">🎯 '+lchatzta(myNum)+'! '+answerVerb(myNum)+'</span>';
+    $('s2-wait-area').style.display='block';
+    $('s2-judge-area').style.display='none';
+    btn.textContent=gOf(myNum)==='f'?'את עונה!':'אתה עונה!';
+  } else {
+    $('buzz-status').innerHTML='<span style="color:rgba(255,255,255,.5)">'+buzzer_name+' '+(buzzer_gender==='f'?'לחצה':'לחץ')+' ראשונ'+(buzzer_gender==='f'?'ה':'')+' ...</span>';
+    $('s2-correct-ans').textContent=S2Q[currentQ]?S2Q[currentQ].a:'';
+    $('s2-judge-label').textContent=judgeLabel(buzzer);
+    $('s2-judge-yes').textContent=judgeBtnYes(buzzer);
+    $('s2-judge-no').textContent=judgeBtnNo(buzzer);
+    $('s2-judge-area').style.display='block';
+    $('s2-wait-area').style.display='none';
+    btn.textContent='🔒 נעול';
+  }
+}
+
+function showS2Result(msg){
+  const {correct,answer}=msg;
+  $('s2-judge-area').style.display='none';
+  $('s2-wait-area').style.display='none';
+  $('buzz-status').innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:4px;">'+(correct?'✅ נכון!':'❌ לא נכון!')+'</div><div style="color:rgba(255,255,255,.5);font-size:14px;">התשובה: '+answer+'</div></div>';
+}
+
+function renderS3Q(q,qdata,total){
+  $('s3-qnum').textContent='הצהרה '+(q+1)+' מתוך '+total;
+  $('s3-qtext').textContent=qdata;
+  mkDots('s3-dots',total,q);
+  $('s3-qcard').style.display='block';
+  const colors=['#D32F2F','#E57373','#888888','#66BB6A','#2E7D32'];
+  let btns='<div style="display:flex;gap:6px;justify-content:center;direction:rtl;">';
+  for(let i=1;i<=5;i++){
+    btns+='<button onclick="answerS3('+i+')" style="flex:1;padding:10px 2px;border:none;border-radius:12px;background:'+colors[i-1]+';color:#fff;font-family:Heebo,sans-serif;font-size:13px;font-weight:700;cursor:pointer;line-height:1.3;white-space:pre-line;">'+i+'\n'+(['מתנגד/ת\nבחריפות','לא\nמסכים/ה','ניטרלי/ת','מסכים/ה','מסכים/ה\nמאוד'][i-1])+'</button>';
+  }
+  btns+='</div>';
+  $('s3-btns').innerHTML=btns;
+  $('s3-reveal').style.display='none';
+}
+
+function showRevealS3(msg){
+  const {q,qdata,answers,pts1,pts2,diff,base,speed,first}=msg;
+  const ptsColor=(pts)=>pts>0?'#00E676':pts<0?'#FF5252':'#888888';
+  const ptsFmt=p=>p>0?'+'+p:String(p);
+  const firstNm=nOf(first);
+  const firstVerb=gOf(first)==='f'?'ענתה':'ענה';
+  const firstSuf=gOf(first)==='f'?'ראשונה':'ראשון';
+  const s3ScoreLabel=(pts)=>{
+    if(pts===3)return'🎯 פגיעה בול! +3 נקודות לשניכם';
+    if(pts===1)return'✨ קרוב מאוד! +1 נקודה לשניכם';
+    if(pts===0)return'😐 הפרש 2 – אפס נקודות לשניכם';
+    if(pts===-1)return'😬 הפרש 3 – מינוס נקודה לשניכם';
+    return'💥 הפרש 4 – מינוס 2 נקודות לשניכם';
+  };
+  const speedLine=speed!==0?'<div class="match-banner" style="background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);color:var(--yellow);">⚡ '+firstNm+' '+firstVerb+' '+firstSuf+' – בונוס/קנס: '+(speed>0?'+':'')+speed+'</div>':'';
+  const s3qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata+'</div>';
+  $('s3-rev-content').innerHTML=s3qTxt+
+    '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+answers.p1+' – '+answers.p1_label+'<small style="font-size:13px;color:'+ptsColor(pts1)+'"> ('+ptsFmt(pts1)+')</small></span></div>'+
+    '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+answers.p2+' – '+answers.p2_label+'<small style="font-size:13px;color:'+ptsColor(pts2)+'"> ('+ptsFmt(pts2)+')</small></span></div>'+
+    '<div class="match-banner" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);">הפרש בין התשובות: '+diff+'</div>'+
+    '<div class="match-banner '+(base>0?'match-yes':base<0?'match-no':'')+'">'+s3ScoreLabel(base)+'</div>'+
+    speedLine;
+  $('s3-qcard').style.display='none';
+  $('s3-reveal').style.display='block';
+  $('s3-next').style.display=myNum===1?'block':'none';
+  $('s3-wait-next').style.display=myNum===2?'block':'none';
+}
+
+function renderS4Q(q,qdata,total){
+  $('s4-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
+  $('s4-qtext').textContent=qdata.q;
+  mkDots('s4-dots',total,q);
+  $('s4-self-label').textContent=selfLabel(myNum);
+  $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="answerS4('+i+')">'+o+'</button>').join('');
+  $('s4-qarea').style.display='block';
+  $('s4-guess-area').style.display='none';
+  $('s4-reveal').style.display='none';
+}
+
+function showGuessS4(msg){
+  const {qdata}=msg;
+  const on=myNum===1?2:1;
+  $('s4-guess-text').textContent='מה '+heStr(on)+' '+answeredStr(on)+'?';
+  $('s4-guess-label').textContent='עכשיו נחש/י מה '+nOf(on)+' '+answeredStr(on)+':';
+  $('s4-guess-opts').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="guessS4('+i+')">'+o+'</button>').join('');
+  $('s4-qarea').style.display='none';
+  $('s4-guess-area').style.display='block';
+}
+
+function showRevealS4(msg){
+  const {qdata,answers,guesses,pts1,pts2}=msg;
+  const opts=qdata.o;
+  let stories='';
+  if(!guesses.g1ok){const s=s4Story(1,2,guesses.g1,answers.p2,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
+  if(!guesses.g2ok){const s=s4Story(2,1,guesses.g2,answers.p1,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
+  const s4qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata.q+'</div>';
+  $('s4-rev-content').innerHTML=s4qTxt+
+    '<div class="p-ans"><span class="p-name">'+gN.p1+' '+answeredStr(1)+' על '+selfStr(1)+'</span><span class="p-val" style="font-size:14px">'+opts[answers.p1]+'</span></div>'+
+    '<div class="p-ans"><span class="p-name">'+gN.p2+' '+answeredStr(2)+' על '+selfStr(2)+'</span><span class="p-val" style="font-size:14px">'+opts[answers.p2]+'</span></div>'+
+    stories+
+    '<div class="match-banner '+(guesses.g1ok?'match-yes':'match-no')+'">'+gN.p1+': '+(guesses.g1ok?'✅ ניחוש נכון! +'+pts1:'❌ טעות')+'</div>'+
+    '<div class="match-banner '+(guesses.g2ok?'match-yes':'match-no')+'">'+gN.p2+': '+(guesses.g2ok?'✅ ניחוש נכון! +'+pts2:'❌ טעות')+'</div>';
+  $('s4-reveal').style.display='block';
+  $('s4-guess-area').style.display='none';
+  $('s4-next').style.display=myNum===1?'block':'none';
+  $('s4-wait-next').style.display=myNum===2?'block':'none';
+}
+
+function renderFinal(msg){
+  const {p1,p2,winner,scores}=msg;
+  $('final-winner').textContent=winner?winnerStr(winner):'🤝 תיקו מושלם!';
+  const rows=[{name:p1.name,score:scores.p1,win:scores.p1>=scores.p2},{name:p2.name,score:scores.p2,win:scores.p2>=scores.p1}].sort((a,b)=>b.score-a.score);
+  $('final-scores').innerHTML=rows.map(r=>'<div class="final-row '+(r.win?'win':'')+'"><span style="font-size:18px;font-weight:700">'+(r.win?'👑 ':'')+r.name+'</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">'+r.score+'</span></div>').join('');
+  showSc('sc-final');
+  fireConfetti();
+}
+
+/* ── MESSAGE HANDLERS ── */
+const MSG_HANDLERS={
+  room_created:(msg)=>{
+    $('disp-code').textContent=msg.code;
+    showSc('sc-wait');
+  },
+  player_joined:(msg)=>{
+    gN.p1=msg.p1.name;gN.p2=msg.p2.name;
+    gG.p1=msg.p1.gender;gG.p2=msg.p2.gender;
+    S1Q=msg.questions.s1;S2Q=msg.questions.s2;
+    S3Q=msg.questions.s3;S4Q=msg.questions.s4;
+    if(myNum===1)showSc('sc-mode');
+    else{showSc('sc-wait-mode');const n=$('wait-mode-p1name');if(n)n.textContent=gN.p1;}
+  },
+  mode_announced:(msg)=>{
+    gameMode=msg.mode;
+    showModeAnnounce(msg.mode,gN.p1);
+  },
+  stage_intro:(msg)=>{
+    rStage=msg.stage;rReveal=false;
+    showSc('sc-intro'+msg.stage);
+    renderIntroStart(msg.stage);
+  },
+  countdown_done:(msg)=>{
+    startCountdown(msg.stage,()=>{
+      showSc('sc-s'+msg.stage);
+    });
+  },
+  question:(msg)=>{
+    rReveal=false;
+    currentQ=msg.q;
+    syncScores(msg.scores);
+    if(msg.stage===1)renderS1Q(msg.q,msg.qdata);
+    else if(msg.stage===2)renderS2Q(msg.q,msg.qdata,msg.total);
+    else if(msg.stage===3)renderS3Q(msg.q,msg.qdata,msg.total);
+    else if(msg.stage===4)renderS4Q(msg.q,msg.qdata,msg.total);
+  },
+  reveal:(msg)=>{
+    rReveal=true;
+    syncScores(msg.scores);
+    if(msg.stage===1)showRevealS1(msg);
+    else if(msg.stage===3)showRevealS3(msg);
+    else if(msg.stage===4)showRevealS4(msg);
+  },
+  guess_phase:(msg)=>{
+    showGuessS4(msg);
+  },
+  buzz_result:(msg)=>{
+    showBuzzResult(msg);
+  },
+  s2_result:(msg)=>{
+    syncScores(msg.scores);
+    showS2Result(msg);
+  },
+  game_over:(msg)=>{
+    renderFinal(msg);
+  },
+  restarted:()=>{
+    myGender='';myNum=0;
+    $('gb-m').classList.remove('selected');$('gb-f').classList.remove('selected');
+    showSc('sc-home');
+  },
+  error:(msg)=>{
+    $('home-err').textContent=msg.message;
+  }
+};
+
+ws.onmessage=(evt)=>{
+  const msg=JSON.parse(evt.data);
+  const h=MSG_HANDLERS[msg.type];
+  if(h)h(msg);
+};
+ws.onclose=()=>{
+  if(myNum>0)$('home-err').textContent='החיבור נותק. רענן את הדף.';
+};
+</script>
+</body>
+</html>
