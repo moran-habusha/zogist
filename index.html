@@ -150,6 +150,26 @@ input::placeholder{color:rgba(255,255,255,.3);}
     </button>
   </div>
 </div>
+<!-- WAIT MODE (P2 waits while P1 picks mode) -->
+<div class="screen" id="sc-wait-mode">
+  <div class="logo" style="font-size:36px;">⏳ רגע...</div>
+  <div style="background:var(--card);border-radius:20px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:52px;">🎮</div>
+    <div style="font-size:20px;font-weight:700;" id="wait-mode-p1name">שחקן 1</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);">בוחר/ת את סוג המשחק...</div>
+    <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
+  </div>
+</div>
+<!-- MODE ANNOUNCE (shown to both after P1 picks mode) -->
+<div class="screen" id="sc-mode-announce">
+  <div style="background:var(--card);border-radius:24px;padding:32px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;">סוג המשחק שנבחר</div>
+    <div style="font-size:72px;line-height:1;" id="ma-emoji">🎮</div>
+    <div style="font-size:30px;font-weight:900;" id="ma-title">משחק מלא</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);line-height:1.5;" id="ma-desc"></div>
+    <div id="ma-btn-area" style="margin-top:8px;"></div>
+  </div>
+</div>
 <!-- COUNTDOWN -->
 <div class="screen" id="sc-countdown">
   <div class="countdown-wrap">
@@ -632,6 +652,25 @@ function s4Story(gn,an,gi,ai,opts,readerNum){
   }
 }
 
+/* ── MODE ANNOUNCE ── */
+function showModeAnnounce(mode,p1name){
+  const modes={
+    'full':{emoji:'🎮',title:'משחק מלא',desc:'כל 4 השלבים ברצף'},
+    '1':{emoji:'🤔',title:'מי אנחנו?',desc:'שאלות כן/לא על הרגלים ואישיות'},
+    '2':{emoji:'⚡',title:'מהיר יותר!',desc:'טריוויה – מי לוחץ ראשון עונה'},
+    '3':{emoji:'🔥',title:'דעות חמות',desc:'סקאלה 1–5 על הצהרות שנויות במחלוקת'},
+    '4':{emoji:'🃏',title:'אני מכיר אותך',desc:'ענה/י על עצמך ונחש/י את השני/ה'}
+  };
+  const m=modes[String(mode)]||modes['full'];
+  $('ma-emoji').textContent=m.emoji;
+  $('ma-title').textContent=m.title;
+  $('ma-desc').textContent=m.desc;
+  $('ma-btn-area').innerHTML=myNum===1
+    ?'<button class="btn btn-primary" onclick="startGameFromAnnounce()">בואו נתחיל! 🚀</button>'
+    :'<div class="waiting-answer">ממתינ/ה ל'+(p1name||'שחקן 1')+' להתחיל...</div>';
+  if(!$('sc-mode-announce').classList.contains('active'))showSc('sc-mode-announce');
+}
+
 /* ── COUNTDOWN ── */
 function startCountdown(stageNum,onDone){
   showSc('sc-countdown');
@@ -692,6 +731,7 @@ window.joinRoom=async function(){
   // Write p2 data but keep stage:0 until P1 picks mode
   await update(roomRef,{'p2/name':name,'p2/score':0,'p2/gender':myGender});
   startMain();
+  showSc('sc-wait-mode');
 };
 
 /* ── MAIN LISTENER ── */
@@ -715,9 +755,18 @@ function startMain(){
     }
     syncScores();
     if(stage===0){
+      if(data.modeAnnounced){
+        showModeAnnounce(data.modeAnnounced,data.p1?.name);
+        return;
+      }
       // P1: if P2 just joined and we're still waiting, show mode select
       if(myNum===1&&data.p2?.name&&$('sc-wait').classList.contains('active')){
         showSc('sc-mode');
+      }
+      // P2: update P1 name on wait screen
+      if(myNum===2&&$('sc-wait-mode').classList.contains('active')){
+        const n1el=$('wait-mode-p1name');
+        if(n1el&&data.p1?.name)n1el.textContent=data.p1.name;
       }
       return;
     }
@@ -774,9 +823,12 @@ function checkQ(stage,data,q){
 window.chooseMode=async function(mode){
   if(myNum!==1)return;
   gameMode=mode;
-  const startStage=mode==='full'?1:Number(mode);
-  const endStage=mode==='full'?5:Number(mode)+1;
-  await update(roomRef,{stage:startStage,q:0,introAck:0,gameMode:mode==='full'?'full':String(mode)});
+  await update(roomRef,{modeAnnounced:mode==='full'?'full':String(mode),gameMode:mode==='full'?'full':String(mode)});
+};
+window.startGameFromAnnounce=async function(){
+  if(myNum!==1)return;
+  const startStage=gameMode==='full'?1:Number(gameMode);
+  await update(roomRef,{stage:startStage,q:0,introAck:0,modeAnnounced:null});
 };
 
 window.p1StartStage=async function(stageNum){
@@ -828,7 +880,7 @@ function checkS1(data,q){
   } else {
     banner='🔥 לא הסכמתם – 0 נקודות לשניכם';
   }
-  const s1qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(S1Q[q],1)+'</div>';
+  const s1qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(S1Q[q],myNum)+'</div>';
   $('s1-rev-content').innerHTML=s1qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+(qd.p1==='yes'?'כן ✅':'לא ❌')+(pts1>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts1+'</small>':'')+'</span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+(qd.p2==='yes'?'כן ✅':'לא ❌')+(pts2>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts2+'</small>':'')+'</span></div>'+
