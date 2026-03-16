@@ -124,6 +124,32 @@ input::placeholder{color:rgba(255,255,255,.3);}
   </div>
   <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
 </div>
+<!-- MODE SELECT (shown to P1 after P2 joins) -->
+<div class="screen" id="sc-mode">
+  <div class="logo" style="font-size:36px;">בחר/י מצב משחק</div>
+  <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+    <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode('full')">
+      <span style="font-size:28px;">🎮</span>
+      <span><strong>משחק מלא</strong><br><small style="font-weight:400;opacity:.7">כל 4 השלבים ברצף</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(1)">
+      <span style="font-size:28px;">🤔</span>
+      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">שאלות כן/לא על הרגלים ואישיות</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(2)">
+      <span style="font-size:28px;">⚡</span>
+      <span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">טריוויה – מי לוחץ ראשון עונה</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(3)">
+      <span style="font-size:28px;">🔥</span>
+      <span><strong>דעות חמות</strong><br><small style="font-weight:400;opacity:.7">סקאלה 1–5 על הצהרות שנויות במחלוקת</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(4)">
+      <span style="font-size:28px;">🃏</span>
+      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">ענה על עצמך ונחש את השני/ה</small></span>
+    </button>
+  </div>
+</div>
 <!-- COUNTDOWN -->
 <div class="screen" id="sc-countdown">
   <div class="countdown-wrap">
@@ -518,8 +544,18 @@ const S4_BANK=[
   {q:"מה מגדיר/ה אותך יותר מכל?",o:["המשפחה שלי 👨‍👩‍👧","העבודה שלי 💼","הערכים שלי 🌟","החיוך שלי 😊"]}
 ];
 
+/* ── BEFOREUNLOAD: warn on refresh during game ── */
+window.addEventListener('beforeunload',e=>{
+  if(myNum>0&&rStage>0&&rStage<5){
+    e.preventDefault();
+    e.returnValue='רענון הדף יסגור את המשחק';
+    return 'רענון הדף יסגור את המשחק';
+  }
+});
+
 /* ── STATE ── */
 let myName='',myGender='',myNum=0,roomCode='',roomRef=null;
+let gameMode='full'; // 'full' or stage number 1-4
 let gN={p1:'שחקן 1',p2:'שחקן 2'};
 let gG={p1:'m',p2:'m'};
 let S1Q=[],S2Q=[],S3Q=[],S4Q=[];
@@ -653,7 +689,8 @@ window.joinRoom=async function(){
   roomRef=ref(db,'rooms/'+roomCode);
   const snap=await get(roomRef);
   if(!snap.exists()){$('home-err').textContent='חדר לא נמצא!';return;}
-  await update(roomRef,{'p2/name':name,'p2/score':0,'p2/gender':myGender,stage:1,q:0,introAck:0});
+  // Write p2 data but keep stage:0 until P1 picks mode
+  await update(roomRef,{'p2/name':name,'p2/score':0,'p2/gender':myGender});
   startMain();
 };
 
@@ -665,6 +702,7 @@ function startMain(){
     const data=snap.val();
     window._gData=data;
     const stage=data.stage||0,q=data.q||0,introAck=data.introAck||0;
+    if(data.gameMode)gameMode=data.gameMode;
     gN.p1=data.p1?.name||'שחקן 1';
     gN.p2=data.p2?.name||'שחקן 2';
     gG.p1=data.p1?.gender||'m';
@@ -676,7 +714,13 @@ function startMain(){
       S4Q=data.qidx.s4.map(i=>S4_BANK[i]);
     }
     syncScores();
-    if(stage===0)return;
+    if(stage===0){
+      // P1: if P2 just joined and we're still waiting, show mode select
+      if(myNum===1&&data.p2?.name&&$('sc-wait').classList.contains('active')){
+        showSc('sc-mode');
+      }
+      return;
+    }
 
     /* New stage → show intro */
     if(stage!==rStage){
@@ -727,6 +771,14 @@ function checkQ(stage,data,q){
 }
 
 /* ── P1 CONTROLS ── */
+window.chooseMode=async function(mode){
+  if(myNum!==1)return;
+  gameMode=mode;
+  const startStage=mode==='full'?1:Number(mode);
+  const endStage=mode==='full'?5:Number(mode)+1;
+  await update(roomRef,{stage:startStage,q:0,introAck:0,gameMode:mode==='full'?'full':String(mode)});
+};
+
 window.p1StartStage=async function(stageNum){
   if(myNum!==1)return;
   await update(roomRef,{introAck:stageNum});
@@ -735,8 +787,13 @@ window.p1AdvQ=async function(stage){
   if(myNum!==1)return;
   const lens={1:S1Q.length,2:S2Q.length,3:S3Q.length,4:S4Q.length};
   const nq=rQ+1;
-  if(nq>=(lens[stage]||10))await update(roomRef,{stage:stage+1,q:0,introAck:0});
-  else await update(roomRef,{q:nq});
+  if(nq>=(lens[stage]||10)){
+    // In single-stage mode, jump straight to final instead of next stage
+    const nextStage=(gameMode==='full')?stage+1:5;
+    await update(roomRef,{stage:nextStage,q:0,introAck:0});
+  } else {
+    await update(roomRef,{q:nq});
+  }
 };
 
 /* ══ STAGE 1 ══
@@ -771,7 +828,8 @@ function checkS1(data,q){
   } else {
     banner='🔥 לא הסכמתם – 0 נקודות לשניכם';
   }
-  $('s1-rev-content').innerHTML=
+  const s1qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(S1Q[q],1)+'</div>';
+  $('s1-rev-content').innerHTML=s1qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+(qd.p1==='yes'?'כן ✅':'לא ❌')+(pts1>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts1+'</small>':'')+'</span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+(qd.p2==='yes'?'כן ✅':'לא ❌')+(pts2>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts2+'</small>':'')+'</span></div>'+
     '<div class="match-banner '+(match?'match-yes':'match-no')+'">'+banner+'</div>';
@@ -798,9 +856,21 @@ window.buzz=async function(){
   const btn=$('buzz-btn');
   if(btn.classList.contains('disabled'))return;
   btn.className='buzz-btn disabled';
-  const snap=await get(ref(db,'rooms/'+roomCode+'/s2/q'+rQ+'/buzzer'));
-  if(snap.exists())return;
-  await update(ref(db,'rooms/'+roomCode+'/s2/q'+rQ),{buzzer:myNum});
+  // Use random tiebreak timestamp to avoid both players locking as buzzer
+  const myTs=Date.now()+Math.random()*10;
+  const tsKey=myNum===1?'buzz_ts1':'buzz_ts2';
+  await update(ref(db,'rooms/'+roomCode+'/s2/q'+rQ),{[tsKey]:myTs});
+  // Short delay then check who has earlier timestamp and set buzzer
+  await new Promise(r=>setTimeout(r,300));
+  const snap=await get(ref(db,'rooms/'+roomCode+'/s2/q'+rQ));
+  if(!snap.exists())return;
+  const qd=snap.val();
+  if(qd.buzzer)return; // already set
+  const ts1=qd.buzz_ts1||Infinity,ts2=qd.buzz_ts2||Infinity;
+  // Winner = earlier timestamp; if neither pressed, skip
+  if(ts1===Infinity&&ts2===Infinity)return;
+  const winner=ts1<=ts2?1:2;
+  await update(ref(db,'rooms/'+roomCode+'/s2/q'+rQ),{buzzer:winner});
 };
 function checkS2(data,q){
   const qd=data.s2?.['q'+q]||{};
@@ -829,7 +899,9 @@ function checkS2(data,q){
     rReveal=true;
     $('s2-judge-area').style.display='none';
     $('s2-wait-area').style.display='none';
-    $('buzz-status').innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:4px;">'+(qd.result?'✅ נכון!':'❌ לא נכון!')+'</div><div style="color:rgba(255,255,255,.5);font-size:14px;">התשובה: '+S2Q[q].a+'</div></div>';
+    const s2qTxt='<div style="font-size:15px;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:12px;margin-bottom:8px;text-align:center;color:rgba(255,255,255,.8);">'+S2Q[q].q+'</div>';
+    $('s2-qtext').innerHTML=S2Q[q].q; // keep question visible
+    $('buzz-status').innerHTML=s2qTxt+'<div style="text-align:center"><div style="font-size:20px;margin-bottom:4px;">'+(qd.result?'✅ נכון!':'❌ לא נכון!')+'</div><div style="color:rgba(255,255,255,.5);font-size:14px;">התשובה: '+S2Q[q].a+'</div></div>';
     setTimeout(async()=>{if(myNum===1)await p1AdvQ(2);},2000);
   }
 }
@@ -902,7 +974,8 @@ function checkS3(data,q){
   const firstSuf=gOf(first)==='f'?'ראשונה':'ראשון';
   const gapLine='<div class="match-banner" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);">הפרש בין התשובות: '+diff+'</div>';
   const speedLine=speedBonus!==0?'<div class="match-banner" style="background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);color:var(--yellow);">⚡ '+firstNm+' '+firstVerb+' '+firstSuf+' – בונוס/קנס: '+(speedBonus>0?'+':'')+speedBonus+'</div>':'';
-  $('s3-rev-content').innerHTML=
+  const s3qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+S3Q[q]+'</div>';
+  $('s3-rev-content').innerHTML=s3qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+v1+' – '+scaleLabels[v1]+'<small style="font-size:13px;color:'+ptsColor1+'"> ('+ptsFmt(pts1)+')</small></span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+v2+' – '+scaleLabels[v2]+'<small style="font-size:13px;color:'+ptsColor2+'"> ('+ptsFmt(pts2)+')</small></span></div>'+
     gapLine+
@@ -969,7 +1042,8 @@ function checkS4(data,q){
   let stories='';
   if(!g1ok){const s=s4Story(1,2,qd.g1,qd.p2,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
   if(!g2ok){const s=s4Story(2,1,qd.g2,qd.p1,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
-  $('s4-rev-content').innerHTML=
+  const s4qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+S4Q[q].q+'</div>';
+  $('s4-rev-content').innerHTML=s4qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+' '+answeredStr(1)+' על '+selfStr(1)+'</span><span class="p-val" style="font-size:14px">'+opts[qd.p1]+'</span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+' '+answeredStr(2)+' על '+selfStr(2)+'</span><span class="p-val" style="font-size:14px">'+opts[qd.p2]+'</span></div>'+
     stories+
@@ -993,6 +1067,7 @@ function renderFinal(data){
 }
 
 window.restartGame=async function(){
+  gameMode='full';
   if(mainUnsub){mainUnsub();mainUnsub=null;}
   if(roomRef)await remove(roomRef);
   rStage=-1;rQ=-1;rReveal=false;s2BuzzDone=false;lastIntroAck=0;
