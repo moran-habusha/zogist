@@ -154,7 +154,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(1)">
       <span style="font-size:28px;">🤔</span>
-      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">10 שאלות כן/לא על הרגלים, העדפות ואישיות</small></span>
+      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">10 שאלות של כן/לא</small></span>
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(2)">
       <span style="font-size:28px;">⚡</span>
@@ -162,11 +162,11 @@ input::placeholder{color:rgba(255,255,255,.3);}
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(3)">
       <span style="font-size:28px;">🔥</span>
-      <span><strong>דעות קדומות</strong><br><small style="font-weight:400;opacity:.7">10 הצהרות שנויות במחלוקת - בחירה בסקאלה של 1-5</small></span>
+      <span><strong>דעות קדומות</strong><br><small style="font-weight:400;opacity:.7">בחירה בסקאלה של 5 רמות הסכמה</small></span>
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(4)">
       <span style="font-size:28px;">🃏</span>
-      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">10 שאלות אמריקאיות - קודם בחר בעצמך ואז נחש מה בן/ת הזוג יבחרו</small></span>
+      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">ואז נחש מה בן/ת הזוג בחרו</small></span>
     </button>
   </div>
 </div>
@@ -219,7 +219,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="intro-title">מהיר יותר!</div>
     <div class="intro-desc">שלב הבזק – מי יודע יותר, ומי יודע מהר יותר?</div>
     <div class="intro-rules">
-      <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון יכול לענות בקול</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון רשאי לענות את התשובה בקול</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">👀</span><span>השני רואה את התשובה הנכונה ושופט אם השותף צדק</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">⚠️</span><span>טעות = נקודה לצד השני!</span></div>
     </div>
@@ -238,7 +238,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
       <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד בסקאלה 1–5</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">🎭</span><span>אחר כך רואים יחד – הסכמתם? 👀</span></div>
     </div>
-    <div class="intro-points">🏆 כמות הנקודות תלויה בכם ;) | שימו לב, הראשון שיענה יקבל בונוס או קנס בהתאם למרחק הדעות!</div>
+    <div class="intro-points">🏆 כמות הנקודות תלויה בכם ;)<br>שימו לב, הראשון שיענה יקבל בונוס או קנס בהתאם למרחק הדעות שלכם!</div>
     <div id="intro3-start"></div>
   </div>
 </div>
@@ -593,13 +593,13 @@ window.answerS3=function(val){
 };
 
 window.answerS4=function(idx){
-  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
+  document.querySelectorAll('#s4-ans-area button').forEach(b=>{b.disabled=true;b.style.opacity='.35';});
   ws.send(JSON.stringify({type:'answer_s4',idx}));
 };
 
 window.guessS4=function(idx){
+  document.querySelectorAll('#s4-ans-area button').forEach(b=>{b.disabled=true;b.style.opacity='.35';});
   ws.send(JSON.stringify({type:'guess_s4',idx}));
-  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
 };
 
 window.restartGame=function(){
