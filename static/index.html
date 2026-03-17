@@ -420,13 +420,17 @@ input::placeholder{color:rgba(255,255,255,.3);}
 <!-- LL INTRO -->
 <div class="screen" id="sc-ll-intro">
   <div class="logo" style="font-size:32px;">💬 שפות האהבה</div>
+  <div class="card" style="text-align:center;font-size:15px;line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:12px;">
+    לכולנו יש שפה רגשית משלנו — הדרך הייחודית שבה אנחנו מרגישים אהובים ומביעים אהבה.<br>
+    כשאנחנו ובן/בת הזוג שלנו מדברים באותה שפה — הכל זורם.<br>
+    כשהשפות שונות, גם כוונה טובה לא תמיד מגיעה למקום.
+  </div>
   <div class="intro-card">
     <div class="intro-emoji">❤️</div>
     <div class="intro-title">20 שאלות אישיות</div>
-    <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תוכלו לגלות מה שפות האהבה העיקריות שלכם ושל בן/בת זוגכם, הן בקבלה והן בנתינה.</div>
+    <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תוכלו לגלות מה שפות האהבה העיקריות שלכם ושל בן/בת זוגכם.</div>
     <div class="intro-rules">
-      <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענה/י בכנות — אין תשובות נכונות או לא נכונות</span></div>
-      <div class="intro-rule"><span class="intro-rule-icon">🔀</span><span>השאלות מעורבבות — קבלה ונתינה ביחד</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענו בכנות — אין תשובות נכונות</span></div>
     </div>
   </div>
   <button class="btn btn-primary" onclick="startLLQuiz()">בואו נתחיל! ➡️</button>
@@ -471,11 +475,21 @@ let llQuestions=[], llAnswers=[], llQIdx=0;
 
 /* ── LOVE LANGUAGES DATA ── */
 const LL_DEFS={
-  quality_time:{name:'זמן איכות',icon:'⏰',desc:'נוכחות מלאה ותשומת לב בלתי מחולקת — לא סתם להיות באותו חדר, אלא להיות ממוקד/ת בשני',tips:['כבה/י את הטלפון בזמן שיחה ובמהלך הזמן שלכם','הצע/י דייטים קבועים רק לשניכם, גם קצרים','היה/י נוכח/ת גם ברגעים יומיומיים הקטנים']},
-  words:{name:'מילים מאשרות',icon:'💬',desc:'מילים ספציפיות של הערכה, אהבה ועידוד — לא רק "אני אוהב/ת אותך" אלא "אני אוהב/ת אותך כי..."',tips:['שלח/י הודעות חמות באמצע היום','אמור/י בדיוק מה מוצא/ת חן בעיניך — ספציפי, לא כללי','ציין/י הצלחות ומאמצים במילים, גם הקטנים שבהם']},
-  service:{name:'מעשים ושירות',icon:'🤝',desc:'לעשות דברים בשביל השני — ללא בקשה, מתוך מחשבה על מה שיקל או ישמח',tips:['שים/י לב מה עומד על הרשימה שלו/שלה ועשה/י לפני שמבקשים','טפל/י בפרטים בלי לספר — תן/י לתוצאה לדבר','כשהשני עסוק/ה, מצא/י דרך להוריד לו/לה עומס']},
-  touch:{name:'מגע פיזי',icon:'🤗',desc:'קרבה גופנית — חיבוקים, מגע אגבי, ישיבה צמודה — שאומרת "אני כאן" בלי מילים',tips:['יזום/י מגע גם בלי סיבה מיוחדת','אל תשכח/י את המגע הקטן היומיומי — יד על הכתף, נשיקה בדרך','היה/י קרוב/ה פיזית בזמנים קשים, גם בשקט']},
-  gifts:{name:'מתנות',icon:'🎁',desc:'מחווה חומרית — לאו דווקא יקרה — שמסמלת "חשבתי עליך"',tips:['שים/י לב למה שמזכיר אותו/אותה ושמור/י לזיכרון','הפתע/י בדברים קטנים וספונטניים — שוקולד, פרח, פתק','הדבר החשוב הוא המחשבה, לא המחיר']}
+  quality_time:{name:'זמן איכות',icon:'⏰',
+    desc:'נוכחות מלאה ותשומת לב בלתי מחולקת — לא סתם להיות באותו חדר, אלא להיות ממוקד/ת בשני בלבד. בלי טלפון, בלי מסך ברקע, בלי "רגע אחד". מי שמרגיש/ה אהוב/ה דרך זמן איכות לא בהכרח צריך/ה אירועים גדולים — גם עשר דקות שלמות ומחוברות שוות לו/לה יותר משעה של ישיבה זה ליד זה.',
+    tips:['כבה/י את הטלפון — לא רק בשקט, ממש עם המסך הפוך — כשאת/ה שומע/ת שהשני מתחיל לדבר על משהו שחשוב לו/לה','הצע/י זמן שהוא רק שלכם: "בא לנו לצאת ביחד בסוף השבוע — רק שנינו?" גם שעה אחת בשבוע עושה הבדל','כשאת/ה נמצא/ת לידו/לידה, אך נוכח/ת — גם בלי שיחה. לפעמים הישיבה ביחד בשקט, מחוברים, היא עצמה ה"שפה"','שאל/י שאלות אמיתיות על היום שלו/שלה — לא רק "איך היה" אלא "מה היה הרגע הכי טוב? מה הרגיז אותך?"']},
+  words:{name:'מילים מאשרות',icon:'💬',
+    desc:'מילים ספציפיות של הערכה, אהבה ועידוד — לא סתם "אני אוהב/ת אותך" אלא "אני אוהב/ת אותך כי...". מי שמרגיש/ה אהוב/ה דרך מילים זקוק/ה לשמוע אותן כדי להאמין להן. שתיקה, גם כשהכוונות טובות, מרגישה לו/לה כחוסר. מה שמשפיע עליו/עליה הם לא רק מילות אהבה — אלא גם הוקרה, הכרה ועידוד ספציפי.',
+    tips:['שלח/י הודעה אחת ביום שאומרת משהו ספציפי: "ראיתי אותך אמש מתמודד/ת עם זה וממש התרגשתי"','אמור/י בקול מה מוצא/ת חן בעיניך — לא "את/ה נהדר/ת" אלא "אהבתי שעשית את זה"','כשמבקרים בחברה, מצא/י רגע לומר משהו גאה על השני — ולא מאחורי גבו/גבה, אלא אליו/אליה ישירות','כתוב/כתבי פתק קצר ותשאיר/י במקום שימצא/תמצא — בכיס, על הכרית, על המכונה של קפה']},
+  service:{name:'מעשים ושירות',icon:'🤝',
+    desc:'לעשות דברים בשביל השני — בלי שביקש/ה, מתוך מחשבה על מה שיקל עליו/עליה או ישמח אותו/אותה. הפעולה עצמה היא ההודעה: "ראיתי שזה עומד עליך, ודאגתי". מי שמרגיש/ה אהוב/ה דרך מעשים לא מחפש/ת מתנות יקרות — הוא/היא שם/ה לב לדברים שנעשו (ולדברים שלא נעשו) בדיוק רב.',
+    tips:['שים/י לב למה שחוזר ברשימת המטלות שלו/שלה ועשה/י לפני שמבקשים — כביסה, תשלום חשבון, קניות','כשיש/ה עסוק/ה בדבר גדול, מצא/י דרך להוריד עומס מהצד: "אני מטפל/ת בארוחת הערב היום, תתמקד/י במה שחשוב לך"','טפל/י בפרטים בלי לדווח — תן/י לתוצאה לדבר. לא "כל הכבוד לי" אלא פשוט לעשות','שאל/י פעם בשבוע: "יש משהו שמכביד עליך שאני יכול/ה להוריד לך?"']},
+  touch:{name:'מגע פיזי',icon:'🤗',
+    desc:'קרבה גופנית — חיבוקים, מגע אגבי, ישיבה צמודה, יד על הגב — שאומרת "אני כאן" בלי מילים. זה לא בהכרח רומנטי, וזה לא רק ביחסי מין — מגע פיזי הוא כל געגוע פיזי קטן לאורך היום שמזכיר לשני שאת/ה רואה אותו/אותה. מי שמרגיש/ה אהוב/ה דרך מגע שם/ה לב כשהוא/היא לא מגיע.',
+    tips:['יזום/י מגע קטן ויומיומי שאינו קשור לרגעים מיוחדים — יד על הכתף בזמן שיחה, נשיקה בצאת מהבית','כשמדברים על דבר כבד, שב/י קרוב/ה יותר — הפיזיות אומרת "אני איתך" גם בלי שתגיד/י מילה','אל תניח/י שמגע מפריע — שאל/י. "בא לי לאחוז בידך, זה בסדר?" עצם השאלה נחמדה','בזמנים קשים, גם חיבוק שקט ממושך יכול לאמר יותר מכל דבר אחר']},
+  gifts:{name:'מתנות',icon:'🎁',
+    desc:'מחווה חומרית — לאו דווקא יקרה — שמסמלת "חשבתי עליך כשלא היית איתי". המתנה עצמה היא סמל: "אני נושא/ת אותך בראש גם כשאנחנו לא ביחד". מי שמרגיש/ה אהוב/ה דרך מתנות לא בהכרח חומרני/ת — הוא/היא רגיש/ה לסימנים של מחשבה, ומתנות ריקות (בלי מחשבה מאחוריהן) מרגישות לו/לה ריקות גם ברגש.',
+    tips:['שמור/י ב"רשימה מנטלית" דברים שהוא/היא מזכיר/ה — חטיף שאוהב/ת, ספר שרצה/רצתה, מקום שחלמ/ה לבקר','הפתע/י בדברים קטנים וספונטניים שאינם קשורים לאירוע — שוקולד, פרח בודד, פתק בכיס, הורדת שיר','ההקפדה על פרטים קטנים מדברת בעד עצמה: "קניתי לך את זה כי זכרתי שאמרת..." — זו השפה','כשמתכנן/ת כלפי קדימה, שאל/י את עצמך/עצמך: "יש משהו שאוכל להביא/לדאוג לו/לה שיגרום לחייך?"']}
 };
 
 const LL_RECEIVING=[
@@ -613,6 +627,21 @@ function chooseExperience(exp){
   ws.send(JSON.stringify({type:'choose_experience',experience:exp}));
 }
 
+/* ── GENDER ADAPTATION ── */
+const PARTNER_LEFT=new Set(['לו','בו','אותו','עליו','ממנו','לידו','לצידו','בשבילו','איתו','שלו','ראה','קנה','הוא','דואג','מכיר','בטוח','סומך','חושב','עסוק','ישן','מתלהב','עובד','לוקח','עומד','שכח','אמר','מתחיל','מספר','משקיע','עמד','עומדת']);
+function adaptText(text,pg,pn,partG){
+  text=text.replace(/את\/ה/g,pg==='m'?'אתה':'את');
+  text=text.replace(/([\u05D0-\u05EA]+)\/([\u05D0-\u05EA]+)/g,(_,a,b)=>{
+    const isP=PARTNER_LEFT.has(a)||/^[שב]?[יו]/.test(a);
+    const g=isP?partG:pg;
+    if(g==='m')return a;
+    if(b.length===1){return b==='י'?(a.endsWith('ה')?a.slice(0,-1)+'י':a+'י'):a+b;}
+    return b;
+  });
+  text=text.replace(/X/g,pn);
+  return text;
+}
+
 function startLLQuiz(){
   const recv=LL_RECEIVING.map(q=>({...q,opts:[...q.opts],type:'r'}));
   const give=LL_GIVING.map(q=>({...q,opts:[...q.opts],type:'g'}));
@@ -625,12 +654,14 @@ function renderLLQ(){
   const q=llQuestions[llQIdx];
   $('ll-q-num').textContent='שאלה '+(llQIdx+1)+' מתוך 20';
   $('ll-prog-bar').style.width=(llQIdx/20*100)+'%';
-  $('ll-q-text').textContent=q.q;
+  const pn=myNum===1?gN.p2:gN.p1;
+  const pg=myNum===1?gG.p2:gG.p1;
+  $('ll-q-text').textContent=adaptText(q.q,myGender,pn,pg);
   const el=$('ll-options');el.innerHTML='';
   q.opts.forEach(opt=>{
     const btn=document.createElement('button');
     btn.className='btn btn-secondary ll-opt';
-    btn.textContent=opt.t;
+    btn.textContent=adaptText(opt.t,myGender,pn,pg);
     btn.onclick=()=>answerLL(opt.l);
     el.appendChild(btn);
   });
@@ -655,29 +686,33 @@ function finishLL(){
   ws.send(JSON.stringify({type:'ll_done',results}));
 }
 
-function renderLLLangCard(langKey){
+function renderLLLangCard(langKey,g){
   const d=LL_DEFS[langKey];
   if(!d)return'';
+  const desc=adaptText(d.desc,g,'','m');
+  const tips=d.tips.map(t=>`<li>${adaptText(t,g,'','m')}</li>`).join('');
   return`<div class="ll-lang-card">
     <div class="ll-lang-title">${d.icon} ${d.name}</div>
-    <div class="ll-lang-desc">${d.desc}</div>
+    <div class="ll-lang-desc">${desc}</div>
     <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-    <ul class="ll-tips">${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+    <ul class="ll-tips">${tips}</ul>
   </div>`;
 }
 
 function renderLLResults(msg){
   const cont=$('ll-results-content');
   cont.innerHTML='';
-  [{key:'p1',name:msg.names.p1},{key:'p2',name:msg.names.p2}].forEach(({key,name})=>{
+  [{key:'p1',name:msg.names.p1,g:gG.p1},{key:'p2',name:msg.names.p2,g:gG.p2}].forEach(({key,name,g})=>{
     const r=msg[key];
-    const recvCards=(r.receiving||[]).map(renderLLLangCard).join('');
-    const giveCards=(r.giving||[]).map(renderLLLangCard).join('');
+    const recvCards=(r.receiving||[]).map(k=>renderLLLangCard(k,g)).join('');
+    const giveCards=(r.giving||[]).map(k=>renderLLLangCard(k,g)).join('');
+    const recvLbl=g==='m'?'איך אוהב לקבל אהבה':'איך אוהבת לקבל אהבה';
+    const giveLbl=g==='m'?'איך אוהב להראות אהבה':'איך אוהבת להראות אהבה';
     const block=document.createElement('div');
     block.className='ll-player-block';
     block.innerHTML=`<div class="ll-player-name">❤️ ${name}</div>
-      <div><div class="ll-section-label">קבלה — מה אוהב/ת לקבל</div>${recvCards}</div>
-      <div><div class="ll-section-label">נתינה — איך אוהב/ת לאהוב</div>${giveCards}</div>`;
+      <div><div class="ll-section-label">${recvLbl}</div>${recvCards}</div>
+      <div><div class="ll-section-label">${giveLbl}</div>${giveCards}</div>`;
     cont.appendChild(block);
   });
   const btns=$('ll-after-btns');
