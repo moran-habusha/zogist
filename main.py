@@ -227,6 +227,12 @@ class GameRoom:
         self.s2_state = {}     # {q: {buzz_ts_1, buzz_ts_2, buzzer, result}}
         self.s3_ans = {}       # {q: {p1, p1_ts, p2, p2_ts}}
         self.s4_state = {}     # {q: {p1, p2, g1, g1_ts, g2, g2_ts}}
+        self.s1_streak = 0          # positive = agreement streak, negative = disagreement streak
+        self.s1_history = []        # list of {m, f, matched}
+        self.s2_history = []        # list of {q, correct, buzzer}
+        self.s3_history = []        # list of {q, diff, v1, v2}
+        self.s4_history = []        # list of {q, g1ok, g2ok}
+        self.pending_next = None    # next stage to go to after summary ack
 
     async def send(self, pnum, msg):
         ws = self.ws.get(pnum)
@@ -418,27 +424,180 @@ async def handle_next_question(ws, data):
     nq = room.q + 1
     if nq >= len(qs):
         next_stage = next_stage_for_mode(room.mode, stage)
-        room.stage = next_stage
-        room.q = 0
-        room.intro_acked = False
         if next_stage >= 5:
-            await render_final(room)
+            await send_stage_summary(room, stage, next_stage)
         else:
-            await room.broadcast({'type': 'stage_intro', 'stage': next_stage})
+            await send_stage_summary(room, stage, next_stage)
     else:
         await send_question(room, stage, nq)
+
+
+async def send_stage_summary(room, stage, next_stage):
+    room.pending_next = next_stage
+    data = build_stage_summary(room, stage)
+    await room.broadcast({
+        'type': 'stage_summary',
+        'stage': stage,
+        'next_stage': next_stage,
+        **data
+    })
+
+
+def build_stage_summary(room, stage):
+    p1n = room.players[1]['name']
+    p2n = room.players[2]['name']
+    sc = scores_payload(room)
+
+    if stage == 1:
+        h = room.s1_history
+        total = len(h)
+        agreed = sum(1 for x in h if x['matched'])
+        if total == 0: return {'stats': '', 'comment': ''}
+        pct = round(agreed / total * 100)
+        stats = f"{agreed} הסכמות מתוך {total} שאלות ({pct}%)"
+        if pct == 100: comment = "הסכמתם על הכל – אחד מכם בטח שיקר 😂"
+        elif pct >= 80: comment = f"כמעט זהים. מפחיד קצת, לא? 😏"
+        elif pct >= 60: comment = "הסכמתם יותר ממה שחשבתם – ביחד עדיף מלבד 🤝"
+        elif pct >= 40: comment = "חצי חצי – זה בדיוק מה שהופך זוגיות למעניינת 😅"
+        elif pct >= 20: comment = "הפכים נמשכים? בואו נקוות שכן 😬"
+        else: comment = "וואו. זה... מיוחד. שמרו על הניגודים! 🤣"
+        return {'stats': stats, 'comment': comment, 'scores': sc}
+
+    elif stage == 2:
+        h = room.s2_history
+        total = len(h)
+        if total == 0: return {'stats': '', 'comment': ''}
+        p1_correct = sum(1 for x in h if x['buzzer'] == 1 and x['correct'])
+        p2_correct = sum(1 for x in h if x['buzzer'] == 2 and x['correct'])
+        p1_buzz = sum(1 for x in h if x['buzzer'] == 1)
+        p2_buzz = sum(1 for x in h if x['buzzer'] == 2)
+        stats = f"{p1n}: {p1_buzz} לחיצות, {p1_correct} נכון | {p2n}: {p2_buzz} לחיצות, {p2_correct} נכון"
+        total_correct = p1_correct + p2_correct
+        if total_correct == total: comment = "כל תשובה נכונה! אתם יחד צוות קוויז מנצח 🏆"
+        elif total_correct >= total * 0.7: comment = "רוב התשובות היו נכונות – הידע כאן! 💡"
+        elif p1_buzz > p2_buzz * 2: comment = f"{p1n} לחץ/ה על הכפתור מהר מדי – לפעמים שתיקה זה ניצחון 😂"
+        elif p2_buzz > p1_buzz * 2: comment = f"{p2n} השתלט/ה על הכפתור – מרשים, גם אם לא תמיד צדק/ה 😂"
+        else: comment = "המאבק על הכפתור היה שווה – הקרב ממשיך 🔥"
+        return {'stats': stats, 'comment': comment, 'scores': sc}
+
+    elif stage == 3:
+        h = room.s3_history
+        total = len(h)
+        if total == 0: return {'stats': '', 'comment': ''}
+        bulls = sum(1 for x in h if x['diff'] == 0)
+        close = sum(1 for x in h if x['diff'] == 1)
+        far = sum(1 for x in h if x['diff'] >= 3)
+        stats = f"פגיעה בול: {bulls} | קרוב: {close} | רחוק: {far} מתוך {total}"
+        if bulls >= total * 0.6: comment = "אתם חושבים ממש אותו דבר – מי מחשיב מי? 😂"
+        elif bulls + close >= total * 0.7: comment = "דעות דומות, עם כמה ניואנסים – בדיוק כמו שצריך 😏"
+        elif far >= total * 0.5: comment = "הדעות שלכם... שונות. לגמרי. ועדיין כאן. 🤣"
+        else: comment = "יש לכם דעות משלכם, וזה בסדר גמור 😏"
+        return {'stats': stats, 'comment': comment, 'scores': sc}
+
+    elif stage == 4:
+        h = room.s4_history
+        total = len(h)
+        if total == 0: return {'stats': '', 'comment': ''}
+        g1_right = sum(1 for x in h if x['g1ok'])
+        g2_right = sum(1 for x in h if x['g2ok'])
+        stats = f"{p1n} ניחש/ה נכון {g1_right} פעמים | {p2n} ניחש/ה נכון {g2_right} פעמים"
+        total_right = g1_right + g2_right
+        if total_right >= total * 1.5: comment = "אתם מכירים אחד את השני מצוין! 💞"
+        elif total_right >= total: comment = "לא רע – חצי הדרך להכרות אמיתית 😄"
+        else: comment = "עוד הרבה לגלות אחד על השני – הרפתקה לפניכם 🤷"
+        return {'stats': stats, 'comment': comment, 'scores': sc}
+
+    return {'stats': '', 'comment': '', 'scores': scores_payload(room)}
+
+
+def calc_compatibility(room):
+    pcts = []
+    if room.s1_history:
+        agreed = sum(1 for h in room.s1_history if h['matched'])
+        pcts.append(agreed / len(room.s1_history) * 100)
+    if room.s3_history:
+        close = sum(1 for h in room.s3_history if h['diff'] <= 1)
+        pcts.append(close / len(room.s3_history) * 100)
+    if room.s4_history:
+        correct = sum((1 if h['g1ok'] else 0) + (1 if h['g2ok'] else 0) for h in room.s4_history)
+        pcts.append(correct / (len(room.s4_history) * 2) * 100)
+    return round(sum(pcts) / len(pcts)) if pcts else 50
+
+
+def build_final_summary(room, compat, winner):
+    p1 = room.players[1]
+    p2 = room.players[2]
+    lines = []
+    # compatibility line
+    if compat >= 80: lines.append(f"רמת התאמה {compat}% – שניכם ממש אחד. מפחיד, בצורה הטובה.")
+    elif compat >= 65: lines.append(f"רמת התאמה {compat}% – לא תאומים, אבל גם לא מדינות שונות.")
+    elif compat >= 50: lines.append(f"רמת התאמה {compat}% – בדיוק מספיק כדי להפוך כל שיחה לעניינית.")
+    elif compat >= 35: lines.append(f"רמת התאמה {compat}% – הניגוד ביניכם הוא הדבר הכי מרתק בחדר.")
+    else: lines.append(f"רמת התאמה {compat}% – בינתיים. יש עוד הרבה גילויים בדרך.")
+    # score line
+    s1, s2 = p1['score'], p2['score']
+    gap = abs(s1 - s2)
+    wn = p1['name'] if winner == 1 else p2['name']
+    ln = p2['name'] if winner == 1 else p1['name']
+    if winner == 0: lines.append("הניקוד יצא תיקו מושלם – שניכם שווים בדיוק, ומישהו צריך לנצח בפעם הבאה.")
+    elif gap <= 3: lines.append(f"{wn} ניצח/ה בהפרש קטן – {ln} כנראה כבר מתכנן/ת נקמה.")
+    else: lines.append(f"{wn} ניצח/ה בפרש ניכר – {ln}, יש לנו כמה שאלות.")
+    # notable question
+    if room.s1_history:
+        disagreed = [h for h in room.s1_history if not h['matched']]
+        agreed_all = [h for h in room.s1_history if h['matched']]
+        if disagreed:
+            q = disagreed[0]
+            qt = q['m'][:28]
+            lines.append(f'על "{qt}..." לא הסכמתם – נושא טוב לשיחה הבאה.')
+        elif agreed_all and len(agreed_all) == len(room.s1_history):
+            lines.append("הסכמתם על כל שאלה בשלב הראשון. אחד מכם בטח שיקר.")
+    elif room.s3_history:
+        worst = max(room.s3_history, key=lambda h: h['diff'])
+        if worst['diff'] >= 3:
+            qt = worst['q'][:28]
+            lines.append(f'על "{qt}..." הייתה הדעה הכי שונה – כדאי לשמור לשיחת ערב.')
+    # closing
+    closings = ["בסך הכל? מומלץ לשחק שוב. עם יין.", "ועכשיו אתם יודעים. ממש יודעים.", "המשחק גמר – הזוגיות ממשיכה. בהצלחה 💑", "המסקנה? שניכם מעניינים. ממש."]
+    lines.append(random.choice(closings))
+    return lines
+
+
+def get_highlights(room):
+    highlights = {}
+    # Most agreed S1
+    agreed = [h for h in room.s1_history if h['matched']]
+    if agreed:
+        highlights['agreed'] = agreed[0]['m'][:40]
+    # Most disputed S3
+    if room.s3_history:
+        worst = max(room.s3_history, key=lambda h: h['diff'])
+        if worst['diff'] >= 2:
+            highlights['disputed'] = worst['q'][:40]
+    # Most disputed S1
+    if 'disputed' not in highlights:
+        dis = [h for h in room.s1_history if not h['matched']]
+        if dis:
+            highlights['disputed'] = dis[0]['m'][:40]
+    return highlights
 
 
 async def render_final(room):
     s1 = room.players[1]['score']
     s2 = room.players[2]['score']
     winner = 1 if s1 > s2 else (2 if s2 > s1 else 0)
+    compat = calc_compatibility(room)
+    summary_lines = build_final_summary(room, compat, winner)
+    highlights = get_highlights(room)
     await room.broadcast({
         'type': 'game_over',
         'p1': room.players[1],
         'p2': room.players[2],
         'winner': winner,
-        'scores': {'p1': s1, 'p2': s2}
+        'scores': {'p1': s1, 'p2': s2},
+        'compatibility': compat,
+        'summary_lines': summary_lines,
+        'highlights': highlights
     })
 
 
@@ -458,6 +617,23 @@ async def handle_answer_s1(ws, data):
         pts1, pts2, match = score_s1(qd)
         await update_scores(room, pts1, pts2)
         qs = room.questions['s1']
+        # Track streak
+        if match:
+            room.s1_streak = max(0, room.s1_streak) + 1
+        else:
+            room.s1_streak = min(0, room.s1_streak) - 1
+        # Track history
+        qitem = qs[q]
+        room.s1_history.append({'m': qitem['m'], 'f': qitem['f'], 'matched': match})
+        # Streak message
+        streak_msg = None
+        sk = room.s1_streak
+        if sk >= 5: streak_msg = "5 הסכמות ברצף! 🏆 כמעט מפחיד כמה אתם דומים"
+        elif sk >= 4: streak_msg = "4 ברצף! אתם ממש על אותו גל 💞"
+        elif sk >= 3: streak_msg = "3 הסכמות ברצף! 🔥 אתם כאילו חשבתם יחד"
+        elif sk <= -5: streak_msg = "5 אי-הסכמות ברצף 😅 אולי כדאי לדבר קצת?"
+        elif sk <= -4: streak_msg = "4 ברצף... אחד מכם צריך לוותר 🤔"
+        elif sk <= -3: streak_msg = "3 אי-הסכמות ברצף 😬 הניגודים נמשכים?"
         await room.broadcast({
             'type': 'reveal',
             'stage': 1,
@@ -466,7 +642,9 @@ async def handle_answer_s1(ws, data):
             'answers': {'p1': qd['p1'], 'p2': qd['p2']},
             'pts1': pts1, 'pts2': pts2,
             'match': match,
-            'scores': scores_payload(room)
+            'scores': scores_payload(room),
+            'streak': room.s1_streak,
+            'streak_msg': streak_msg
         })
 
 
@@ -490,12 +668,18 @@ async def handle_buzz(ws, data):
         return
     winner = 1 if ts1 <= ts2 else 2
     qstate['buzzer'] = winner
+    both_buzzed = 'buzz_ts_1' in qstate and 'buzz_ts_2' in qstate
+    time_diff = None
+    if both_buzzed:
+        time_diff = round(abs(qstate['buzz_ts_1'] - qstate['buzz_ts_2']), 2)
     await room.broadcast({
         'type': 'buzz_result',
         'buzzer': winner,
         'buzzer_name': room.players[winner]['name'],
         'buzzer_gender': room.players[winner]['gender'],
-        'q': q
+        'q': q,
+        'both_buzzed': both_buzzed,
+        'time_diff': time_diff
     })
 
 
@@ -509,6 +693,9 @@ async def handle_judge_s2(ws, data):
     if not buzzer:
         return
     correct = bool(data.get('correct'))
+    qs = room.questions['s2']
+    qs_item = qs[q]
+    room.s2_history.append({'q': qs_item['q'], 'correct': correct, 'buzzer': buzzer})
     pts1, pts2 = 0, 0
     if correct:
         if buzzer == 1:
@@ -521,7 +708,6 @@ async def handle_judge_s2(ws, data):
         else:
             pts1 = 1
     await update_scores(room, pts1, pts2)
-    qs = room.questions['s2']
     await room.broadcast({
         'type': 's2_result',
         'correct': correct,
@@ -540,13 +726,7 @@ async def handle_next_question_internal(room):
     nq = room.q + 1
     if nq >= len(qs):
         next_stage = next_stage_for_mode(room.mode, stage)
-        room.stage = next_stage
-        room.q = 0
-        room.intro_acked = False
-        if next_stage >= 5:
-            await render_final(room)
-        else:
-            await room.broadcast({'type': 'stage_intro', 'stage': next_stage})
+        await send_stage_summary(room, stage, next_stage)
     else:
         await send_question(room, stage, nq)
 
@@ -568,6 +748,7 @@ async def handle_answer_s3(ws, data):
         pts1, pts2, diff, base, speed, first = score_s3(v1, v2, qd['p1_ts'], qd['p2_ts'])
         await update_scores(room, pts1, pts2)
         qs = room.questions['s3']
+        room.s3_history.append({'q': qs[q], 'diff': diff, 'v1': v1, 'v2': v2})
         scale_labels = ['', 'מתנגד/ת בחריפות', 'לא מסכים/ה', 'ניטרלי/ת', 'מסכים/ה', 'מסכים/ה מאוד']
         await room.broadcast({
             'type': 'reveal',
@@ -616,6 +797,7 @@ async def handle_guess_s4(ws, data):
         pts1, pts2, g1ok, g2ok = score_s4(qd)
         await update_scores(room, pts1, pts2)
         qs = room.questions['s4']
+        room.s4_history.append({'q': qs[q]['q'], 'g1ok': g1ok, 'g2ok': g2ok})
         await room.broadcast({
             'type': 'reveal',
             'stage': 4,
@@ -626,6 +808,23 @@ async def handle_guess_s4(ws, data):
             'pts1': pts1, 'pts2': pts2,
             'scores': scores_payload(room)
         })
+
+
+async def handle_ack_summary(ws, data):
+    room, pnum = get_room_and_pnum(ws)
+    if not room or pnum != 1:
+        return
+    next_s = room.pending_next
+    if next_s is None:
+        return
+    room.pending_next = None
+    if next_s >= 5:
+        await render_final(room)
+    else:
+        room.stage = next_s
+        room.q = 0
+        room.intro_acked = False
+        await room.broadcast({'type': 'stage_intro', 'stage': next_s})
 
 
 async def handle_restart(ws, data):
@@ -670,6 +869,7 @@ HANDLERS = {
     'answer_s4': handle_answer_s4,
     'guess_s4': handle_guess_s4,
     'restart': handle_restart,
+    'ack_summary': handle_ack_summary,
 }
 
 

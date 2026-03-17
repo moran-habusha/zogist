@@ -89,6 +89,26 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .cp{position:absolute;border-radius:2px;animation:cf linear forwards;}
 @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 .err{color:#FF5252;font-size:14px;text-align:center;}
+/* Fade transitions */
+@keyframes qSlideOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-18px)}}
+@keyframes qSlideIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.slide-out{animation:qSlideOut .55s ease forwards;pointer-events:none;}
+.slide-in{animation:qSlideIn .55s ease forwards;}
+/* Stage summary */
+.summary-screen{text-align:center;width:100%;display:flex;flex-direction:column;gap:16px;}
+.summary-stat{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;padding:14px 18px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.07);}
+.summary-comment{font-size:17px;font-weight:700;color:var(--yellow);padding:14px 18px;background:rgba(255,217,61,.08);border-radius:14px;border:1px solid rgba(255,217,61,.2);}
+.compat-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;}
+.compat-num{font-size:30px;font-weight:900;color:#fff;line-height:1;}
+.compat-label{font-size:11px;color:rgba(255,255,255,.8);}
+.highlight-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;font-size:14px;color:rgba(255,255,255,.8);text-align:right;}
+.summary-lines{display:flex;flex-direction:column;gap:8px;text-align:right;}
+.summary-line{font-size:15px;color:rgba(255,255,255,.85);line-height:1.6;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.summary-line:last-child{border-bottom:none;}
+.streak-banner{padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;margin-top:6px;}
+.streak-agree{background:rgba(0,230,118,.12);color:#00E676;border:1px solid rgba(0,230,118,.25);}
+.streak-disagree{background:rgba(255,82,82,.12);color:#FF5252;border:1px solid rgba(255,82,82,.25);}
+.q-counter{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:8px;}
 </style>
 </head>
 <body>
@@ -245,16 +265,18 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="sc-vs">VS</div>
     <div class="sc-item"><div class="sc-name" id="s1n2">שחקן 2</div><div class="sc-val" id="s1v2">0</div></div>
   </div>
-  <div class="question-card" id="s1-qcard">
-    <div class="q-num" id="s1-qnum"></div>
-    <div class="dots" id="s1-dots"></div>
-    <div class="q-text" id="s1-qtext"></div>
-    <div id="s1-btns"></div>
-  </div>
-  <div id="s1-reveal" style="display:none;width:100%;">
-    <div class="result-reveal" id="s1-rev-content"></div>
-    <button class="btn btn-primary" id="s1-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(1)">הבא ➡️</button>
-    <div id="s1-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+  <div id="s1-content" style="width:100%">
+    <div class="question-card" id="s1-qcard">
+      <div class="q-num" id="s1-qnum"></div>
+      <div class="dots" id="s1-dots"></div>
+      <div class="q-text" id="s1-qtext"></div>
+      <div id="s1-btns"></div>
+    </div>
+    <div id="s1-reveal" style="display:none;width:100%;">
+      <div class="result-reveal" id="s1-rev-content"></div>
+      <button class="btn btn-primary" id="s1-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(1)">הבא ➡️</button>
+      <div id="s1-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+    </div>
   </div>
 </div>
 <!-- STAGE 2 -->
@@ -265,7 +287,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="sc-vs">VS</div>
     <div class="sc-item"><div class="sc-name" id="s2n2">שחקן 2</div><div class="sc-val" id="s2v2">0</div></div>
   </div>
-  <div class="question-card">
+  <div class="question-card" id="s2-qcard">
     <div class="q-num" id="s2-qnum"></div>
     <div class="dots" id="s2-dots"></div>
     <div class="q-text" id="s2-qtext"></div>
@@ -294,16 +316,18 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="sc-vs">VS</div>
     <div class="sc-item"><div class="sc-name" id="s3n2">שחקן 2</div><div class="sc-val" id="s3v2">0</div></div>
   </div>
-  <div class="question-card" id="s3-qcard">
-    <div class="q-num" id="s3-qnum"></div>
-    <div class="dots" id="s3-dots"></div>
-    <div class="q-text" id="s3-qtext"></div>
-    <div id="s3-btns"></div>
-  </div>
-  <div id="s3-reveal" style="display:none;width:100%;">
-    <div class="result-reveal" id="s3-rev-content"></div>
-    <button class="btn btn-primary" id="s3-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(3)">הבא ➡️</button>
-    <div id="s3-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+  <div id="s3-content" style="width:100%">
+    <div class="question-card" id="s3-qcard">
+      <div class="q-num" id="s3-qnum"></div>
+      <div class="dots" id="s3-dots"></div>
+      <div class="q-text" id="s3-qtext"></div>
+      <div id="s3-btns"></div>
+    </div>
+    <div id="s3-reveal" style="display:none;width:100%;">
+      <div class="result-reveal" id="s3-rev-content"></div>
+      <button class="btn btn-primary" id="s3-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(3)">הבא ➡️</button>
+      <div id="s3-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+    </div>
   </div>
 </div>
 <!-- STAGE 4 -->
@@ -314,26 +338,43 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="sc-vs">VS</div>
     <div class="sc-item"><div class="sc-name" id="s4n2">שחקן 2</div><div class="sc-val" id="s4v2">0</div></div>
   </div>
-  <div id="s4-qarea" style="width:100%;">
-    <div class="question-card">
-      <div class="q-num" id="s4-qnum"></div>
-      <div class="dots" id="s4-dots"></div>
-      <div class="q-text" id="s4-qtext"></div>
-      <span class="s4-self-label" id="s4-self-label">קודם ענה על עצמך:</span>
-      <div id="s4-ans-area"></div>
+  <div id="s4-content" style="width:100%">
+    <div id="s4-qarea" style="width:100%;">
+      <div class="question-card">
+        <div class="q-num" id="s4-qnum"></div>
+        <div class="dots" id="s4-dots"></div>
+        <div class="q-text" id="s4-qtext"></div>
+        <span class="s4-self-label" id="s4-self-label">קודם ענה על עצמך:</span>
+        <div id="s4-ans-area"></div>
+      </div>
+    </div>
+    <div id="s4-guess-area" style="display:none;width:100%;">
+      <div class="question-card">
+        <div class="q-text" id="s4-guess-text"></div>
+        <div style="font-size:14px;color:var(--teal);margin-bottom:16px;" id="s4-guess-label"></div>
+        <div id="s4-guess-opts"></div>
+      </div>
+    </div>
+    <div id="s4-reveal" style="display:none;width:100%;">
+      <div class="result-reveal" id="s4-rev-content"></div>
+      <button class="btn btn-primary" id="s4-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(4)">הבא ➡️</button>
+      <div id="s4-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
     </div>
   </div>
-  <div id="s4-guess-area" style="display:none;width:100%;">
-    <div class="question-card">
-      <div class="q-text" id="s4-guess-text"></div>
-      <div style="font-size:14px;color:var(--teal);margin-bottom:16px;" id="s4-guess-label"></div>
-      <div id="s4-guess-opts"></div>
+</div>
+<!-- STAGE SUMMARY -->
+<div class="screen" id="sc-stage-summary">
+  <div class="summary-screen">
+    <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;" id="ss-stage-label">סיכום שלב</div>
+    <div style="font-size:26px;font-weight:900;" id="ss-title"></div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name" id="ss-n1">שחקן 1</div><div class="sc-val" id="ss-v1">0</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name" id="ss-n2">שחקן 2</div><div class="sc-val" id="ss-v2">0</div></div>
     </div>
-  </div>
-  <div id="s4-reveal" style="display:none;width:100%;">
-    <div class="result-reveal" id="s4-rev-content"></div>
-    <button class="btn btn-primary" id="s4-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(4)">הבא ➡️</button>
-    <div id="s4-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
+    <div class="summary-stat" id="ss-stats"></div>
+    <div class="summary-comment" id="ss-comment"></div>
+    <div id="ss-btn-area" style="margin-top:4px;"></div>
   </div>
 </div>
 <!-- FINAL -->
@@ -342,6 +383,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <span class="trophy">🏆</span>
     <div class="winner-text" id="final-winner"></div>
     <div style="color:rgba(255,255,255,.5);font-size:15px;">תוצאות המשחק</div>
+    <div id="final-extra"></div>
     <div class="final-scores" id="final-scores"></div>
     <button class="btn btn-primary" onclick="restartGame()">🔄 משחק חדש</button>
   </div>
@@ -360,6 +402,7 @@ let gG={p1:'m',p2:'m'};
 let S1Q=[], S2Q=[], S3Q=[], S4Q=[];
 let rStage=-1, rReveal=false;
 let currentQ=0;
+let stageRendered={};  // {1: bool, 2: bool, ...}
 
 /* ── BEFOREUNLOAD ── */
 window.addEventListener('beforeunload',e=>{
@@ -394,6 +437,17 @@ function fireConfetti(){
     c.appendChild(p);
   }
   setTimeout(()=>c.innerHTML='',4000);
+}
+
+function fadeTransition(wrapEl, cb) {
+    if (!wrapEl) { cb(); return; }
+    wrapEl.classList.add('slide-out');
+    setTimeout(() => {
+        wrapEl.classList.remove('slide-out');
+        cb();
+        wrapEl.classList.add('slide-in');
+        setTimeout(() => wrapEl.classList.remove('slide-in'), 550);
+    }, 550);
 }
 
 /* ── GENDER HELPERS ── */
@@ -551,6 +605,10 @@ window.restartGame=function(){
   ws.send(JSON.stringify({type:'restart'}));
 };
 
+window.ackSummary=function(){
+  ws.send(JSON.stringify({type:'ack_summary'}));
+};
+
 /* ── RENDER FUNCTIONS ── */
 function renderS1Q(q,qdata){
   $('s1-qnum').textContent='שאלה '+(q+1)+' מתוך '+S1Q.length;
@@ -562,15 +620,19 @@ function renderS1Q(q,qdata){
 }
 
 function showRevealS1(msg){
-  const {q,qdata,answers,pts1,pts2,match}=msg;
-  const s1qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(qdata,myNum)+'</div>';
+  const {q,qdata,answers,pts1,pts2,match,streak_msg}=msg;
+  const total=S1Q.length;
+  const counter='<div class="q-counter">שאלה '+(q+1)+' מתוך '+total+'</div>';
+  const s1qTxt='<div class="q-text" style="font-size:20px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(qdata,myNum)+'</div>';
   let banner=match
     ?'🎉 התאמה! '+nOf(pts1>=2?1:2)+' +2 | '+nOf(pts1>=2?2:1)+' +1'
     :'🔥 לא הסכמתם – 0 נקודות לשניכם';
-  $('s1-rev-content').innerHTML=s1qTxt+
+  const streakHtml=streak_msg?'<div class="streak-banner '+(match?'streak-agree':'streak-disagree')+'">'+streak_msg+'</div>':'';
+  $('s1-rev-content').innerHTML=counter+s1qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+(answers.p1==='yes'?'כן ✅':'לא ❌')+(pts1>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts1+'</small>':'')+'</span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+(answers.p2==='yes'?'כן ✅':'לא ❌')+(pts2>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts2+'</small>':'')+'</span></div>'+
-    '<div class="match-banner '+(match?'match-yes':'match-no')+'">'+banner+'</div>';
+    '<div class="match-banner '+(match?'match-yes':'match-no')+'">'+banner+'</div>'+
+    streakHtml;
   $('s1-qcard').style.display='none';
   $('s1-reveal').style.display='block';
   $('s1-next').style.display=myNum===1?'block':'none';
@@ -593,11 +655,17 @@ function showBuzzResult(msg){
   const btn=$('buzz-btn');btn.className='buzz-btn disabled';
   if(buzzer===myNum){
     $('buzz-status').innerHTML='<span style="color:var(--yellow)">🎯 '+lchatzta(myNum)+'! '+answerVerb(myNum)+'</span>';
+    if(msg.both_buzzed && msg.time_diff !== null){
+      $('buzz-status').innerHTML += '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;">לחצת מהר יותר ב-'+msg.time_diff+' שניות</div>';
+    }
     $('s2-wait-area').style.display='block';
     $('s2-judge-area').style.display='none';
     btn.textContent=gOf(myNum)==='f'?'את עונה!':'אתה עונה!';
   } else {
     $('buzz-status').innerHTML='<span style="color:rgba(255,255,255,.5)">'+buzzer_name+' '+(buzzer_gender==='f'?'לחצה':'לחץ')+' ראשונ'+(buzzer_gender==='f'?'ה':'')+' ...</span>';
+    if(msg.both_buzzed && msg.time_diff !== null){
+      $('buzz-status').innerHTML += '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;">'+buzzer_name+' לחץ/ה מהר יותר ב-'+msg.time_diff+' שניות</div>';
+    }
     $('s2-correct-ans').textContent=S2Q[currentQ]?S2Q[currentQ].a:'';
     $('s2-judge-label').textContent=judgeLabel(buzzer);
     $('s2-judge-yes').textContent=judgeBtnYes(buzzer);
@@ -632,6 +700,8 @@ function renderS3Q(q,qdata,total){
 
 function showRevealS3(msg){
   const {q,qdata,answers,pts1,pts2,diff,base,speed,first}=msg;
+  const total=S3Q.length;
+  const counter='<div class="q-counter">הצהרה '+(q+1)+' מתוך '+total+'</div>';
   const ptsColor=(pts)=>pts>0?'#00E676':pts<0?'#FF5252':'#888888';
   const ptsFmt=p=>p>0?'+'+p:String(p);
   const firstNm=nOf(first);
@@ -645,8 +715,8 @@ function showRevealS3(msg){
     return'💥 הפרש 4 – מינוס 2 נקודות לשניכם';
   };
   const speedLine=speed!==0?'<div class="match-banner" style="background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);color:var(--yellow);">⚡ '+firstNm+' '+firstVerb+' '+firstSuf+' – בונוס/קנס: '+(speed>0?'+':'')+speed+'</div>':'';
-  const s3qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata+'</div>';
-  $('s3-rev-content').innerHTML=s3qTxt+
+  const s3qTxt='<div class="q-text" style="font-size:20px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata+'</div>';
+  $('s3-rev-content').innerHTML=counter+s3qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+answers.p1+' – '+answers.p1_label+'<small style="font-size:13px;color:'+ptsColor(pts1)+'"> ('+ptsFmt(pts1)+')</small></span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+answers.p2+' – '+answers.p2_label+'<small style="font-size:13px;color:'+ptsColor(pts2)+'"> ('+ptsFmt(pts2)+')</small></span></div>'+
     '<div class="match-banner" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);">הפרש בין התשובות: '+diff+'</div>'+
@@ -680,13 +750,15 @@ function showGuessS4(msg){
 }
 
 function showRevealS4(msg){
-  const {qdata,answers,guesses,pts1,pts2}=msg;
+  const {q,qdata,answers,guesses,pts1,pts2}=msg;
+  const total=S4Q.length;
+  const counter='<div class="q-counter">שאלה '+(q+1)+' מתוך '+total+'</div>';
+  const s4qTxt='<div class="q-text" style="font-size:20px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata.q+'</div>';
   const opts=qdata.o;
   let stories='';
   if(!guesses.g1ok){const s=s4Story(1,2,guesses.g1,answers.p2,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
   if(!guesses.g2ok){const s=s4Story(2,1,guesses.g2,answers.p1,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
-  const s4qTxt='<div class="q-text" style="font-size:17px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata.q+'</div>';
-  $('s4-rev-content').innerHTML=s4qTxt+
+  $('s4-rev-content').innerHTML=counter+s4qTxt+
     '<div class="p-ans"><span class="p-name">'+gN.p1+' '+answeredStr(1)+' על '+selfStr(1)+'</span><span class="p-val" style="font-size:14px">'+opts[answers.p1]+'</span></div>'+
     '<div class="p-ans"><span class="p-name">'+gN.p2+' '+answeredStr(2)+' על '+selfStr(2)+'</span><span class="p-val" style="font-size:14px">'+opts[answers.p2]+'</span></div>'+
     stories+
@@ -699,10 +771,31 @@ function showRevealS4(msg){
 }
 
 function renderFinal(msg){
-  const {p1,p2,winner,scores}=msg;
+  const {p1,p2,winner,scores,compatibility,summary_lines,highlights}=msg;
   $('final-winner').textContent=winner?winnerStr(winner):'🤝 תיקו מושלם!';
+
+  // Compatibility circle
+  const compatHtml=compatibility!=null?
+    '<div style="text-align:center;margin:8px 0;"><div class="compat-circle"><div class="compat-num">'+compatibility+'%</div><div class="compat-label">התאמה</div></div></div>':'';
+
+  // Highlights
+  let hlHtml='';
+  if(highlights){
+    if(highlights.agreed) hlHtml+='<div class="highlight-box" style="border-color:rgba(0,230,118,.2);"><span style="color:#00E676;font-size:12px;font-weight:700;">✅ הכי הסכמתם על: </span>'+highlights.agreed+'</div>';
+    if(highlights.disputed) hlHtml+='<div class="highlight-box" style="border-color:rgba(255,82,82,.2);"><span style="color:#FF5252;font-size:12px;font-weight:700;">🔥 הכי נחלקתם על: </span>'+highlights.disputed+'</div>';
+  }
+
+  // Summary lines
+  let summaryHtml='';
+  if(summary_lines&&summary_lines.length){
+    summaryHtml='<div class="summary-lines">'+summary_lines.map(l=>'<div class="summary-line">'+l+'</div>').join('')+'</div>';
+  }
+
+  $('final-extra').innerHTML='<div style="width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:8px;">'+compatHtml+hlHtml+summaryHtml+'</div>';
+
   const rows=[{name:p1.name,score:scores.p1,win:scores.p1>=scores.p2},{name:p2.name,score:scores.p2,win:scores.p2>=scores.p1}].sort((a,b)=>b.score-a.score);
   $('final-scores').innerHTML=rows.map(r=>'<div class="final-row '+(r.win?'win':'')+'"><span style="font-size:18px;font-weight:700">'+(r.win?'👑 ':'')+r.name+'</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">'+r.score+'</span></div>').join('');
+
   showSc('sc-final');
   fireConfetti();
 }
@@ -731,18 +824,26 @@ const MSG_HANDLERS={
     renderIntroStart(msg.stage);
   },
   countdown_done:(msg)=>{
-    startCountdown(msg.stage,()=>{
-      showSc('sc-s'+msg.stage);
-    });
+    stageRendered[msg.stage]=false;
+    startCountdown(msg.stage,()=>{ showSc('sc-s'+msg.stage); });
   },
   question:(msg)=>{
     rReveal=false;
     currentQ=msg.q;
     syncScores(msg.scores);
-    if(msg.stage===1)renderS1Q(msg.q,msg.qdata);
-    else if(msg.stage===2)renderS2Q(msg.q,msg.qdata,msg.total);
-    else if(msg.stage===3)renderS3Q(msg.q,msg.qdata,msg.total);
-    else if(msg.stage===4)renderS4Q(msg.q,msg.qdata,msg.total);
+    const doRender=()=>{
+      stageRendered[msg.stage]=true;
+      if(msg.stage===1)renderS1Q(msg.q,msg.qdata);
+      else if(msg.stage===2)renderS2Q(msg.q,msg.qdata,msg.total);
+      else if(msg.stage===3)renderS3Q(msg.q,msg.qdata,msg.total);
+      else if(msg.stage===4)renderS4Q(msg.q,msg.qdata,msg.total);
+    };
+    if(!stageRendered[msg.stage]){
+      doRender();
+    } else {
+      const wrapId={1:'s1-content',2:'s2-qcard',3:'s3-content',4:'s4-content'}[msg.stage];
+      fadeTransition($(wrapId),doRender);
+    }
   },
   reveal:(msg)=>{
     rReveal=true;
@@ -761,11 +862,30 @@ const MSG_HANDLERS={
     syncScores(msg.scores);
     showS2Result(msg);
   },
+  stage_summary:(msg)=>{
+    const stageNames={1:'מי אנחנו? 🤔',2:'מהיר יותר! ⚡',3:'דעות חמות 🔥',4:'אני מכיר אותך 🃏'};
+    $('ss-stage-label').textContent='סיכום שלב '+msg.stage;
+    $('ss-title').textContent=stageNames[msg.stage]||'';
+    if(msg.scores){
+      $('ss-n1').textContent=gN.p1;$('ss-n2').textContent=gN.p2;
+      $('ss-v1').textContent=msg.scores.p1;$('ss-v2').textContent=msg.scores.p2;
+    }
+    $('ss-stats').textContent=msg.stats||'';
+    $('ss-comment').textContent=msg.comment||'';
+    if(myNum===1){
+      $('ss-btn-area').innerHTML='<button class="btn btn-primary" onclick="ackSummary()">המשך ➡️</button>';
+    } else {
+      $('ss-btn-area').innerHTML='<div class="waiting-answer">ממתינ/ה ל'+gN.p1+' להמשיך...</div>';
+    }
+    showSc('sc-stage-summary');
+  },
   game_over:(msg)=>{
     renderFinal(msg);
   },
   restarted:()=>{
     myGender='';myNum=0;
+    stageRendered={};
+    $('final-extra').innerHTML='';
     $('gb-m').classList.remove('selected');$('gb-f').classList.remove('selected');
     showSc('sc-home');
   },
