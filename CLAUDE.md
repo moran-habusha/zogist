@@ -1,7 +1,10 @@
 # Zogist — Project Context for Claude
 
 ## Overview
-Zogist is a two-player Hebrew party game (couples / friends) with 4 stages.
+Zogist is a two-player Hebrew game for couples with two experiences:
+1. **זוגיסט** — competitive 4-stage quiz game
+2. **שפות האהבה** — love languages mini-game (separate entry point, same room)
+
 The app runs as a **Python FastAPI backend + WebSocket** with a single-page HTML frontend.
 Deployed on **Render.com free tier**, connected to GitHub for auto-deploy.
 
@@ -35,9 +38,10 @@ Backend (main.py — FastAPI + asyncio)
   - `ws` — `{1: ws, 2: ws}`
   - `players` — `{1: {name, gender, score}, 2: {...}}`
   - `mode`, `stage`, `q`
-  - `questions` — `{s1:[10 items], s2:[...], s3:[...], s4:[...]}`
+  - `questions` — `{s1:[10 items], s2:[...], s3:[...], s4:[...]}` (sampled from banks of 70/60/70/70)
   - `s1_ans`, `s2_state`, `s3_ans`, `s4_state`
-- 13 WebSocket message handlers: `create_room`, `join_room`, `choose_mode`, `start_game`, `start_stage`, `next_question`, `answer_s1`, `buzz`, `judge_s2`, `answer_s3`, `answer_s4`, `guess_s4`, `restart`
+  - `ll_results` — `{1: {receiving:[...], giving:[...]}, 2: {...}}` (love languages results)
+- 16 WebSocket message handlers: `create_room`, `join_room`, `choose_experience`, `ll_done`, `start_zogist_after_ll`, `choose_mode`, `start_game`, `start_stage`, `next_question`, `answer_s1`, `buzz`, `judge_s2`, `answer_s3`, `answer_s4`, `guess_s4`, `restart`
 - Buzz race resolved with `asyncio.sleep(0.15)` cooperative yield + guard
 
 ### Frontend (`static/index.html`)
@@ -49,36 +53,57 @@ Backend (main.py — FastAPI + asyncio)
 - `MSG_HANDLERS` dispatcher for all server messages
 - No scoring logic on client — only rendering
 - Hebrew RTL UI with full gender-adapted text helpers
+- Love languages quiz is entirely **client-side** (shuffle, scoring, rendering) — only final results sent to server
 
 ### Legacy file
 - `index.html` (root level) — original Firebase version, kept in repo but not served
 
 ---
 
-## Game Flow
+## Full App Flow
 
 ```
 Room creation → P1 creates, P2 joins by code
-→ P1 chooses mode (full / S2 / S3 / S4)
-→ P2 sees waiting screen (sc-wait-mode)
-→ Both see mode announcement (sc-mode-announce)
-→ Stages play in order based on mode
-→ Final score screen
+→ Both see experience select (sc-experience)
+  → P1 chooses: זוגיסט OR שפות האהבה
+  → P2 sees waiting screen
+
+  [If love_languages chosen]
+  → Both see LL intro (sc-ll-intro)
+  → Both answer 20 shuffled questions privately (sc-ll-q)
+  → First to finish waits (sc-ll-wait)
+  → When both done → results screen (sc-ll-results)
+  → P1 clicks "continue to Zogist" → same room, same flow below
+
+  [If zogist chosen / after LL]
+  → P1 chooses mode (sc-mode)
+  → P2 sees waiting screen (sc-wait-mode)
+  → Both see mode announcement (sc-mode-announce)
+  → Stages play in order based on mode
+  → Final score screen
 ```
 
-### Game Modes
+### Game Modes (Zogist)
 - `full` — all 4 stages (S1 → S2 → S3 → S4)
 - `2` — start from Stage 2
 - `3` — start from Stage 3
 - `4` — start from Stage 4
 
-### Stages
+### Stages (Zogist)
 | Stage | Type | Description |
 |-------|------|-------------|
 | S1 | Yes/No | 10 questions, gender-adapted text per player |
-| S2 | Buzzer trivia | 40 questions, first to buzz answers, host judges |
-| S3 | 1-5 scale | 10 questions, both answer, score for closeness |
-| S4 | Guess partner | 10 questions, guess what your partner said |
+| S2 | Buzzer trivia | 10 questions (sampled from 60), first to buzz answers, host judges |
+| S3 | 1-5 scale | 10 questions (sampled from 70), both answer, score for closeness |
+| S4 | Guess partner | 10 questions (sampled from 70), guess what your partner said |
+
+### Love Languages Mini-Game
+- 20 questions: 10 receiving (`type:'r'`) + 10 giving (`type:'g'`), shuffled together
+- Answer options also shuffled per question at runtime
+- Each option maps to one of 5 love languages: `quality_time`, `words`, `service`, `touch`, `gifts`
+- Scoring: `topTwo(countLangs(...))` — top 2 languages by frequency, split by receiving/giving
+- Server only involved for: broadcasting `experience_chosen`, syncing `ll_done` between players, broadcasting `ll_results`
+- `LL_RECEIVING`, `LL_GIVING`, `LL_DEFS` — all defined in frontend JS
 
 ---
 
@@ -125,9 +150,18 @@ websockets==12.0
 
 ---
 
+## Local Testing
+- Local Python: `C:\Users\moran\AppData\Local\Programs\Python\Python38-32\python.exe`
+- Run server: `python.exe -m uvicorn main:app --port 8765`
+- Simulation script: `simulate.py` — tests full LL flow + Zogist mode select with 2 WebSocket clients
+
+---
+
 ## Important Notes
+- **Always update `preview.html`** after any UI or game changes, and tell the user "הפריוויו עודכן"
 - **Terminal freezes** when user runs commands directly — always use Claude's Bash tool for git/file operations
 - **Hebrew path** (`שולחן העבודה`) can cause issues in some tools — use absolute paths carefully
 - All git operations use the SSH key via `core.sshCommand` stored in `.git/config`
-- The frontend has **no question banks** — all questions served by backend per session
+- The frontend has **no Zogist question banks** — all questions served by backend per session
+- Love languages questions live entirely in the frontend JS
 - Two concurrent users max on free tier (by design — game is 2-player)
