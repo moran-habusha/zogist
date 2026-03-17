@@ -103,6 +103,17 @@ input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px s
 .s2-ans-label{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px;}
 .s2-ans-val{font-size:22px;font-weight:900;color:var(--yellow);}
 .buzz-winner{text-align:center;padding:16px;font-size:20px;font-weight:700;color:var(--yellow);}
+.ll-progress{width:100%;background:rgba(255,255,255,.1);border-radius:4px;height:4px;margin-bottom:10px;}
+.ll-progress-bar{height:100%;border-radius:4px;background:linear-gradient(135deg,var(--pink),var(--purple));}
+.ll-player-block{width:100%;background:var(--card);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px;}
+.ll-player-name{font-size:19px;font-weight:900;text-align:center;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);}
+.ll-section-label{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:1px;margin-bottom:6px;}
+.ll-lang-card{background:rgba(255,255,255,.04);border-radius:14px;padding:14px 16px;border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px;}
+.ll-lang-title{font-size:17px;font-weight:900;}
+.ll-lang-desc{font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;}
+.ll-tips-label{font-size:12px;font-weight:700;color:var(--yellow);}
+.ll-tips{padding-right:18px;display:flex;flex-direction:column;gap:4px;}
+.ll-tips li{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
 </style>
 </head>
 <body>
@@ -576,6 +587,129 @@ input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px s
       </div>
       <button class="btn btn-primary">🔄 משחק חדש</button>
     </div>
+  </div>
+</div>
+
+<!-- 22. EXPERIENCE SELECT -->
+<div class="screen-wrap">
+  <div class="screen-label">22 · בחירת חוויה (אחרי חיבור שניהם)</div>
+  <div class="screen-box">
+    <div class="logo" style="font-size:30px;">👋 ברוכים הבאים!</div>
+    <div style="text-align:center;font-size:15px;color:rgba(255,255,255,.6);">היי נועה ויואב — במה תרצו לשחק?</div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+      <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:28px;">🎮</span>
+        <span><strong>זוגיסט</strong><br><small style="font-weight:400;opacity:.7">בואו לגלות כמה אתם מתאימים, ומי יותר תחרותי ;)</small></span>
+      </button>
+      <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:28px;">💬</span>
+        <span><strong>שפות האהבה</strong><br><small style="font-weight:400;opacity:.7">אתם כבר יודעים מה שפות האהבה שלכם?</small></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 23. LL INTRO -->
+<div class="screen-wrap">
+  <div class="screen-label">23 · מבוא שפות האהבה</div>
+  <div class="screen-box">
+    <div class="logo" style="font-size:32px;">💬 שפות האהבה</div>
+    <div class="intro-card">
+      <div class="intro-emoji">❤️</div>
+      <div class="intro-title">20 שאלות אישיות</div>
+      <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תוכלו לגלות מה שפות האהבה העיקריות שלכם ושל בן/בת זוגכם, הן בקבלה והן בנתינה.</div>
+      <div class="intro-rules">
+        <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענה/י בכנות — אין תשובות נכונות או לא נכונות</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">🔀</span><span>השאלות מעורבבות — קבלה ונתינה ביחד</span></div>
+      </div>
+    </div>
+    <button class="btn btn-primary">בואו נתחיל! ➡️</button>
+  </div>
+</div>
+
+<!-- 24. LL QUESTION -->
+<div class="screen-wrap">
+  <div class="screen-label">24 · שאלת שפות האהבה</div>
+  <div class="screen-box">
+    <div style="width:100%;">
+      <div class="ll-progress"><div class="ll-progress-bar" style="width:35%"></div></div>
+      <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;">שאלה 7 מתוך 20</div>
+    </div>
+    <div class="question-card" style="margin-bottom:12px;"><div class="q-text" style="font-size:18px;">כשאת עצובה, מה הכי מרגיע אותך?</div></div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">חיבוק ארוך ושקט</button>
+      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שישבו איתי ופשוט יהיו שם</button>
+      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שיגידו לי שהכל יהיה בסדר</button>
+      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שיכינו לי משהו טעים</button>
+      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שיביאו לי פרח קטן או מתנה מפתיעה</button>
+    </div>
+  </div>
+</div>
+
+<!-- 25. LL WAIT -->
+<div class="screen-wrap">
+  <div class="screen-label">25 · המתנה לשותף/ה (שסיים ראשון)</div>
+  <div class="screen-box" style="justify-content:center;text-align:center;gap:16px;">
+    <div style="font-size:64px;">✅</div>
+    <div style="font-size:22px;font-weight:900;">סיימת!</div>
+    <div class="waiting-answer">ממתינ/ה ליואב לסיים...</div>
+  </div>
+</div>
+
+<!-- 26. LL RESULTS -->
+<div class="screen-wrap" style="grid-column:1/-1;">
+  <div class="screen-label">26 · תוצאות שפות האהבה</div>
+  <div class="screen-box" style="align-items:flex-start;gap:20px;">
+    <div class="logo" style="font-size:28px;width:100%;text-align:center;">💬 שפות האהבה שלכם</div>
+    <div class="ll-player-block">
+      <div class="ll-player-name">❤️ נועה</div>
+      <div>
+        <div class="ll-section-label">קבלה — מה אוהבת לקבל</div>
+        <div class="ll-lang-card">
+          <div class="ll-lang-title">🤝 מגע פיזי</div>
+          <div class="ll-lang-desc">נגיעה, חיבוק, קרבה פיזית — אלו שמגיעים מהלב ומרגישים הכי בטוח ואוהבים.</div>
+          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+          <ul class="ll-tips"><li>חיבוק בהפתעה</li><li>לשבת צמוד</li><li>ליטוף קל</li></ul>
+        </div>
+        <div class="ll-lang-card" style="margin-top:10px;">
+          <div class="ll-lang-title">⏰ זמן איכות</div>
+          <div class="ll-lang-desc">להיות נוכח/ת לחלוטין — בלי מסכים, עם תשומת לב מלאה.</div>
+          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+          <ul class="ll-tips"><li>טיול בלי טלפון</li><li>ארוחה משותפת</li><li>פשוט לשבת יחד</li></ul>
+        </div>
+      </div>
+      <div>
+        <div class="ll-section-label">נתינה — איך אוהבת לאהוב</div>
+        <div class="ll-lang-card">
+          <div class="ll-lang-title">🛠 מעשים ושירות</div>
+          <div class="ll-lang-desc">לעזור, לארגן, לדאוג — אהבה שמתבטאת בדברים שעושים, לא רק אומרים.</div>
+          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+          <ul class="ll-tips"><li>לזכור מה מתאים לה</li><li>לסדר לו/לה בלי שיבקש/תבקש</li><li>לפתור בעיה שמדאיגה</li></ul>
+        </div>
+      </div>
+    </div>
+    <div class="ll-player-block">
+      <div class="ll-player-name">❤️ יואב</div>
+      <div>
+        <div class="ll-section-label">קבלה — מה אוהב לקבל</div>
+        <div class="ll-lang-card">
+          <div class="ll-lang-title">💬 מילים מאשרות</div>
+          <div class="ll-lang-desc">מילה טובה, מחמאה כנה, ביטוי מילולי של אהבה — אלו שנשמעים ומרגישים חשוב.</div>
+          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+          <ul class="ll-tips"><li>להגיד "אני אוהב/ת אותך" בפשטות</li><li>לציין מה מיוחד בו/בה</li><li>להודות על דברים קטנים</li></ul>
+        </div>
+      </div>
+      <div>
+        <div class="ll-section-label">נתינה — איך אוהב לאהוב</div>
+        <div class="ll-lang-card">
+          <div class="ll-lang-title">🎁 מתנות</div>
+          <div class="ll-lang-desc">לא בהכרח יקרות — אלא כאלו שמראות שחשבת עליו/עליה.</div>
+          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+          <ul class="ll-tips"><li>לזכור מה היא/הוא אוהב/ת</li><li>מתנת הפתעה קטנה</li><li>משהו שמסמל רגע ביניכם</li></ul>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;">🎮 המשיכו לזוגיסט ➡️</button>
   </div>
 </div>
 

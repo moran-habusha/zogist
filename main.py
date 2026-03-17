@@ -313,6 +313,7 @@ class GameRoom:
         self.s3_history = []        # list of {q, diff, v1, v2}
         self.s4_history = []        # list of {q, g1ok, g2ok}
         self.pending_next = None    # next stage to go to after summary ack
+        self.ll_results = {}       # {1: {receiving:[...], giving:[...]}, 2: {...}}
 
     async def send(self, pnum, msg):
         ws = self.ws.get(pnum)
@@ -909,6 +910,38 @@ async def handle_ack_summary(ws, data):
         await room.broadcast({'type': 'stage_intro', 'stage': next_s})
 
 
+async def handle_choose_experience(ws, data):
+    room, pnum = get_room_and_pnum(ws)
+    if not room or pnum != 1:
+        return
+    experience = data.get('experience', 'zogist')
+    await room.broadcast({'type': 'experience_chosen', 'experience': experience})
+
+
+async def handle_ll_done(ws, data):
+    room, pnum = get_room_and_pnum(ws)
+    if not room:
+        return
+    room.ll_results[pnum] = data.get('results', {})
+    if len(room.ll_results) == 2:
+        await room.broadcast({
+            'type': 'll_results',
+            'p1': room.ll_results.get(1, {}),
+            'p2': room.ll_results.get(2, {}),
+            'names': {'p1': room.players[1]['name'], 'p2': room.players[2]['name']}
+        })
+    else:
+        other = 2 if pnum == 1 else 1
+        await room.send(other, {'type': 'll_partner_done'})
+
+
+async def handle_start_zogist_after_ll(ws, data):
+    room, pnum = get_room_and_pnum(ws)
+    if not room or pnum != 1:
+        return
+    await room.broadcast({'type': 'experience_chosen', 'experience': 'zogist'})
+
+
 async def handle_restart(ws, data):
     room, pnum = get_room_and_pnum(ws)
     if not room:
@@ -940,6 +973,9 @@ async def handle_disconnect(ws):
 HANDLERS = {
     'create_room': handle_create_room,
     'join_room': handle_join_room,
+    'choose_experience': handle_choose_experience,
+    'll_done': handle_ll_done,
+    'start_zogist_after_ll': handle_start_zogist_after_ll,
     'choose_mode': handle_choose_mode,
     'start_game': handle_start_game,
     'start_stage': handle_start_stage,

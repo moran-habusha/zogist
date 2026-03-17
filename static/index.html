@@ -109,6 +109,19 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .streak-agree{background:rgba(0,230,118,.12);color:#00E676;border:1px solid rgba(0,230,118,.25);}
 .streak-disagree{background:rgba(255,82,82,.12);color:#FF5252;border:1px solid rgba(255,82,82,.25);}
 .q-counter{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1px;margin-bottom:8px;text-align:center;}
+.hidden{display:none!important;}
+.ll-opt{width:100%;padding:14px 18px;text-align:right;font-size:15px;line-height:1.5;white-space:normal;height:auto;}
+.ll-progress{width:100%;background:rgba(255,255,255,.1);border-radius:4px;height:4px;margin-bottom:10px;}
+.ll-progress-bar{height:100%;border-radius:4px;background:linear-gradient(135deg,var(--pink),var(--purple));transition:width .3s;}
+.ll-player-block{width:100%;background:var(--card);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px;}
+.ll-player-name{font-size:19px;font-weight:900;text-align:center;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);}
+.ll-section-label{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:1px;margin-bottom:6px;}
+.ll-lang-card{background:rgba(255,255,255,.04);border-radius:14px;padding:14px 16px;border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px;}
+.ll-lang-title{font-size:17px;font-weight:900;}
+.ll-lang-desc{font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;}
+.ll-tips-label{font-size:12px;font-weight:700;color:var(--yellow);}
+.ll-tips{padding-right:18px;display:flex;flex-direction:column;gap:4px;}
+.ll-tips li{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
 </style>
 </head>
 <body>
@@ -388,6 +401,57 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <button class="btn btn-primary" onclick="restartGame()">🔄 משחק חדש</button>
   </div>
 </div>
+<!-- EXPERIENCE SELECT -->
+<div class="screen" id="sc-experience">
+  <div class="logo" style="font-size:30px;">👋 ברוכים הבאים!</div>
+  <div style="text-align:center;font-size:15px;color:rgba(255,255,255,.6);">היי <span id="exp-names"></span> — במה תרצו לשחק?</div>
+  <div id="exp-choices" style="width:100%;display:flex;flex-direction:column;gap:14px;">
+    <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseExperience('zogist')">
+      <span style="font-size:28px;">🎮</span>
+      <span><strong>זוגיסט</strong><br><small style="font-weight:400;opacity:.7">בואו לגלות כמה אתם מתאימים, ומי יותר תחרותי ;)</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseExperience('love_languages')">
+      <span style="font-size:28px;">💬</span>
+      <span><strong>שפות האהבה</strong><br><small style="font-weight:400;opacity:.7">אתם כבר יודעים מה שפות האהבה שלכם?</small></span>
+    </button>
+  </div>
+  <div id="exp-wait" class="hidden waiting-answer">ממתינ/ה ל<span id="exp-p1-name"></span> לבחור...</div>
+</div>
+<!-- LL INTRO -->
+<div class="screen" id="sc-ll-intro">
+  <div class="logo" style="font-size:32px;">💬 שפות האהבה</div>
+  <div class="intro-card">
+    <div class="intro-emoji">❤️</div>
+    <div class="intro-title">20 שאלות אישיות</div>
+    <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תוכלו לגלות מה שפות האהבה העיקריות שלכם ושל בן/בת זוגכם, הן בקבלה והן בנתינה.</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענה/י בכנות — אין תשובות נכונות או לא נכונות</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🔀</span><span>השאלות מעורבבות — קבלה ונתינה ביחד</span></div>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="startLLQuiz()">בואו נתחיל! ➡️</button>
+</div>
+<!-- LL QUESTION -->
+<div class="screen" id="sc-ll-q">
+  <div style="width:100%;">
+    <div class="ll-progress"><div class="ll-progress-bar" id="ll-prog-bar" style="width:0%"></div></div>
+    <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;" id="ll-q-num">שאלה 1 מתוך 20</div>
+  </div>
+  <div class="question-card" style="margin-bottom:12px;"><div class="q-text" style="font-size:18px;" id="ll-q-text"></div></div>
+  <div id="ll-options" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
+</div>
+<!-- LL WAIT -->
+<div class="screen" id="sc-ll-wait">
+  <div style="font-size:64px;text-align:center;">✅</div>
+  <div style="font-size:22px;font-weight:900;text-align:center;">סיימת!</div>
+  <div class="waiting-answer" id="ll-wait-msg">ממתינ/ה ל<span id="ll-wait-name"></span> לסיים...</div>
+</div>
+<!-- LL RESULTS -->
+<div class="screen" id="sc-ll-results" style="overflow-y:auto;max-height:92vh;padding-bottom:30px;">
+  <div class="logo" style="font-size:26px;">💬 שפות האהבה שלכם</div>
+  <div id="ll-results-content" style="width:100%;display:flex;flex-direction:column;gap:16px;"></div>
+  <div id="ll-after-btns" style="width:100%;margin-top:8px;display:flex;flex-direction:column;gap:12px;"></div>
+</div>
 </div>
 <div class="confetti" id="confetti"></div>
 
@@ -403,6 +467,236 @@ let S1Q=[], S2Q=[], S3Q=[], S4Q=[];
 let rStage=-1, rReveal=false;
 let currentQ=0;
 let stageRendered={};  // {1: bool, 2: bool, ...}
+let llQuestions=[], llAnswers=[], llQIdx=0;
+
+/* ── LOVE LANGUAGES DATA ── */
+const LL_DEFS={
+  quality_time:{name:'זמן איכות',icon:'⏰',desc:'נוכחות מלאה ותשומת לב בלתי מחולקת — לא סתם להיות באותו חדר, אלא להיות ממוקד/ת בשני',tips:['כבה/י את הטלפון בזמן שיחה ובמהלך הזמן שלכם','הצע/י דייטים קבועים רק לשניכם, גם קצרים','היה/י נוכח/ת גם ברגעים יומיומיים הקטנים']},
+  words:{name:'מילים מאשרות',icon:'💬',desc:'מילים ספציפיות של הערכה, אהבה ועידוד — לא רק "אני אוהב/ת אותך" אלא "אני אוהב/ת אותך כי..."',tips:['שלח/י הודעות חמות באמצע היום','אמור/י בדיוק מה מוצא/ת חן בעיניך — ספציפי, לא כללי','ציין/י הצלחות ומאמצים במילים, גם הקטנים שבהם']},
+  service:{name:'מעשים ושירות',icon:'🤝',desc:'לעשות דברים בשביל השני — ללא בקשה, מתוך מחשבה על מה שיקל או ישמח',tips:['שים/י לב מה עומד על הרשימה שלו/שלה ועשה/י לפני שמבקשים','טפל/י בפרטים בלי לספר — תן/י לתוצאה לדבר','כשהשני עסוק/ה, מצא/י דרך להוריד לו/לה עומס']},
+  touch:{name:'מגע פיזי',icon:'🤗',desc:'קרבה גופנית — חיבוקים, מגע אגבי, ישיבה צמודה — שאומרת "אני כאן" בלי מילים',tips:['יזום/י מגע גם בלי סיבה מיוחדת','אל תשכח/י את המגע הקטן היומיומי — יד על הכתף, נשיקה בדרך','היה/י קרוב/ה פיזית בזמנים קשים, גם בשקט']},
+  gifts:{name:'מתנות',icon:'🎁',desc:'מחווה חומרית — לאו דווקא יקרה — שמסמלת "חשבתי עליך"',tips:['שים/י לב למה שמזכיר אותו/אותה ושמור/י לזיכרון','הפתע/י בדברים קטנים וספונטניים — שוקולד, פרח, פתק','הדבר החשוב הוא המחשבה, לא המחיר']}
+};
+
+const LL_RECEIVING=[
+  {q:'במהלך היום סיפרת לX שעובר עליך יום ממש לא טוב. איזו פעולה של X כשתגיע/י הביתה תגרום לך להרגיש שאכפת לו/לה?',opts:[
+    {t:'שיישב/תישב מולי, יניח/תניח בצד את הטלפון וישאל/תשאל "ספר/י לי מה קרה"',l:'quality_time'},
+    {t:'שיגיד/תגיד לי "את/ה תמיד יודע/ת למצוא את הדרך, זה קטן עליך, אני סומך/ת עליך"',l:'words'},
+    {t:'שיכין/תכין לי אוכל חם בלי שאבקש',l:'service'},
+    {t:'שיישב/תישב לידי קרוב ויניח/ותניח עלי יד בשקט',l:'touch'},
+    {t:'שיביא/תביא לי משהו קטן שקנה/קנתה לפני שהגעתי — שוקולד, פרח, כל דבר',l:'gifts'}]},
+  {q:'את/ה לחוץ/לחוצה רגע לפני אירוע חשוב. מה הכי יעזור לך שX יעשה/תעשה?',opts:[
+    {t:'שיהיה/תהיה נוכח/ת לידי ממש עד שזה מתחיל, גם אם בשקט',l:'quality_time'},
+    {t:'שיתמוך/תתמוך בי ויגיד/תגיד לי בדיוק למה הוא/היא בטוח/ה שאצליח',l:'words'},
+    {t:'שידאג/תדאג מראש שכל מה שאני צריך/צריכה יהיה מסודר כדי שלא אצטרך לחשוב',l:'service'},
+    {t:'שיחזיק/תחזיק את היד שלי עד ממש שנייה לפני שהאירוע מתחיל',l:'touch'},
+    {t:'שיביא/תביא לי משהו קטן שיעזור להרגיע — סוכריית מנטה, מים קרים, כל דבר כזה',l:'gifts'}]},
+  {q:'את/ה שוכב/ת חולה. מה הכי יגרום לך להרגיש שX דואג/ת לך?',opts:[
+    {t:'שישב/תשב לידי ונראה סדרה ביחד גם אם הוא/היא כבר ראה/ראתה אותה',l:'quality_time'},
+    {t:'שישאל/תשאל אותי כמה פעמים באמצע היום: "חשבתי עליך, איך אתה/את?"',l:'words'},
+    {t:'שידאג/תדאג שלא אצטרך לקום בשביל כלום',l:'service'},
+    {t:'שילטף/תלטף אותי עד שארדם',l:'touch'},
+    {t:'שיזמין/תזמין לי בדיוק את האוכל שרציתי',l:'gifts'}]},
+  {q:'את/ה עם X בחברת אנשים שאת/ה לא מכיר/ה. מה יגרום לך להרגיש שהוא/היא רואה אותך?',opts:[
+    {t:'שיישאר/תישאר קרוב/ה אלי כל הערב גם אם הם מדברים עם אחרים',l:'quality_time'},
+    {t:'שיספר/תספר לאחרים משהו שמראה שהוא/היא ממש מכיר/ה אותי או גאה בי',l:'words'},
+    {t:'שישים/תשים לב אם אני לא בנוח ויציע/ותציע ללכת עוד לפני שאבקש',l:'service'},
+    {t:'שיגע/תגע לי בגב קלות בזמן שמדבר/ת עם אחרים — סימן שקט שהוא/היא שם/שם',l:'touch'},
+    {t:'שיגיע/תגיע פתאום עם משקה או נשנוש שיודע/ת שאני שותה',l:'gifts'}]},
+  {q:'את/ה וX אחרי ריב שנפתר. מה יגרום לך להרגיש שזה באמת מאחוריכם?',opts:[
+    {t:'שנשב ביחד סתם בשקט מרגיע, בלי להמשיך לדבר',l:'quality_time'},
+    {t:'שיגיד/תגיד לי משהו ספציפי שמראה שמבין/ה מה כאב לי',l:'words'},
+    {t:'שיעשה/תעשה משהו שיודע/ת שאני צריך/ה — גם בלי קשר לריב',l:'service'},
+    {t:'שיתקרב/תתקרב אלי ויזום/תיזום מגע כלשהו — כמו הזמנה לשחרר ולהתקרב',l:'touch'},
+    {t:'שיביא/תביא לי משהו — גם הכי קטן — שחושב/ת שייגרום לי להתעודד',l:'gifts'}]},
+  {q:'זה יום ההולדת שלך. מה יגרום לך להרגיש שX ממש מכיר/ה אותך?',opts:[
+    {t:'שידאג/תדאג לזמן שהוא רק של שנינו, בלי טלפונים ובלי הסחות דעת',l:'quality_time'},
+    {t:'שיכתוב/תכתוב לי ברכה, בפתק או בהודעה, שמסבירה בדיוק למה אוהב/ת אותי',l:'words'},
+    {t:'שידאג/תדאג לכל הפרטים הקטנים של היום הזה, ככה שלא צריך/ה לחשוב על כלום',l:'service'},
+    {t:'שאתעורר לידו/לידה וזה יהיה החיבוק הראשון שאקבל היום',l:'touch'},
+    {t:'שיביא/תביא לי דבר ספציפי שציינתי פעם ולא חשבתי ששם/ה לב',l:'gifts'}]},
+  {q:'את/ה עצוב/ה בלי סיבה ברורה. מה הכי יעזור לך שX יעשה/תעשה?',opts:[
+    {t:'שפשוט ישב/תשב לידי — לא מנסה לתקן, רק נמצא/ת שם',l:'quality_time'},
+    {t:'שינסה/תנסה לדובב אותי ויגיד/תגיד לי "אתה/את לא לבד, אני כאן"',l:'words'},
+    {t:'שיטפל/תטפל בדברים שהיו ברשימת המטלות שלי להיום מבלי שביקשתי',l:'service'},
+    {t:'שיתן/תתן לי לשים עליו/עליה את הראש ויעשה/תעשה לי נעים בשיער',l:'touch'},
+    {t:'שיביא/תביא לי משהו שיגרום לי להרגיש שתמיד חושבים עלי',l:'gifts'}]},
+  {q:'הצלחת משהו שעבדת עליו הרבה זמן. מה התגובה של X שתגרום לך להרגיש הכי מוערך/ת?',opts:[
+    {t:'שיציע/תציע שנצא להרים לחיים הערב — רק שנינו, חוגגים את ההצלחה הזו',l:'quality_time'},
+    {t:'שיגיד/תגיד לי שגאה/ה בי ושמגיעה לי ההצלחה הזאת אחרי כל ההשקעה',l:'words'},
+    {t:'שידאג/תדאג לקחת על עצמו/עצמה את הטיפול בדברים מסביב, שאוכל להנות מההרגשה עוד קצת',l:'service'},
+    {t:'שמרוב התרגשות יתפוס/תתפוס לי את היד ויסתכל/ותסתכל לי בעיניים — מבט מלא גאווה',l:'touch'},
+    {t:'שיביא/תביא לי משהו שיציין את ההצלחה — פרחים או מתנה בעיצוב אישי כמו ספל עם כיתוב',l:'gifts'}]},
+  {q:'את/ה וX נסעתם לסוף שבוע. מה יגרום לך להרגיש מחובר/ת אליו/אליה?',opts:[
+    {t:'לא צריך לתכנן יותר מדי — העיקר שאנחנו ביחד',l:'quality_time'},
+    {t:'שנשב על כוס יין והוא/היא יגיד/תגיד לי כמה מעריך/ה אותי',l:'words'},
+    {t:'שיתכנן/תתכנן את כל הדברים שצריך לסדר ואני אגיע כמו אורח/ה לחופשה',l:'service'},
+    {t:'שנהיה צמודים פיזית לאורך כל הסוף שבוע — על הספה, בהליכה, מחזיקים ידיים ברכב',l:'touch'},
+    {t:'שידאג/תדאג שיחכה לי משהו שווה בחדר — פרחים, יין, בלונים או פירות',l:'gifts'}]},
+  {q:'רגע לפני שהולכים לישון. מה יגרום לך להירדם בתחושה הכי טובה?',opts:[
+    {t:'שאני וX נדבר קצת על היום — גם אם בקצרה — לפני שמכבים את האור',l:'quality_time'},
+    {t:'שיספר/תספר לי על משהו שגרם לו/לה לחשוב עלי היום — גם אם זה משפט אחד',l:'words'},
+    {t:'שידאג/תדאג לכל מה שצריך ללכת לישון — לנעול דלת, לכבות אורות — כדי שאוכל להיכנס למיטה',l:'service'},
+    {t:'חיבוק ארוך או להירדם בכפיות — להרגיש את החום שלו/שלה לפני שארדם',l:'touch'},
+    {t:'שיפתיע/תפתיע אותי בדבר קטן — תה חם ליד המיטה, פלייליסט מיוחד או שוקולד לסיום היום',l:'gifts'}]}
+];
+
+const LL_GIVING=[
+  {q:'זה יום רגיל לחלוטין, לא קורה שום דבר מיוחד היום. איך את/ה מראה לX שאת/ה אוהב/ת אותו/אותה?',opts:[
+    {t:'מתישהו במהלך היום עוצר/ת את מה שאני עושה ומציע/ה לשבת ביחד בלי הסחות דעת — גם אם רק לרבע שעה',l:'quality_time'},
+    {t:'אומר/ת לו/לה משהו ספציפי שהבחנתי בו/בה היום — את/ה יפה היום, אהבתי את הבגדים שבחרת',l:'words'},
+    {t:'עושה בשבילו/בשבילה משהו קטן שאני יודע/ת שיקל עליו/עליה — מבלי שיבקש/תבקש',l:'service'},
+    {t:'עובר/ת לידו/לידה ונוגע/ת בו/בה ב"דרך אגב" — שידע/תדע שאני שמח/ה שהוא/היא לידי',l:'touch'},
+    {t:'מביא/ה לו/לה משהו קטן שגרם לי לחשוב עליו/עליה — גם אם זה רק החטיף שאוהב מהסופר',l:'gifts'}]},
+  {q:'X עסוק/ה ולחוץ/לחוצה ואין לך אפשרות לעזור ממש. מה תעשה/י?',opts:[
+    {t:'אשאר פיזית נוכח/ת בלי להפריע — רק כדי שידע/תדע שאני שם/שם',l:'quality_time'},
+    {t:'אשלח לו/לה הודעה קצרה במהלך היום שתזכיר שאני חושב/ת עליו/עליה',l:'words'},
+    {t:'אנסה למצוא דבר קטן להוריד לו/לה מהראש — גם משהו שולי כמו לעשות כביסה',l:'service'},
+    {t:'אעבור לידו/לידה ואניח לרגע יד על הכתף או אתן נשיקה קטנה בראש',l:'touch'},
+    {t:'אביא לו/לה משהו קטן בזמן שעסוק/ה — קפה, חטיף, כל דבר שיגיד "ראיתי אותך"',l:'gifts'}]},
+  {q:'X עומד/ת לפגוש את המשפחה שלך בפעם הראשונה. מה תעשה/י כדי להרגיע אותו/אותה לפני שמגיעים?',opts:[
+    {t:'אוודא שיהיה לנו קצת זמן ביחד לבד לפני כן — רק שירגיש/תרגיש שאנחנו ביחד בזה',l:'quality_time'},
+    {t:'אגיד לו/לה שאני אוהב/ת אותו/אותה ולמה גאה/ה להציג להם אותו/אותה',l:'words'},
+    {t:'אכין אותו/אותה לאירוע — מי יהיה שם, למה לצפות, מה חשוב לדעת מראש',l:'service'},
+    {t:'אחזיק לו/לה את היד כשניכנס — שידע/תדע שאני איתו/איתה',l:'touch'},
+    {t:'אדאג שיהיה לו/לה משהו שאוהב/ת בדרך — משקה אהוב, מאכל מתוק, שירים אהובים ברכב',l:'gifts'}]},
+  {q:'X התעורר/ה בבוקר במצב רוח ירוד — לא אמר/ה כלום, אבל רואים. מה תעשה/י?',opts:[
+    {t:'אתיישב לידו/לידה ואחכה — בלי לדחוף, בזמן שלו/שלה',l:'quality_time'},
+    {t:'אגיד לו/לה משהו שמזכיר כמה אהוב/ה ושאני רואה אותו/אותה, זה לא חמק ממני',l:'words'},
+    {t:'אפנק אותו/אותה בדברים הקטנים של הבוקר — קפה, ארוחה, אדליק דוד למקלחת חמה — בלי לבקש',l:'service'},
+    {t:'אצור ביננו מגע קצר אבל מלא הכלה — חיבוק או ליטוף — שירגיש/תרגיש שאני כאן',l:'touch'},
+    {t:'אצא לסיבוב ואחזור עם משהו שיגרום לחייך — פרחים, קינוח אהוב, ספר שרצה/רצתה',l:'gifts'}]},
+  {q:'שבת בבוקר, X עדיין ישן/ה והתעורר/ת לפניו/לפניה. מה תעשה/י?',opts:[
+    {t:'אשאר לידו/לידה במיטה — אמצא תעסוקה עד שיקום/תקום, העיקר שאהיה שם כשיתעורר/תתעורר',l:'quality_time'},
+    {t:'אשלח לו/לה הודעה שתחכה כשיקום/תקום — משהו שיגרום לחייך לפני שקם/ה מהמיטה',l:'words'},
+    {t:'אנצל את הזמן לסדר את הבית כדי שיוכלו לקום עם קצת פחות משימות להיום',l:'service'},
+    {t:'כשאשמע שמתחיל/ה להתעורר, ארוץ לחדר לחיבוק ארוך ונשיקה של בוקר טוב',l:'touch'},
+    {t:'אצא לקנות לו/לה מאפה קטן שיהיה לאכול עם הקפה של בוקר',l:'gifts'}]},
+  {q:'X שכח/ה לספר לך על משהו חשוב שקרה לו/לה — ויצא שגילית ממישהו אחר. מה תעשה/י?',opts:[
+    {t:'אשאר באותו חלל מבלי ללחוץ ואתן את הזמן לספר בקצב שלו/שלה',l:'quality_time'},
+    {t:'אגיד שאני כאן ושאני רוצה לשמוע — בלי ביקורת',l:'words'},
+    {t:'אמצא דרך מעשית לעזור עם מה שקרה — גם בלי שביקש/ה',l:'service'},
+    {t:'אתקרב אליו/אליה פיזית — שירגיש/תרגיש שלא משנה מה יאמר, אני לא הולך/ת',l:'touch'},
+    {t:'אביא משהו שיגרום להרגיש בנוח — קפה ושמיכה, כוס יין — כדי להקל על האווירה',l:'gifts'}]},
+  {q:'X מתלהב/ת ומספר/ת לך על משהו חדש שממש לא מעניין אותך. מה תעשה/י?',opts:[
+    {t:'אעזוב את הטלפון ואסתכל עליו/עליה — ההתלהבות שלו/שלה מספיקה כדי שארצה להיות נוכח/ת',l:'quality_time'},
+    {t:'אשאל שאלות המשך — כדי שירגיש/תרגיש שאני באמת מקשיב/ה',l:'words'},
+    {t:'אחפש דרך לעזור לו/לה עם זה — גם אם אני לא מבין/ה בזה',l:'service'},
+    {t:'אניח עליו/עליה יד בזמן שמדבר/ת — שירגיש/תרגיש את הנוכחות והקשב שלי',l:'touch'},
+    {t:'אחפש להביא לו/לה משהו קטן שקשור לתחום שמתלהב/ת ממנו',l:'gifts'}]},
+  {q:'X לוקח/ת החלטה גדולה ולא ביקש/ה את דעתך. מה תעשה/י?',opts:[
+    {t:'אמתין ואתן מקום — אני אהיה שם כשיצטרך/תצטרך אותי',l:'quality_time'},
+    {t:'אגיד שאני מאמין/ה בו/בה ושיהיה מה שיהיה, אני לצידו/לצידה',l:'words'},
+    {t:'אנסה לעזור בפרטים המעשיים — גם בלי שביקש/ה',l:'service'},
+    {t:'אתמוך בו/בה בחיבוק ושקט — שירגיש/תרגיש שאני איתו/איתה',l:'touch'},
+    {t:'אביא לו/לה משהו שתומך בהחלטה — חוברת לתחילת לימודים, פריט שקשור לתחביב החדש',l:'gifts'}]},
+  {q:'X עובד/ת על פרויקט גדול כבר שבועות ועדיין לא סיים/סיימה. מה תעשה/י?',opts:[
+    {t:'אציע לשבת לידו/לידה בזמן שעובד/ת — גם בשקט, רק שלא ירגיש/תרגיש לבד בזה',l:'quality_time'},
+    {t:'אגיד שאני רואה כמה משקיע/ה, שאני מאמין/ה בו/בה ושמגיע לו/לה שיצא טוב',l:'words'},
+    {t:'אמצא דרך להוריד עומס מהצד — לבשל, לסדר, כל דבר שיפנה זמן לפרויקט',l:'service'},
+    {t:'אתן עידוד פיזי במהלך היום — חיבוקים, נשיקות — רק שידע/תדע שאני שם/שם',l:'touch'},
+    {t:'אביא לו/לה משהו קטן שיגרום להרגיש שחושב/ת עליו/עליה גם כשעסוק/ה — קפה מהמקום האהוב',l:'gifts'}]},
+  {q:'את/ה וX בסוף יום ארוך. מה הדרך הטבעית שלך להגיד "אני שמח/ה שאת/ה קיים/ת"?',opts:[
+    {t:'אציע שנשב קצת ביחד — גם אם רק כמה דקות, רק לחיות את הרגע הזה עוד קצת',l:'quality_time'},
+    {t:'אגיד שהיה לשנינו יום לא פשוט, אבל אני שמח/ה שיש לי אותו/אותה ברגעים כאלו',l:'words'},
+    {t:'למרות שגם לי היה יום ארוך, אטפל בדבר אחד שיודע/ת שמכביד עליו/עליה — מגיע לו/לה',l:'service'},
+    {t:'אחבק אותו/אותה חיבוק ארוך וחזק, שלא יהיה לו/לה ספק שאני כאן בשבילו/בשבילה',l:'touch'},
+    {t:'אביא לו/לה פינוק קטן שיגרום לחייך לפני שנגמר היום — יין, קינוח טוב, קרם בריח אהוב',l:'gifts'}]}
+];
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function countLangs(langs){const c={quality_time:0,words:0,service:0,touch:0,gifts:0};langs.forEach(l=>{if(c[l]!==undefined)c[l]++;});return c;}
+function topTwo(counts){return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);}
+
+function chooseExperience(exp){
+  if(myNum!==1)return;
+  ws.send(JSON.stringify({type:'choose_experience',experience:exp}));
+}
+
+function startLLQuiz(){
+  const recv=LL_RECEIVING.map(q=>({...q,opts:[...q.opts],type:'r'}));
+  const give=LL_GIVING.map(q=>({...q,opts:[...q.opts],type:'g'}));
+  llQuestions=shuffle([...recv,...give]).map(q=>({...q,opts:shuffle([...q.opts])}));
+  llAnswers=[];llQIdx=0;
+  showSc('sc-ll-q');renderLLQ();
+}
+
+function renderLLQ(){
+  const q=llQuestions[llQIdx];
+  $('ll-q-num').textContent='שאלה '+(llQIdx+1)+' מתוך 20';
+  $('ll-prog-bar').style.width=(llQIdx/20*100)+'%';
+  $('ll-q-text').textContent=q.q;
+  const el=$('ll-options');el.innerHTML='';
+  q.opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='btn btn-secondary ll-opt';
+    btn.textContent=opt.t;
+    btn.onclick=()=>answerLL(opt.l);
+    el.appendChild(btn);
+  });
+}
+
+function answerLL(lang){
+  llAnswers.push(lang);
+  llQIdx++;
+  if(llQIdx>=llQuestions.length){finishLL();}
+  else{renderLLQ();}
+}
+
+function finishLL(){
+  const rLangs=[],gLangs=[];
+  llQuestions.forEach((q,i)=>{
+    if(q.type==='r')rLangs.push(llAnswers[i]);
+    else gLangs.push(llAnswers[i]);
+  });
+  const results={receiving:topTwo(countLangs(rLangs)),giving:topTwo(countLangs(gLangs))};
+  $('ll-wait-name').textContent=myNum===1?gN.p2:gN.p1;
+  showSc('sc-ll-wait');
+  ws.send(JSON.stringify({type:'ll_done',results}));
+}
+
+function renderLLLangCard(langKey){
+  const d=LL_DEFS[langKey];
+  if(!d)return'';
+  return`<div class="ll-lang-card">
+    <div class="ll-lang-title">${d.icon} ${d.name}</div>
+    <div class="ll-lang-desc">${d.desc}</div>
+    <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+    <ul class="ll-tips">${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+  </div>`;
+}
+
+function renderLLResults(msg){
+  const cont=$('ll-results-content');
+  cont.innerHTML='';
+  [{key:'p1',name:msg.names.p1},{key:'p2',name:msg.names.p2}].forEach(({key,name})=>{
+    const r=msg[key];
+    const recvCards=(r.receiving||[]).map(renderLLLangCard).join('');
+    const giveCards=(r.giving||[]).map(renderLLLangCard).join('');
+    const block=document.createElement('div');
+    block.className='ll-player-block';
+    block.innerHTML=`<div class="ll-player-name">❤️ ${name}</div>
+      <div><div class="ll-section-label">קבלה — מה אוהב/ת לקבל</div>${recvCards}</div>
+      <div><div class="ll-section-label">נתינה — איך אוהב/ת לאהוב</div>${giveCards}</div>`;
+    cont.appendChild(block);
+  });
+  const btns=$('ll-after-btns');
+  btns.innerHTML='';
+  const card=document.createElement('div');
+  card.className='card';card.style.textAlign='center';
+  card.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:6px;">רוצים להמשיך למשחק זוגיסט? 🎮</div>';
+  btns.appendChild(card);
+  if(myNum===1){
+    const btn=document.createElement('button');
+    btn.className='btn btn-primary';btn.textContent='בואו נשחק! ➡️';
+    btn.onclick=()=>ws.send(JSON.stringify({type:'start_zogist_after_ll'}));
+    btns.appendChild(btn);
+  } else {
+    const w=document.createElement('div');
+    w.className='waiting-answer';w.textContent='ממתינ/ה ל'+gN.p1+' להחליט...';
+    btns.appendChild(w);
+  }
+}
 
 /* ── BEFOREUNLOAD ── */
 window.addEventListener('beforeunload',e=>{
@@ -811,8 +1105,31 @@ const MSG_HANDLERS={
     gG.p1=msg.p1.gender;gG.p2=msg.p2.gender;
     S1Q=msg.questions.s1;S2Q=msg.questions.s2;
     S3Q=msg.questions.s3;S4Q=msg.questions.s4;
-    if(myNum===1)showSc('sc-mode');
-    else{showSc('sc-wait-mode');const n=$('wait-mode-p1name');if(n)n.textContent=gN.p1;}
+    const en=$('exp-names');if(en)en.textContent=gN.p1+' ו'+gN.p2;
+    // Reset experience screen state (handles replaying as different role)
+    const expBtns=$('exp-choices');if(expBtns)expBtns.style.display='';
+    const expWait=$('exp-wait');if(expWait)expWait.classList.add('hidden');
+    showSc('sc-experience');
+    if(myNum===2){
+      if(expBtns)expBtns.style.display='none';
+      if(expWait)expWait.classList.remove('hidden');
+      const wn=$('exp-p1-name');if(wn)wn.textContent=gN.p1;
+    }
+  },
+  experience_chosen:(msg)=>{
+    if(msg.experience==='love_languages'){
+      showSc('sc-ll-intro');
+    } else {
+      if(myNum===1)showSc('sc-mode');
+      else{showSc('sc-wait-mode');const n=$('wait-mode-p1name');if(n)n.textContent=gN.p1;}
+    }
+  },
+  ll_partner_done:(msg)=>{
+    const w=$('ll-wait-msg');
+    if(w)w.textContent='הצד השני סיים! ממתינ/ה לתוצאות...';
+  },
+  ll_results:(msg)=>{
+    renderLLResults(msg);showSc('sc-ll-results');
   },
   mode_announced:(msg)=>{
     gameMode=msg.mode;
