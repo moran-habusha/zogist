@@ -489,7 +489,7 @@ def build_stage_summary(room, stage):
         bulls = sum(1 for x in h if x['diff'] == 0)
         close = sum(1 for x in h if x['diff'] == 1)
         far = sum(1 for x in h if x['diff'] >= 3)
-        stats = f"פגיעה בול: {bulls} | קרוב: {close} | רחוק: {far} מתוך {total}"
+        stats = f"פגיעה בול: {bulls} | קרוב (מרחק 1): {close} | רחוק (מרחק 3+): {far} מתוך {total}"
         if bulls >= total * 0.6: comment = "אתם חושבים ממש אותו דבר – מי מחשיב מי? 😂"
         elif bulls + close >= total * 0.7: comment = "דעות דומות, עם כמה ניואנסים – בדיוק כמו שצריך 😏"
         elif far >= total * 0.5: comment = "הדעות שלכם... שונות. לגמרי. ועדיין כאן. 🤣"

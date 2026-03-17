@@ -49,7 +49,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .stage-title{font-size:28px;font-weight:900;margin-bottom:6px;}
 .stage-subtitle{font-size:14px;color:rgba(255,255,255,.5);}
 .question-card{background:var(--card);border-radius:24px;padding:28px 24px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.1);}
-.q-num{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:12px;letter-spacing:1px;}
+.q-num{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px;letter-spacing:1px;}
 .q-text{font-size:22px;font-weight:700;line-height:1.4;margin-bottom:24px;}
 .answer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .btn-yes{background:linear-gradient(135deg,#00E676,#00BFA5);color:var(--dark);font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;transition:transform .15s;font-family:'Heebo',sans-serif;}
@@ -108,7 +108,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .streak-banner{padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;margin-top:6px;}
 .streak-agree{background:rgba(0,230,118,.12);color:#00E676;border:1px solid rgba(0,230,118,.25);}
 .streak-disagree{background:rgba(255,82,82,.12);color:#FF5252;border:1px solid rgba(255,82,82,.25);}
-.q-counter{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:8px;}
+.q-counter{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1px;margin-bottom:8px;text-align:center;}
 </style>
 </head>
 <body>
@@ -154,19 +154,19 @@ input::placeholder{color:rgba(255,255,255,.3);}
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(1)">
       <span style="font-size:28px;">🤔</span>
-      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">שאלות כן/לא על הרגלים ואישיות</small></span>
+      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">10 שאלות כן/לא על הרגלים, העדפות ואישיות</small></span>
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(2)">
       <span style="font-size:28px;">⚡</span>
-      <span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">טריוויה – מי לוחץ ראשון עונה</small></span>
+      <span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">10 שאלות טריוויה כללית - הראשון שלוחץ עונה</small></span>
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(3)">
       <span style="font-size:28px;">🔥</span>
-      <span><strong>דעות חמות</strong><br><small style="font-weight:400;opacity:.7">סקאלה 1–5 על הצהרות שנויות במחלוקת</small></span>
+      <span><strong>דעות קדומות</strong><br><small style="font-weight:400;opacity:.7">10 הצהרות שנויות במחלוקת - בחירה בסקאלה של 1-5</small></span>
     </button>
     <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(4)">
       <span style="font-size:28px;">🃏</span>
-      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">ענה על עצמך ונחש את השני/ה</small></span>
+      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">10 שאלות אמריקאיות - קודם בחר בעצמך ואז נחש מה בן/ת הזוג יבחרו</small></span>
     </button>
   </div>
 </div>
@@ -206,9 +206,9 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="intro-rules">
       <div class="intro-rule"><span class="intro-rule-icon">📝</span><span>10 שאלות על הרגלים ואישיות</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד – בלי לראות את תשובת השני</span></div>
-      <div class="intro-rule"><span class="intro-rule-icon">🎉</span><span>אחרי שניכם ענו – רואים יחד את התוצאה</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🎉</span><span>אחרי ששניכם עניתם – רואים יחד את התוצאה</span></div>
     </div>
-    <div class="intro-points">🏆 הסכמתם? ראשון +2 | שני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
+    <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
     <div id="intro1-start"></div>
   </div>
 </div>
@@ -219,11 +219,11 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="intro-title">מהיר יותר!</div>
     <div class="intro-desc">שלב הבזק – מי יודע יותר, ומי יודע מהר יותר?</div>
     <div class="intro-rules">
-      <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון עונה</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון יכול לענות בקול</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">👀</span><span>השני רואה את התשובה הנכונה ושופט אם השותף צדק</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">⚠️</span><span>טעות = נקודה לצד השני!</span></div>
     </div>
-    <div class="intro-points">🏆 נכון = +2 לך | לא נכון = +1 לשני</div>
+    <div class="intro-points">🏆 לחצת ראשון וענית נכון = +2 לך | לחצת אבל טעית? = +1 לשני</div>
     <div id="intro2-start"></div>
   </div>
 </div>
@@ -231,14 +231,14 @@ input::placeholder{color:rgba(255,255,255,.3);}
 <div class="screen" id="sc-intro3">
   <div class="intro-card">
     <div class="intro-emoji">🔥</div>
-    <div class="intro-title">דעות חמות</div>
+    <div class="intro-title">דעות קדומות</div>
     <div class="intro-desc">שלב הדעות – מסכים או לא? נגלה כמה אתם חושבים דומה!</div>
     <div class="intro-rules">
       <div class="intro-rule"><span class="intro-rule-icon">💬</span><span>10 הצהרות שנויות במחלוקת</span></div>
-      <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד בוחר בנפרד בסקאלה של 1–5 (1=מתנגד לחלוטין, 5=מסכים מאוד)</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד בסקאלה 1–5</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">🎭</span><span>אחר כך רואים יחד – הסכמתם? 👀</span></div>
     </div>
-    <div class="intro-points">🏆 סקאלה 1–5: פגיעה בול +3 | מרחק 1: +1 | מרחק 2: 0 | מרחק 3: -1 | מרחק 4: -2<br>⚡ תיזהרו! השחקן שענה מהר יותר יכול לקבל בונוס או קנס בהתאם לפער בין התשובות!</div>
+    <div class="intro-points">🏆 כמות הנקודות תלויה בכם ;) | שימו לב, הראשון שיענה יקבל בונוס או קנס בהתאם למרחק הדעות!</div>
     <div id="intro3-start"></div>
   </div>
 </div>
@@ -253,7 +253,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
       <div class="intro-rule"><span class="intro-rule-icon">🔮</span><span>אחר כך מנחשים מה השני בחר</span></div>
       <div class="intro-rule"><span class="intro-rule-icon">😲</span><span>גלו מי הכי מכיר את מי!</span></div>
     </div>
-    <div class="intro-points">🏆 ניחשת נכון ראשונ/ה: +2 | ניחשת נכון שני/ה: +1 | טעות: 0</div>
+    <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
     <div id="intro4-start"></div>
   </div>
 </div>
@@ -310,7 +310,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
 </div>
 <!-- STAGE 3 -->
 <div class="screen" id="sc-s3">
-  <div class="stage-header"><div class="stage-badge">שלב 3 מתוך 4</div><div class="stage-title">🔥 דעות חמות</div><div class="stage-subtitle">מסכים או לא? נגלה יחד</div></div>
+  <div class="stage-header"><div class="stage-badge">שלב 3 מתוך 4</div><div class="stage-title">🔥 דעות קדומות</div><div class="stage-subtitle">מסכים או לא? נגלה יחד</div></div>
   <div class="score-bar">
     <div class="sc-item"><div class="sc-name" id="s3n1">שחקן 1</div><div class="sc-val" id="s3v1">0</div></div>
     <div class="sc-vs">VS</div>
@@ -489,7 +489,7 @@ function showModeAnnounce(mode,p1name){
     'full':{emoji:'🎮',title:'משחק מלא',desc:'כל 4 השלבים ברצף'},
     '1':{emoji:'🤔',title:'מי אנחנו?',desc:'שאלות כן/לא על הרגלים ואישיות'},
     '2':{emoji:'⚡',title:'מהיר יותר!',desc:'טריוויה – מי לוחץ ראשון עונה'},
-    '3':{emoji:'🔥',title:'דעות חמות',desc:'סקאלה 1–5 על הצהרות שנויות במחלוקת'},
+    '3':{emoji:'🔥',title:'דעות קדומות',desc:'10 הצהרות שנויות במחלוקת - בחירה בסקאלה של 1-5'},
     '4':{emoji:'🃏',title:'אני מכיר אותך',desc:'ענה/י על עצמך ונחש/י את השני/ה'}
   };
   const m=modes[String(mode)]||modes['full'];
@@ -505,7 +505,7 @@ function showModeAnnounce(mode,p1name){
 /* ── COUNTDOWN ── */
 function startCountdown(stageNum,onDone){
   showSc('sc-countdown');
-  const names={1:'מי אנחנו 🤔',2:'מהיר יותר ⚡',3:'דעות חמות 🔥',4:'אני מכיר אותך 🃏'};
+  const names={1:'מי אנחנו 🤔',2:'מהיר יותר ⚡',3:'דעות קדומות 🔥',4:'אני מכיר אותך 🃏'};
   $('cd-label').textContent=names[stageNum]||'';
   let n=3;$('cd-num').textContent=n;
   const iv=setInterval(()=>{n--;if(n>0){$('cd-num').textContent=n;}else{clearInterval(iv);onDone();}},1000);
@@ -593,14 +593,13 @@ window.answerS3=function(val){
 };
 
 window.answerS4=function(idx){
+  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
   ws.send(JSON.stringify({type:'answer_s4',idx}));
 };
 
 window.guessS4=function(idx){
   ws.send(JSON.stringify({type:'guess_s4',idx}));
-  $('s4-qarea').style.display='none';
-  $('s4-rev-content').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
-  $('s4-reveal').style.display='block';
+  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
 };
 
 window.restartGame=function(){
@@ -656,7 +655,7 @@ function showBuzzResult(msg){
   const {buzzer,buzzer_name,buzzer_gender}=msg;
   const btn=$('buzz-btn');btn.className='buzz-btn disabled';
   if(buzzer===myNum){
-    $('buzz-status').innerHTML='<span style="color:var(--yellow)">🎯 '+lchatzta(myNum)+'! '+answerVerb(myNum)+'</span>';
+    $('buzz-status').innerHTML='<div style="color:var(--yellow)">🎯 '+lchatzta(myNum)+'! '+answerVerb(myNum)+'</div>';
     if(msg.both_buzzed && msg.time_diff !== null){
       $('buzz-status').innerHTML += '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;">לחצת מהר יותר ב-'+msg.time_diff+' שניות</div>';
     }
@@ -664,7 +663,7 @@ function showBuzzResult(msg){
     $('s2-judge-area').style.display='none';
     btn.textContent=gOf(myNum)==='f'?'את עונה!':'אתה עונה!';
   } else {
-    $('buzz-status').innerHTML='<span style="color:rgba(255,255,255,.5)">'+buzzer_name+' '+(buzzer_gender==='f'?'לחצה':'לחץ')+' ראשונ'+(buzzer_gender==='f'?'ה':'')+' ...</span>';
+    $('buzz-status').innerHTML='<div style="color:rgba(255,255,255,.5)">'+buzzer_name+' '+(buzzer_gender==='f'?'לחצה':'לחץ')+' ראשונ'+(buzzer_gender==='f'?'ה':'')+' ...</div>';
     if(msg.both_buzzed && msg.time_diff !== null){
       $('buzz-status').innerHTML += '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;">'+buzzer_name+' לחץ/ה מהר יותר ב-'+msg.time_diff+' שניות</div>';
     }
@@ -732,28 +731,19 @@ function showRevealS3(msg){
 
 function renderS4Q(q,qdata,total){
   $('s4-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
-  $('s4-qnum').style.display='';
-  $('s4-dots').style.display='';
   $('s4-qtext').textContent=qdata.q;
   mkDots('s4-dots',total,q);
   $('s4-self-label').textContent=selfLabel(myNum);
-  $('s4-self-label').style.color='';
-  $('s4-self-label').style.fontSize='';
   $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="answerS4('+i+')">'+o+'</button>').join('');
   $('s4-qarea').style.display='block';
-  $('s4-guess-area').style.display='none';
   $('s4-reveal').style.display='none';
 }
 
 function showGuessS4(msg){
   const {qdata}=msg;
   const on=myNum===1?2:1;
-  // Update s4-qarea in-place — no layout shift
-  $('s4-qnum').style.display='none';
-  $('s4-dots').style.display='none';
+  // Update label only — same design, no layout shift
   $('s4-self-label').textContent='עכשיו נחש/י מה '+nOf(on)+' '+answeredStr(on)+':';
-  $('s4-self-label').style.color='var(--teal)';
-  $('s4-self-label').style.fontSize='14px';
   $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="guessS4('+i+')">'+o+'</button>').join('');
 }
 
@@ -772,8 +762,8 @@ function showRevealS4(msg){
     stories+
     '<div class="match-banner '+(guesses.g1ok?'match-yes':'match-no')+'">'+gN.p1+': '+(guesses.g1ok?'✅ ניחוש נכון! +'+pts1:'❌ טעות')+'</div>'+
     '<div class="match-banner '+(guesses.g2ok?'match-yes':'match-no')+'">'+gN.p2+': '+(guesses.g2ok?'✅ ניחוש נכון! +'+pts2:'❌ טעות')+'</div>';
+  $('s4-qarea').style.display='none';
   $('s4-reveal').style.display='block';
-  $('s4-guess-area').style.display='none';
   $('s4-next').style.display=myNum===1?'block':'none';
   $('s4-wait-next').style.display=myNum===2?'block':'none';
 }
@@ -871,7 +861,7 @@ const MSG_HANDLERS={
     showS2Result(msg);
   },
   stage_summary:(msg)=>{
-    const stageNames={1:'מי אנחנו? 🤔',2:'מהיר יותר! ⚡',3:'דעות חמות 🔥',4:'אני מכיר אותך 🃏'};
+    const stageNames={1:'מי אנחנו? 🤔',2:'מהיר יותר! ⚡',3:'דעות קדומות 🔥',4:'אני מכיר אותך 🃏'};
     $('ss-stage-label').textContent='סיכום שלב '+msg.stage;
     $('ss-title').textContent=stageNames[msg.stage]||'';
     if(msg.scores){

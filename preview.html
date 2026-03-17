@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>זוגיסט — תצוגה מקדימה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#FF4D8D;--purple:#7B2FFF;--yellow:#FFD93D;--teal:#00E5CC;--dark:#0D0D1A;--card:#1A1A2E;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:#080810;color:#fff;padding:40px 20px;}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 20%,rgba(123,47,255,.08) 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(255,77,141,.08) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+h1{text-align:center;font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.subtitle{text-align:center;color:rgba(255,255,255,.4);font-size:14px;margin-bottom:40px;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:32px;max-width:1400px;margin:0 auto;position:relative;z-index:1;}
+
+.screen-wrap{display:flex;flex-direction:column;gap:10px;}
+.screen-label{font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;padding:0 4px;}
+.screen-box{background:var(--dark);border-radius:24px;padding:24px;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:18px;min-height:200px;}
+
+/* === copied styles from game === */
+.logo{font-size:52px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center;}
+.tagline{font-size:16px;color:rgba(255,255,255,.6);text-align:center;}
+.card{background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:14px;}
+input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:14px;color:#fff;font-size:18px;font-family:'Heebo',sans-serif;text-align:center;outline:none;}
+.btn{width:100%;padding:18px;border:none;border-radius:16px;font-size:18px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
+.btn-secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--dark);}
+.gender-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.gender-btn{padding:14px;border:2px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.06);color:#fff;font-size:20px;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;text-align:center;}
+.gender-btn.selected{border-color:var(--pink);background:rgba(255,77,141,.15);color:var(--pink);}
+.code-display{font-size:52px;font-weight:900;letter-spacing:12px;text-align:center;color:var(--yellow);padding:16px;}
+.waiting-dots span{display:inline-block;color:var(--pink);font-size:28px;}
+.intro-card{background:var(--card);border-radius:24px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:16px;}
+.intro-emoji{font-size:56px;line-height:1;}
+.intro-title{font-size:26px;font-weight:900;}
+.intro-desc{font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;}
+.intro-rules{display:flex;flex-direction:column;gap:10px;text-align:right;}
+.intro-rule{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.8);background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;}
+.intro-rule-icon{font-size:18px;flex-shrink:0;}
+.intro-points{background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);border-radius:14px;padding:14px;font-size:13px;color:var(--yellow);font-weight:700;text-align:center;}
+.countdown-wrap{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.countdown-num{font-size:120px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.countdown-label{font-size:18px;color:rgba(255,255,255,.5);}
+.stage-header{text-align:center;width:100%;}
+.stage-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:10px;background:rgba(255,255,255,.1);color:var(--yellow);letter-spacing:1px;}
+.stage-title{font-size:28px;font-weight:900;margin-bottom:6px;}
+.stage-subtitle{font-size:14px;color:rgba(255,255,255,.5);}
+.question-card{background:var(--card);border-radius:24px;padding:28px 24px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.1);}
+.q-num{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px;letter-spacing:1px;}
+.q-text{font-size:22px;font-weight:700;line-height:1.4;margin-bottom:24px;}
+.answer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-yes{background:linear-gradient(135deg,#00E676,#00BFA5);color:var(--dark);font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;font-family:'Heebo',sans-serif;width:100%;}
+.btn-no{background:linear-gradient(135deg,#FF5252,#D50000);color:#fff;font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;font-family:'Heebo',sans-serif;width:100%;}
+.waiting-answer{padding:20px;text-align:center;color:rgba(255,255,255,.5);font-size:15px;}
+.result-reveal{width:100%;display:flex;flex-direction:column;gap:12px;}
+.p-ans{background:var(--card);border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,.08);}
+.p-name{font-size:14px;color:rgba(255,255,255,.6);}
+.p-val{font-size:18px;font-weight:900;}
+.match-banner{text-align:center;padding:14px;border-radius:16px;font-size:17px;font-weight:700;}
+.match-yes{background:rgba(0,230,118,.15);color:#00E676;border:1px solid rgba(0,230,118,.3);}
+.match-no{background:rgba(255,82,82,.15);color:#FF5252;border:1px solid rgba(255,82,82,.3);}
+.story-card{background:rgba(255,255,255,.04);border-radius:14px;padding:14px 18px;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.07);text-align:right;}
+.score-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--card);border-radius:14px;border:1px solid rgba(255,255,255,.06);}
+.sc-item{text-align:center;}
+.sc-name{font-size:12px;color:rgba(255,255,255,.5);}
+.sc-val{font-size:28px;font-weight:900;color:var(--yellow);}
+.sc-vs{font-size:16px;color:rgba(255,255,255,.3);font-weight:700;}
+.buzz-btn{width:100%;padding:40px;border-radius:28px;font-size:28px;font-weight:900;font-family:'Heebo',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--yellow),#FF9800);color:var(--dark);box-shadow:0 8px 30px rgba(255,217,61,.3);}
+.buzz-status{text-align:center;font-size:18px;padding:16px;font-weight:700;}
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);}
+.dot.done{background:var(--pink)}.dot.cur{background:var(--yellow);transform:scale(1.3)}
+.s4-self-label{font-size:20px;font-weight:700;color:var(--yellow);margin-bottom:16px;display:block;}
+.s4-guess-label{font-size:14px;color:var(--teal);margin-bottom:16px;}
+.final-screen{text-align:center;width:100%;}
+.trophy{font-size:80px;display:block;}
+.winner-text{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--yellow),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0;}
+.final-scores{width:100%;display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.final-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-radius:16px;background:var(--card);border:1px solid rgba(255,255,255,.08);}
+.final-row.win{border-color:var(--yellow);background:rgba(255,217,61,.08);}
+.summary-screen{text-align:center;width:100%;display:flex;flex-direction:column;gap:16px;}
+.summary-stat{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;padding:14px 18px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.07);}
+.summary-comment{font-size:17px;font-weight:700;color:var(--yellow);padding:14px 18px;background:rgba(255,217,61,.08);border-radius:14px;border:1px solid rgba(255,217,61,.2);}
+.compat-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 0 40px rgba(255,77,141,.35);}
+.compat-num{font-size:42px;font-weight:900;color:#fff;line-height:1;}
+.compat-label{font-size:13px;color:rgba(255,255,255,.85);margin-top:4px;}
+.highlight-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;font-size:14px;color:rgba(255,255,255,.8);text-align:right;width:100%;}
+.summary-lines{display:flex;flex-direction:column;gap:8px;text-align:right;width:100%;}
+.summary-line{font-size:15px;color:rgba(255,255,255,.85);line-height:1.6;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.summary-line:last-child{border-bottom:none;}
+.streak-banner{padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;margin-top:6px;}
+.streak-agree{background:rgba(0,230,118,.12);color:#00E676;border:1px solid rgba(0,230,118,.25);}
+.streak-disagree{background:rgba(255,82,82,.12);color:#FF5252;border:1px solid rgba(255,82,82,.25);}
+.q-counter{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1px;margin-bottom:8px;text-align:center;}
+.scale-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px;flex-wrap:wrap;}
+.scale-btn{width:48px;height:48px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:18px;font-weight:900;cursor:pointer;font-family:'Heebo',sans-serif;}
+.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.4);padding:0 4px;}
+.s2-judge-box{background:rgba(255,255,255,.06);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;}
+.s2-ans-label{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px;}
+.s2-ans-val{font-size:22px;font-weight:900;color:var(--yellow);}
+.buzz-winner{text-align:center;padding:16px;font-size:20px;font-weight:700;color:var(--yellow);}
+</style>
+</head>
+<body>
+
+<h1>זוגיסט 💑 — תצוגה מקדימה</h1>
+<p class="subtitle">כל מסכי המשחק עם נתוני דוגמה</p>
+
+<div class="grid">
+
+<!-- 1. HOME -->
+<div class="screen-wrap">
+  <div class="screen-label">1 · מסך פתיחה</div>
+  <div class="screen-box">
+    <div class="logo">זוגיסט 💑</div>
+    <div class="tagline">משחק היכרות תחרותי לזוגות</div>
+    <div class="card">
+      <span style="font-size:14px;color:rgba(255,255,255,.5)">השם שלך</span>
+      <input value="נועה" readonly>
+      <span style="font-size:14px;color:rgba(255,255,255,.5)">המגדר שלך</span>
+      <div class="gender-row">
+        <button class="gender-btn">גבר 👦</button>
+        <button class="gender-btn selected">אישה 👧</button>
+      </div>
+      <button class="btn btn-primary">✨ צור חדר חדש</button>
+      <button class="btn btn-secondary">🔗 הצטרף לחדר</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. WAITING FOR P2 -->
+<div class="screen-wrap">
+  <div class="screen-label">2 · המתנה לשחקן 2</div>
+  <div class="screen-box">
+    <div class="logo" style="font-size:36px;">ממתין לשחקן השני...</div>
+    <div style="background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:14px;color:rgba(255,255,255,.5)">שתף את הקוד הזה</div>
+      <div class="code-display">7382</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.4)">השני מכניס את הקוד ומצטרף</div>
+    </div>
+    <div class="waiting-dots"><span>●</span> <span>●</span> <span>●</span></div>
+  </div>
+</div>
+
+<!-- 3. MODE SELECT -->
+<div class="screen-wrap">
+  <div class="screen-label">3 · בחירת מצב משחק (שחקן 1)</div>
+  <div class="screen-box">
+    <div class="logo" style="font-size:32px;">בחר/י מצב משחק</div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-primary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;">🎮</span>
+        <span><strong>משחק מלא</strong><br><small style="font-weight:400;opacity:.7">כל 4 השלבים ברצף</small></span>
+      </button>
+      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;">🤔</span><span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">10 שאלות כן/לא על הרגלים, העדפות ואישיות</small></span>
+      </button>
+      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;">⚡</span><span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">10 שאלות טריוויה כללית - הראשון שלוחץ עונה</small></span>
+      </button>
+      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;">🔥</span><span><strong>דעות קדומות</strong><br><small style="font-weight:400;opacity:.7">10 הצהרות שנויות במחלוקת - בחירה בסקאלה של 1-5</small></span>
+      </button>
+      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;">🃏</span><span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">10 שאלות אמריקאיות - קודם בחר בעצמך ואז נחש מה בן/ת הזוג יבחרו</small></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. P2 WAITING MODE -->
+<div class="screen-wrap">
+  <div class="screen-label">4 · שחקן 2 ממתין לבחירת מצב</div>
+  <div class="screen-box">
+    <div class="logo" style="font-size:30px;">⏳ רגע...</div>
+    <div style="background:var(--card);border-radius:20px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:52px;">🎮</div>
+      <div style="font-size:20px;font-weight:700;">נועה</div>
+      <div style="font-size:15px;color:rgba(255,255,255,.6);">בוחרת את סוג המשחק...</div>
+      <div class="waiting-dots"><span>●</span> <span>●</span> <span>●</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. MODE ANNOUNCE -->
+<div class="screen-wrap">
+  <div class="screen-label">5 · הודעת מצב משחק (לשניהם)</div>
+  <div class="screen-box">
+    <div style="background:var(--card);border-radius:24px;padding:32px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;">סוג המשחק שנבחר</div>
+      <div style="font-size:72px;line-height:1;">🎮</div>
+      <div style="font-size:30px;font-weight:900;">משחק מלא</div>
+      <div style="font-size:15px;color:rgba(255,255,255,.6);line-height:1.5;">כל 4 השלבים ברצף — כן/לא, טריוויה, דעות וניחושים!</div>
+      <button class="btn btn-primary" style="margin-top:8px;">🚀 בואו נתחיל!</button>
+    </div>
+  </div>
+</div>
+
+<!-- 6. COUNTDOWN -->
+<div class="screen-wrap">
+  <div class="screen-label">6 · ספירה לאחור</div>
+  <div class="screen-box" style="justify-content:center;min-height:260px;">
+    <div class="countdown-wrap">
+      <div class="countdown-num">3</div>
+      <div class="countdown-label">מתחילים!</div>
+    </div>
+  </div>
+</div>
+
+<!-- 7. INTRO S1 -->
+<div class="screen-wrap">
+  <div class="screen-label">7 · מבוא שלב 1 — מי אנחנו?</div>
+  <div class="screen-box">
+    <div class="intro-card">
+      <div class="intro-emoji">🤔</div>
+      <div class="intro-title">מי אנחנו?</div>
+      <div class="intro-desc">שלב ההכרות – ענו בנפרד ותגלו כמה אתם מסכימים!</div>
+      <div class="intro-rules">
+        <div class="intro-rule"><span class="intro-rule-icon">📝</span><span>10 שאלות על הרגלים ואישיות</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד – בלי לראות את תשובת השני</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">🎉</span><span>אחרי ששניכם עניתם – רואים יחד את התוצאה</span></div>
+      </div>
+      <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
+      <button class="btn btn-primary">▶️ התחל שלב</button>
+    </div>
+  </div>
+</div>
+
+<!-- 8. S1 QUESTION -->
+<div class="screen-wrap">
+  <div class="screen-label">8 · שלב 1 — שאלה</div>
+  <div class="screen-box">
+    <div class="stage-header">
+      <div class="stage-badge">שלב 1 מתוך 4</div>
+      <div class="stage-title">🤔 מי אנחנו?</div>
+      <div class="stage-subtitle">ענו בנפרד – נראה כמה אתם מסכימים</div>
+    </div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">5</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">3</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">שאלה 3 מתוך 10</div>
+      <div class="dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot cur"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="q-text">את אוהבת לבשל</div>
+      <div class="answer-row">
+        <button class="btn-yes">כן ✓</button>
+        <button class="btn-no">לא ✗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 9. S1 REVEAL -->
+<div class="screen-wrap">
+  <div class="screen-label">9 · שלב 1 — חשיפת תשובות</div>
+  <div class="screen-box">
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
+    </div>
+    <div class="result-reveal">
+      <div class="q-counter">שאלה 3 מתוך 10</div>
+      <div style="font-size:20px;font-weight:700;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;">את אוהבת לבשל</div>
+      <div class="p-ans"><span class="p-name">נועה</span><span class="p-val">כן ✅</span></div>
+      <div class="p-ans"><span class="p-name">יואב</span><span class="p-val">כן ✅</span></div>
+      <div class="match-banner match-yes">💞 הסכמתם! נועה ענתה ראשונה</div>
+      <div class="streak-banner streak-agree">3 הסכמות ברצף! 🔥 אתם כאילו חשבתם יחד</div>
+    </div>
+    <button class="btn btn-primary">הבא ➡️</button>
+  </div>
+</div>
+
+<!-- 10. INTRO S2 -->
+<div class="screen-wrap">
+  <div class="screen-label">10 · מבוא שלב 2 — מהיר יותר!</div>
+  <div class="screen-box">
+    <div class="intro-card">
+      <div class="intro-emoji">⚡</div>
+      <div class="intro-title">מהיר יותר!</div>
+      <div class="intro-desc">שלב הבזק – מי יודע יותר, ומי יודע מהר יותר?</div>
+      <div class="intro-rules">
+        <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון יכול לענות בקול</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">👀</span><span>השני רואה את התשובה הנכונה ושופט אם השותף צדק</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">⚠️</span><span>טעות = נקודה לצד השני!</span></div>
+      </div>
+      <div class="intro-points">🏆 לחצת ראשון וענית נכון = +2 לך | לחצת אבל טעית? = +1 לשני</div>
+      <button class="btn btn-primary">▶️ התחל שלב</button>
+    </div>
+  </div>
+</div>
+
+<!-- 11. S2 QUESTION + BUZZ -->
+<div class="screen-wrap">
+  <div class="screen-label">11 · שלב 2 — שאלת טריוויה + כפתור באז</div>
+  <div class="screen-box">
+    <div class="stage-header">
+      <div class="stage-badge">שלב 2 מתוך 4</div>
+      <div class="stage-title">⚡ מהיר יותר!</div>
+      <div class="stage-subtitle">מי שלוחץ ראשון עונה</div>
+    </div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">שאלה 5 מתוך 10</div>
+      <div class="dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="q-text">מה הבירה של אוסטרליה?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.4)">רמז: לא סידני ולא מלבורן!</div>
+    </div>
+    <button class="buzz-btn">⚡ אני יודע!</button>
+  </div>
+</div>
+
+<!-- 12. S2 BUZZ RESULT + JUDGE -->
+<div class="screen-wrap">
+  <div class="screen-label">12 · שלב 2 — לאחר לחיצת באז (שופט)</div>
+  <div class="screen-box">
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
+    </div>
+    <div class="buzz-winner">⚡ נועה לחצה ראשונה!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-top:4px;">נועה לחצה מהר יותר ב-0.23 שניות</div>
+    <div class="s2-judge-box">
+      <div class="s2-ans-label">התשובה הנכונה:</div>
+      <div class="s2-ans-val">קנברה</div>
+    </div>
+    <div style="font-size:15px;color:rgba(255,255,255,.7);text-align:center;margin-bottom:10px;">נועה אמרה — האם צדקה?</div>
+    <div class="answer-row">
+      <button class="btn-yes">צודק ✅</button>
+      <button class="btn-no">לא צודק ❌</button>
+    </div>
+  </div>
+</div>
+
+<!-- 13. INTRO S3 -->
+<div class="screen-wrap">
+  <div class="screen-label">13 · מבוא שלב 3 — דעות חמות</div>
+  <div class="screen-box">
+    <div class="intro-card">
+      <div class="intro-emoji">🔥</div>
+      <div class="intro-title">דעות קדומות</div>
+      <div class="intro-desc">שלב הדעות – מסכים או לא? נגלה כמה אתם חושבים דומה!</div>
+      <div class="intro-rules">
+        <div class="intro-rule"><span class="intro-rule-icon">💬</span><span>10 הצהרות שנויות במחלוקת</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד בסקאלה 1–5</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">🎭</span><span>אחר כך רואים יחד – הסכמתם? 👀</span></div>
+      </div>
+      <div class="intro-points">🏆 כמות הנקודות תלויה בכם ;) | שימו לב, הראשון שיענה יקבל בונוס או קנס בהתאם למרחק הדעות!</div>
+      <button class="btn btn-primary">▶️ התחל שלב</button>
+    </div>
+  </div>
+</div>
+
+<!-- 14. S3 QUESTION -->
+<div class="screen-wrap">
+  <div class="screen-label">14 · שלב 3 — הצהרה + סקאלה</div>
+  <div class="screen-box">
+    <div class="stage-header">
+      <div class="stage-badge">שלב 3 מתוך 4</div>
+      <div class="stage-title">🔥 דעות קדומות</div>
+      <div class="stage-subtitle">מסכים או לא? נגלה יחד</div>
+    </div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">14</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">11</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">הצהרה 4 מתוך 10</div>
+      <div class="dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+        <div class="dot cur"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="q-text">כסף קונה אושר</div>
+      <div class="scale-row">
+        <button class="scale-btn">1</button>
+        <button class="scale-btn">2</button>
+        <button class="scale-btn">3</button>
+        <button class="scale-btn">4</button>
+        <button class="scale-btn">5</button>
+      </div>
+      <div class="scale-labels"><span>מתנגד/ת בחריפות</span><span>מסכים/ה מאוד</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 15. S3 REVEAL -->
+<div class="screen-wrap">
+  <div class="screen-label">15 · שלב 3 — חשיפת דעות</div>
+  <div class="screen-box">
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">17</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">11</div></div>
+    </div>
+    <div class="result-reveal">
+      <div class="q-counter">הצהרה 4 מתוך 10</div>
+      <div style="font-size:20px;font-weight:700;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;">כסף קונה אושר</div>
+      <div class="p-ans"><span class="p-name">נועה</span><span class="p-val">4 – מסכימה <small style="font-size:13px;color:#00E676">(+3)</small></span></div>
+      <div class="p-ans"><span class="p-name">יואב</span><span class="p-val">4 – מסכים <small style="font-size:13px;color:#00E676">(+3)</small></span></div>
+      <div class="match-banner" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);">הפרש בין התשובות: 0</div>
+      <div class="match-banner match-yes">🎯 פגיעה בול! +3 נקודות לשניכם</div>
+      <div class="match-banner" style="background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);color:var(--yellow);">⚡ נועה ענתה ראשונה – בונוס: +2</div>
+    </div>
+    <button class="btn btn-primary">הבא ➡️</button>
+  </div>
+</div>
+
+<!-- 16. INTRO S4 -->
+<div class="screen-wrap">
+  <div class="screen-label">16 · מבוא שלב 4 — אני מכיר אותך</div>
+  <div class="screen-box">
+    <div class="intro-card">
+      <div class="intro-emoji">🃏</div>
+      <div class="intro-title">אני מכיר אותך</div>
+      <div class="intro-desc">שלב הניחושים – כמה אתם באמת מכירים אחד את השני?</div>
+      <div class="intro-rules">
+        <div class="intro-rule"><span class="intro-rule-icon">✍️</span><span>קודם עונים על עצמכם</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">🔮</span><span>אחר כך מנחשים מה השני בחר</span></div>
+        <div class="intro-rule"><span class="intro-rule-icon">😲</span><span>גלו מי הכי מכיר את מי!</span></div>
+      </div>
+      <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
+      <button class="btn btn-primary">▶️ התחל שלב</button>
+    </div>
+  </div>
+</div>
+
+<!-- 17. S4 SELF ANSWER -->
+<div class="screen-wrap">
+  <div class="screen-label">17 · שלב 4 — תשובה על עצמך</div>
+  <div class="screen-box">
+    <div class="stage-header">
+      <div class="stage-badge">שלב 4 מתוך 4</div>
+      <div class="stage-title">🃏 אני מכיר אותך</div>
+      <div class="stage-subtitle">ענה/י על עצמך + נחש/י את השני</div>
+    </div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">19</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">14</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">שאלה 2 מתוך 10</div>
+      <div class="dots">
+        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="q-text">מה הייתם קונים עם מיליון שקל?</div>
+      <span class="s4-self-label">קודם ענה על עצמך:</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">דירה 🏠</button>
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">טיול בעולם ✈️</button>
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">רכב יוקרה 🚗</button>
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">השקעות 📈</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 18. S4 GUESS PHASE -->
+<div class="screen-wrap">
+  <div class="screen-label">18 · שלב 4 — שלב הניחוש</div>
+  <div class="screen-box">
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">19</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">14</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">שאלה 2 מתוך 10</div>
+      <div class="dots">
+        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="q-text">מה הייתם קונים עם מיליון שקל?</div>
+      <span class="s4-self-label">עכשיו נחש/י מה יואב ענה:</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">דירה 🏠</button>
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">טיול בעולם ✈️</button>
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">רכב יוקרה 🚗</button>
+        <button class="btn btn-secondary" style="text-align:right;padding:16px;">השקעות 📈</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 19. S4 REVEAL -->
+<div class="screen-wrap">
+  <div class="screen-label">19 · שלב 4 — חשיפת תשובות וניחושים</div>
+  <div class="screen-box">
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">21</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">15</div></div>
+    </div>
+    <div class="result-reveal">
+      <div class="q-counter">שאלה 2 מתוך 10</div>
+      <div style="font-size:20px;font-weight:700;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;">מה הייתם קונים עם מיליון שקל?</div>
+      <div class="p-ans"><span class="p-name">נועה ענתה על עצמה</span><span class="p-val" style="font-size:14px">דירה 🏠</span></div>
+      <div class="p-ans"><span class="p-name">יואב ענה על עצמו</span><span class="p-val" style="font-size:14px">טיול בעולם ✈️</span></div>
+      <div class="story-card">💬 נועה ניחשה "דירה 🏠" אבל יואב ענה "טיול בעולם ✈️" — פספוס!</div>
+      <div class="match-banner match-yes">נועה: ✅ ניחוש נכון! +2</div>
+      <div class="match-banner match-no">יואב: ❌ טעות</div>
+    </div>
+    <button class="btn btn-primary">הבא ➡️</button>
+  </div>
+</div>
+
+<!-- 20. STAGE SUMMARY -->
+<div class="screen-wrap">
+  <div class="screen-label">20 · סיכום שלב</div>
+  <div class="screen-box">
+    <div class="summary-screen">
+      <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;">סיכום שלב 1</div>
+      <div style="font-size:26px;font-weight:900;">מי אנחנו? 🤔</div>
+      <div class="score-bar">
+        <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
+        <div class="sc-vs">VS</div>
+        <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
+      </div>
+      <div class="summary-stat">7 הסכמות מתוך 10 שאלות (70%)</div>
+      <div class="summary-comment">הסכמתם יותר ממה שחשבתם – ביחד עדיף מלבד 🤝</div>
+      <button class="btn btn-primary">המשך ➡️</button>
+    </div>
+  </div>
+</div>
+
+<!-- 21. FINAL -->
+<div class="screen-wrap">
+  <div class="screen-label">21 · מסך סיום</div>
+  <div class="screen-box">
+    <div class="final-screen">
+      <span class="trophy">🏆</span>
+      <div class="winner-text">נועה ניצחה! 🎉</div>
+      <div style="color:rgba(255,255,255,.5);font-size:15px;">תוצאות המשחק</div>
+      <div style="text-align:center;margin:8px 0;">
+        <div class="compat-circle">
+          <div class="compat-num">74%</div>
+          <div class="compat-label">התאמה</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;width:100%;margin-bottom:8px;">
+        <div class="highlight-box"><span style="color:#00E676;font-size:12px;font-weight:700;">✅ הכי הסכמתם על: </span>כלבים עדיפים על חתולים</div>
+        <div class="highlight-box"><span style="color:#FF5252;font-size:12px;font-weight:700;">🔥 הכי חלקתם על:</span> כסף קונה אושר</div>
+      </div>
+      <div class="summary-lines">
+        <div class="summary-line">רמת התאמה 74% – לא תאומים, אבל גם לא מדינות שונות.</div>
+        <div class="summary-line">נועה ניצחה בהפרש קטן – יואב כנראה כבר מתכנן נקמה.</div>
+        <div class="summary-line">ועכשיו אתם יודעים. ממש יודעים.</div>
+      </div>
+      <div class="final-scores">
+        <div class="final-row win"><span style="font-size:18px;font-weight:700">👑 נועה</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">38</span></div>
+        <div class="final-row"><span style="font-size:18px;font-weight:700">יואב</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">31</span></div>
+      </div>
+      <button class="btn btn-primary">🔄 משחק חדש</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /grid -->
+</body>
+</html>
