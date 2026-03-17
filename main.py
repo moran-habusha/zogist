@@ -419,6 +419,8 @@ async def handle_next_question(ws, data):
     room, pnum = get_room_and_pnum(ws)
     if not room or pnum != 1:
         return
+    if room.pending_next is not None:
+        return  # already transitioning to next stage, ignore duplicate
     stage = room.stage
     qs = room.questions[f's{stage}']
     nq = room.q + 1

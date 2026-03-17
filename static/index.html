@@ -98,9 +98,9 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .summary-screen{text-align:center;width:100%;display:flex;flex-direction:column;gap:16px;}
 .summary-stat{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;padding:14px 18px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.07);}
 .summary-comment{font-size:17px;font-weight:700;color:var(--yellow);padding:14px 18px;background:rgba(255,217,61,.08);border-radius:14px;border:1px solid rgba(255,217,61,.2);}
-.compat-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;}
-.compat-num{font-size:30px;font-weight:900;color:#fff;line-height:1;}
-.compat-label{font-size:11px;color:rgba(255,255,255,.8);}
+.compat-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 0 40px rgba(255,77,141,.35);}
+.compat-num{font-size:42px;font-weight:900;color:#fff;line-height:1;}
+.compat-label{font-size:13px;color:rgba(255,255,255,.85);margin-top:4px;}
 .highlight-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;font-size:14px;color:rgba(255,255,255,.8);text-align:right;}
 .summary-lines{display:flex;flex-direction:column;gap:8px;text-align:right;}
 .summary-line{font-size:15px;color:rgba(255,255,255,.85);line-height:1.6;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
@@ -565,6 +565,8 @@ window.p1StartStage=function(stageNum){
 };
 
 window.p1AdvQ=function(stage){
+  const btn=$('s'+stage+'-next');
+  if(btn){btn.disabled=true;}
   ws.send(JSON.stringify({type:'next_question',stage}));
 };
 
@@ -596,7 +598,7 @@ window.answerS4=function(idx){
 
 window.guessS4=function(idx){
   ws.send(JSON.stringify({type:'guess_s4',idx}));
-  $('s4-guess-area').style.display='none';
+  $('s4-qarea').style.display='none';
   $('s4-rev-content').innerHTML='<div class="waiting-answer">ממתינ/ה לשני... ⏳</div>';
   $('s4-reveal').style.display='block';
 };
@@ -730,9 +732,13 @@ function showRevealS3(msg){
 
 function renderS4Q(q,qdata,total){
   $('s4-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
+  $('s4-qnum').style.display='';
+  $('s4-dots').style.display='';
   $('s4-qtext').textContent=qdata.q;
   mkDots('s4-dots',total,q);
   $('s4-self-label').textContent=selfLabel(myNum);
+  $('s4-self-label').style.color='';
+  $('s4-self-label').style.fontSize='';
   $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="answerS4('+i+')">'+o+'</button>').join('');
   $('s4-qarea').style.display='block';
   $('s4-guess-area').style.display='none';
@@ -742,11 +748,13 @@ function renderS4Q(q,qdata,total){
 function showGuessS4(msg){
   const {qdata}=msg;
   const on=myNum===1?2:1;
-  $('s4-guess-text').textContent='מה '+heStr(on)+' '+answeredStr(on)+'?';
-  $('s4-guess-label').textContent='עכשיו נחש/י מה '+nOf(on)+' '+answeredStr(on)+':';
-  $('s4-guess-opts').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="guessS4('+i+')">'+o+'</button>').join('');
-  $('s4-qarea').style.display='none';
-  $('s4-guess-area').style.display='block';
+  // Update s4-qarea in-place — no layout shift
+  $('s4-qnum').style.display='none';
+  $('s4-dots').style.display='none';
+  $('s4-self-label').textContent='עכשיו נחש/י מה '+nOf(on)+' '+answeredStr(on)+':';
+  $('s4-self-label').style.color='var(--teal)';
+  $('s4-self-label').style.fontSize='14px';
+  $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="guessS4('+i+')">'+o+'</button>').join('');
 }
 
 function showRevealS4(msg){
@@ -782,7 +790,7 @@ function renderFinal(msg){
   let hlHtml='';
   if(highlights){
     if(highlights.agreed) hlHtml+='<div class="highlight-box" style="border-color:rgba(0,230,118,.2);"><span style="color:#00E676;font-size:12px;font-weight:700;">✅ הכי הסכמתם על: </span>'+highlights.agreed+'</div>';
-    if(highlights.disputed) hlHtml+='<div class="highlight-box" style="border-color:rgba(255,82,82,.2);"><span style="color:#FF5252;font-size:12px;font-weight:700;">🔥 הכי נחלקתם על: </span>'+highlights.disputed+'</div>';
+    if(highlights.disputed) hlHtml+='<div class="highlight-box" style="border-color:rgba(255,82,82,.2);"><span style="color:#FF5252;font-size:12px;font-weight:700;">🔥 הכי חלקתם על:</span>'+highlights.disputed+'</div>';
   }
 
   // Summary lines
