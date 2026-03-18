@@ -712,7 +712,15 @@ function renderLLLangCard(langKey,g,tipsType){
 
 async function saveResultsImage(){
   const el=$('sc-ll-results');
-  const canvas=await html2canvas(el,{backgroundColor:'#0D0D1A',useCORS:true,scale:2,width:el.scrollWidth,height:el.scrollHeight,windowWidth:el.scrollWidth,windowHeight:el.scrollHeight});
+  const prevMaxHeight=el.style.maxHeight;
+  const prevOverflow=el.style.overflow;
+  el.style.maxHeight='none';
+  el.style.overflow='visible';
+  await new Promise(r=>setTimeout(r,100));
+  const h=el.scrollHeight;
+  const canvas=await html2canvas(el,{backgroundColor:'#080810',useCORS:true,scale:2,width:el.offsetWidth,height:h,windowWidth:el.offsetWidth,windowHeight:h,scrollX:0,scrollY:0});
+  el.style.maxHeight=prevMaxHeight;
+  el.style.overflow=prevOverflow;
   canvas.toBlob(async(blob)=>{
     const file=new File([blob],'love-languages.png',{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){
