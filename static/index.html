@@ -123,6 +123,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .ll-tips{padding-right:18px;display:flex;flex-direction:column;gap:4px;}
 .ll-tips li{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -306,7 +307,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="q-text" id="s2-qtext"></div>
     <div style="font-size:13px;color:rgba(255,255,255,.4)" id="s2-hint"></div>
   </div>
-  <button class="buzz-btn" id="buzz-btn" onclick="buzz()">⚡ אני יודע!</button>
+  <button class="buzz-btn" id="buzz-btn" onclick="buzz()">⚡ אני יודע/ת!</button>
   <div class="buzz-status" id="buzz-status"></div>
   <div id="s2-judge-area" style="display:none;width:100%;">
     <div style="background:rgba(255,255,255,.06);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;">
@@ -452,6 +453,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
 <!-- LL RESULTS -->
 <div class="screen" id="sc-ll-results" style="overflow-y:auto;max-height:92vh;padding-bottom:30px;">
   <div class="logo" style="font-size:26px;">💬 שפות האהבה שלכם</div>
+  <div style="width:100%;text-align:center;font-size:15px;font-weight:700;background:linear-gradient(135deg,#FF4D8D,#7B2FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"><span id="ll-save-text"></span> ← <span style="font-size:20px;cursor:pointer;-webkit-text-fill-color:initial;" onclick="saveResultsImage()">💾</span></div>
   <div id="ll-results-content" style="width:100%;display:flex;flex-direction:column;gap:16px;"></div>
   <div id="ll-after-btns" style="width:100%;margin-top:8px;display:flex;flex-direction:column;gap:12px;"></div>
 </div>
@@ -476,19 +478,24 @@ let llQuestions=[], llAnswers=[], llQIdx=0;
 const LL_DEFS={
   quality_time:{name:'זמן איכות',icon:'⏰',
     desc:'נוכחות מלאה ותשומת לב בלתי מחולקת — לא סתם להיות באותו חדר, אלא להיות ממוקד/ת בשני בלבד. בלי טלפון, בלי מסך ברקע, בלי "רגע אחד". מי שמרגיש/ה אהוב/ה דרך זמן איכות לא בהכרח צריך/ה אירועים גדולים — גם עשר דקות שלמות ומחוברות שוות לו/לה יותר משעה של ישיבה זה ליד זה.',
-    tips:['כבה/י את הטלפון — לא רק בשקט, ממש עם המסך הפוך — כשאת/ה שומע/ת שהשני מתחיל לדבר על משהו שחשוב לו/לה','הצע/י זמן שהוא רק שלכם: "בא לנו לצאת ביחד בסוף השבוע — רק שנינו?" גם שעה אחת בשבוע עושה הבדל','כשאת/ה נמצא/ת לידו/לידה, אך נוכח/ת — גם בלי שיחה. לפעמים הישיבה ביחד בשקט, מחוברים, היא עצמה ה"שפה"','שאל/י שאלות אמיתיות על היום שלו/שלה — לא רק "איך היה" אלא "מה היה הרגע הכי טוב? מה הרגיז אותך?"']},
+    tips_give:['כבה/י את הטלפון — לא רק בשקט, ממש עם המסך הפוך — כשאת/ה שומע/ת שהשני מתחיל לדבר על משהו שחשוב לו/לה','הצע/י זמן שהוא רק שלכם: "בא לנו לצאת ביחד בסוף השבוע — רק שנינו?" גם שעה אחת בשבוע עושה הבדל','כשאת/ה נמצא/ת לידו/לידה, אך נוכח/ת — גם בלי שיחה. לפעמים הישיבה ביחד בשקט, מחוברים, היא עצמה ה"שפה"','שאל/י שאלות אמיתיות על היום שלו/שלה — לא רק "איך היה" אלא "מה היה הרגע הכי טוב? מה הרגיז אותך?"'],
+    tips_receive:['כשהוא/היא מייזם/ת לבלות ביחד בלי סיבה מיוחדת — זו לא הרגל, זה ה"אני אוהב/ת אותך" שלו/שלה','לקבל נוכחות מלאה — כשהוא/היא מניח/ה את הטלפון ומסתכל/ת רק עליך, זה לא מובן מאליו, זה אהבה','שיחפש/תחפש לצרף אותך גם לדברים שגרתיים — ביחד הוא/היא מרגיש/ה הכי קרוב/ה']},
   words:{name:'מילים מאשרות',icon:'💬',
     desc:'מילים ספציפיות של הערכה, אהבה ועידוד — לא סתם "אני אוהב/ת אותך" אלא "אני אוהב/ת אותך כי...". מי שמרגיש/ה אהוב/ה דרך מילים זקוק/ה לשמוע אותן כדי להאמין להן. שתיקה, גם כשהכוונות טובות, מרגישה לו/לה כחוסר. מה שמשפיע עליו/עליה הם לא רק מילות אהבה — אלא גם הוקרה, הכרה ועידוד ספציפי.',
-    tips:['שלח/י הודעה אחת ביום שאומרת משהו ספציפי: "ראיתי אותך אמש מתמודד/ת עם זה וממש התרגשתי"','אמור/י בקול מה מוצא/ת חן בעיניך — לא "את/ה נהדר/ת" אלא "אהבתי שעשית את זה"','כשמבקרים בחברה, מצא/י רגע לומר משהו גאה על השני — ולא מאחורי גבו/גבה, אלא אליו/אליה ישירות','כתוב/כתבי פתק קצר ותשאיר/י במקום שימצא/תמצא — בכיס, על הכרית, על המכונה של קפה']},
+    tips_give:['שלח/י הודעה אחת ביום שאומרת משהו ספציפי: "ראיתי אותך אמש מתמודד/ת עם זה וממש התרגשתי"','אמור/י בקול מה מוצא/ת חן בעיניך — לא "את/ה נהדר/ת" אלא "אהבתי שעשית את זה"','כשמבקרים בחברה, מצא/י רגע לומר משהו גאה על השני — ולא מאחורי גבו/גבה, אלא אליו/אליה ישירות','כתוב/כתבי פתק קצר ותשאיר/י במקום שימצא/תמצא — בכיס, על הכרית, על המכונה של קפה'],
+    tips_receive:['לקבל הודעות חמות גם בלי סיבה — אלה לא "סתם", אלה האהבה שלו/שלה','כשהוא/היא אומר/ת ספציפית מה הוא/היא מעריך/ה בך — כדאי לתת לזה לנחות, זה לא מילים ריקות','שיגיד/תגיד את זה בקול, גם כשנראה מובן מאליו — לב שמכוון למילים צריך לשמוע']},
   service:{name:'מעשים ושירות',icon:'🤝',
     desc:'לעשות דברים בשביל השני — בלי שביקש/ה, מתוך מחשבה על מה שיקל עליו/עליה או ישמח אותו/אותה. הפעולה עצמה היא ההודעה: "ראיתי שזה עומד עליך, ודאגתי". מי שמרגיש/ה אהוב/ה דרך מעשים לא מחפש/ת מתנות יקרות — הוא/היא שם/ה לב לדברים שנעשו (ולדברים שלא נעשו) בדיוק רב.',
-    tips:['שים/י לב למה שחוזר ברשימת המטלות שלו/שלה ועשה/י לפני שמבקשים — כביסה, תשלום חשבון, קניות','כשיש/ה עסוק/ה בדבר גדול, מצא/י דרך להוריד עומס מהצד: "אני מטפל/ת בארוחת הערב היום, תתמקד/י במה שחשוב לך"','טפל/י בפרטים בלי לדווח — תן/י לתוצאה לדבר. לא "כל הכבוד לי" אלא פשוט לעשות','שאל/י פעם בשבוע: "יש משהו שמכביד עליך שאני יכול/ה להוריד לך?"']},
+    tips_give:['שים/י לב למה שחוזר ברשימת המטלות שלו/שלה ועשה/י לפני שמבקשים — כביסה, תשלום חשבון, קניות','כשיש/ה עסוק/ה בדבר גדול, מצא/י דרך להוריד עומס מהצד: "אני מטפל/ת בארוחת הערב היום, תתמקד/י במה שחשוב לך"','טפל/י בפרטים בלי לדווח — תן/י לתוצאה לדבר. לא "כל הכבוד לי" אלא פשוט לעשות','שאל/י פעם בשבוע: "יש משהו שמכביד עליך שאני יכול/ה להוריד לך?"'],
+    tips_receive:['שימצאו דברים שנעשו בשבילך בלי שביקשת — זה לא מקרה, זה הדרך שלו/שלה לאמר "ראיתי אותך ודאגתי"','לקבל עזרה בדיוק כשזה מכביד — כשהוא/היא קופץ/ת לפני שביקשת, כדאי לתת לזה מקום','שיטפל/תטפל בפרטים הקטנים בלי לדווח — הוא/היא לא מתאמץ/ת להרשים, הוא/היא אוהב/ת']},
   touch:{name:'מגע פיזי',icon:'🤗',
     desc:'קרבה גופנית — חיבוקים, מגע אגבי, ישיבה צמודה, יד על הגב — שאומרת "אני כאן" בלי מילים. זה לא בהכרח רומנטי, וזה לא רק ביחסי מין — מגע פיזי הוא כל געגוע פיזי קטן לאורך היום שמזכיר לשני שאת/ה רואה אותו/אותה. מי שמרגיש/ה אהוב/ה דרך מגע שם/ה לב כשהוא/היא לא מגיע.',
-    tips:['יזום/י מגע קטן ויומיומי שאינו קשור לרגעים מיוחדים — יד על הכתף בזמן שיחה, נשיקה בצאת מהבית','כשמדברים על דבר כבד, שב/י קרוב/ה יותר — הפיזיות אומרת "אני איתך" גם בלי שתגיד/י מילה','אל תניח/י שמגע מפריע — שאל/י. "בא לי לאחוז בידך, זה בסדר?" עצם השאלה נחמדה','בזמנים קשים, גם חיבוק שקט ממושך יכול לאמר יותר מכל דבר אחר']},
+    tips_give:['יזום/י מגע קטן ויומיומי שאינו קשור לרגעים מיוחדים — יד על הכתף בזמן שיחה, נשיקה בצאת מהבית','כשמדברים על דבר כבד, שב/י קרוב/ה יותר — הפיזיות אומרת "אני איתך" גם בלי שתגיד/י מילה','אל תניח/י שמגע מפריע — שאל/י. "בא לי לאחוז בידך, זה בסדר?" עצם השאלה נחמדה','בזמנים קשים, גם חיבוק שקט ממושך יכול לאמר יותר מכל דבר אחר'],
+    tips_receive:['לקבל מגע קטן ויומיומי — יד על הכתף, חיבוק שלא קשור לכלום. זו הדרך שלו/שלה לאמר "אני כאן"','כשמשהו קשה, שיתקרב/תתקרב פיזית — הנוכחות הגופנית שלו/שלה היא "אני איתך" בלי מילים','לקבל חיבוק בלי סיבה — כשזה מגיע, כדאי לתת לזה להיות מורגש']},
   gifts:{name:'מתנות',icon:'🎁',
     desc:'מחווה חומרית — לאו דווקא יקרה — שמסמלת "חשבתי עליך כשלא היית איתי". המתנה עצמה היא סמל: "אני נושא/ת אותך בראש גם כשאנחנו לא ביחד". מי שמרגיש/ה אהוב/ה דרך מתנות לא בהכרח חומרני/ת — הוא/היא רגיש/ה לסימנים של מחשבה, ומתנות ריקות (בלי מחשבה מאחוריהן) מרגישות לו/לה ריקות גם ברגש.',
-    tips:['שמור/י ב"רשימה מנטלית" דברים שהוא/היא מזכיר/ה — חטיף שאוהב/ת, ספר שרצה/רצתה, מקום שחלמ/ה לבקר','הפתע/י בדברים קטנים וספונטניים שאינם קשורים לאירוע — שוקולד, פרח בודד, פתק בכיס, הורדת שיר','ההקפדה על פרטים קטנים מדברת בעד עצמה: "קניתי לך את זה כי זכרתי שאמרת..." — זו השפה','כשמתכנן/ת כלפי קדימה, שאל/י את עצמך/עצמך: "יש משהו שאוכל להביא/לדאוג לו/לה שיגרום לחייך?"']}
+    tips_give:['שמור/י ב"רשימה מנטלית" דברים שהוא/היא מזכיר/ה — חטיף שאוהב/ת, ספר שרצה/רצתה, מקום שחלמ/ה לבקר','הפתע/י בדברים קטנים וספונטניים שאינם קשורים לאירוע — שוקולד, פרח בודד, פתק בכיס, הורדת שיר','ההקפדה על פרטים קטנים מדברת בעד עצמה: "קניתי לך את זה כי זכרתי שאמרת..." — זו השפה','כשמתכנן/ת כלפי קדימה, שאל/י את עצמך/עצמך: "יש משהו שאוכל להביא/לדאוג לו/לה שיגרום לחייך?"'],
+    tips_receive:['לקבל דברים קטנים שהוא/היא זכר/ה — חטיף, שיר, פתק. זה לא חומרניות, זה "חשבתי עליך"','כשהוא/היא מביא/ה משהו ואומר/ת "זכרתי שאמרת" — זו ההצהרה הגדולה ביותר שלו/שלה','לשים לב לכוונה מאחורי המחווה — גם אם הדבר עצמו לא מושלם, המחשבה היא הכל']}
 };
 
 const LL_RECEIVING=[
@@ -619,7 +626,7 @@ const LL_GIVING=[
 
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function countLangs(langs){const c={quality_time:0,words:0,service:0,touch:0,gifts:0};langs.forEach(l=>{if(c[l]!==undefined)c[l]++;});return c;}
-function topTwo(counts){return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);}
+function topLangs(counts){const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);if(sorted[1][1]===0||sorted[0][1]>=sorted[1][1]*2)return[sorted[0][0]];return[sorted[0][0],sorted[1][0]];}
 
 function chooseExperience(exp){
   if(myNum!==1)return;
@@ -678,40 +685,82 @@ function finishLL(){
     if(q.type==='r')rLangs.push(llAnswers[i]);
     else gLangs.push(llAnswers[i]);
   });
-  const results={receiving:topTwo(countLangs(rLangs)),giving:topTwo(countLangs(gLangs))};
+  const results={receiving:topLangs(countLangs(rLangs)),giving:topLangs(countLangs(gLangs))};
   showSc('sc-ll-wait');
   ws.send(JSON.stringify({type:'ll_done',results}));
 }
 
-function renderLLLangCard(langKey,g){
+function renderLLLangCard(langKey,g,tipsType){
   const d=LL_DEFS[langKey];
   if(!d)return'';
   const desc=adaptGender(d.desc,g);
-  const tips=d.tips.map(t=>`<li>${adaptGender(t,g)}</li>`).join('');
+  if(!tipsType)return`<div class="ll-lang-card">
+    <div class="ll-lang-title">${d.icon} ${d.name}</div>
+    <div class="ll-lang-desc">${desc}</div>
+  </div>`;
+  const tips=(tipsType==='give'?d.tips_give:d.tips_receive)||[];
+  const tipsLabel=tipsType==='give'
+    ?(g==='m'?'איך לדבר בשפה שהוא יבין:':'איך לדבר בשפה שהיא תבין:')
+    :'איך אהבה כזו מרגישה בפועל:';
+  const tipsHtml=tips.map(t=>`<li>${adaptGender(t,g)}</li>`).join('');
   return`<div class="ll-lang-card">
     <div class="ll-lang-title">${d.icon} ${d.name}</div>
     <div class="ll-lang-desc">${desc}</div>
-    <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-    <ul class="ll-tips">${tips}</ul>
+    ${tips.length?`<div class="ll-tips-label">${tipsLabel}</div><ul class="ll-tips">${tipsHtml}</ul>`:''}
   </div>`;
+}
+
+async function saveResultsImage(){
+  const el=$('sc-ll-results');
+  const canvas=await html2canvas(el,{backgroundColor:'#0D0D1A',useCORS:true,scale:2,width:el.scrollWidth,height:el.scrollHeight,windowWidth:el.scrollWidth,windowHeight:el.scrollHeight});
+  canvas.toBlob(async(blob)=>{
+    const file=new File([blob],'love-languages.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:'שפות האהבה שלנו'});}catch(e){}
+    }else{
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='love-languages.png';a.click();
+    }
+  },'image/png');
 }
 
 function renderLLResults(msg){
   const cont=$('ll-results-content');
   cont.innerHTML='';
-  [{key:'p1',name:msg.names.p1,g:gG.p1},{key:'p2',name:msg.names.p2,g:gG.p2}].forEach(({key,name,g})=>{
-    const r=msg[key];
-    const recvCards=(r.receiving||[]).map(k=>renderLLLangCard(k,g)).join('');
-    const giveCards=(r.giving||[]).map(k=>renderLLLangCard(k,g)).join('');
-    const recvLbl=g==='m'?'איך אוהב לקבל אהבה':'איך אוהבת לקבל אהבה';
-    const giveLbl=g==='m'?'איך אוהב להראות אהבה':'איך אוהבת להראות אהבה';
-    const block=document.createElement('div');
-    block.className='ll-player-block';
-    block.innerHTML=`<div class="ll-player-name">❤️ ${name}</div>
-      <div><div class="ll-section-label">${recvLbl}</div>${recvCards}</div>
-      <div><div class="ll-section-label">${giveLbl}</div>${giveCards}</div>`;
-    cont.appendChild(block);
-  });
+  const saveEl=$('ll-save-text');
+  if(saveEl)saveEl.textContent=adaptGender('תסמוך/תסמכי עלי, תעשה/תעשי פה צילום מסך ;)',myGender);
+  const myKey=myNum===1?'p1':'p2';
+  const partnerKey=myNum===1?'p2':'p1';
+  const myG=myNum===1?gG.p1:gG.p2;
+  const partnerG=myNum===1?gG.p2:gG.p1;
+  const myName=myNum===1?msg.names.p1:msg.names.p2;
+  const partnerName=myNum===1?msg.names.p2:msg.names.p1;
+  const myData=msg[myKey];
+  const partnerData=msg[partnerKey];
+
+  // My block — desc only, no tips
+  const myRecvLbl=myG==='f'?'איך את מרגישה אהבה מהצד השני':'איך אתה מרגיש אהבה מהצד השני';
+  const myGiveLbl=myG==='f'?'איך את נוטה להראות אהבה לצד השני':'איך אתה נוטה להראות אהבה לצד השני';
+  const myRecvCards=(myData.receiving||[]).map(k=>renderLLLangCard(k,myG,null)).join('');
+  const myGiveCards=(myData.giving||[]).map(k=>renderLLLangCard(k,myG,null)).join('');
+  const myBlock=document.createElement('div');
+  myBlock.className='ll-player-block';
+  myBlock.innerHTML=`<div class="ll-player-name">❤️ ${myName}</div>
+    <div><div class="ll-section-label">${myRecvLbl}</div>${myRecvCards}</div>
+    <div><div class="ll-section-label">${myGiveLbl}</div>${myGiveCards}</div>`;
+  cont.appendChild(myBlock);
+
+  // Partner block — with tips
+  const partnerRecvLbl=`איך לגרום ל${partnerName} להרגיש את האהבה שלי`;
+  const partnerGiveLbl=partnerG==='m'?`איך ${partnerName} מראה לך אהבה מצידו`:`איך ${partnerName} מראה לך אהבה מצידה`;
+  const partnerRecvCards=(partnerData.receiving||[]).map(k=>renderLLLangCard(k,partnerG,'give')).join('');
+  const partnerGiveCards=(partnerData.giving||[]).map(k=>renderLLLangCard(k,partnerG,'receive')).join('');
+  const partnerBlock=document.createElement('div');
+  partnerBlock.className='ll-player-block';
+  partnerBlock.innerHTML=`<div class="ll-player-name">❤️ ${partnerName}</div>
+    <div><div class="ll-section-label">${partnerRecvLbl}</div>${partnerRecvCards}</div>
+    <div><div class="ll-section-label">${partnerGiveLbl}</div>${partnerGiveCards}</div>`;
+  cont.appendChild(partnerBlock);
+
   const btns=$('ll-after-btns');
   btns.innerHTML='';
   const card=document.createElement('div');
@@ -973,7 +1022,7 @@ function renderS2Q(q,qdata,total){
   $('buzz-status').textContent='';
   $('s2-judge-area').style.display='none';
   $('s2-wait-area').style.display='none';
-  const btn=$('buzz-btn');btn.className='buzz-btn';btn.textContent='⚡ אני יודע!';
+  const btn=$('buzz-btn');btn.className='buzz-btn';btn.textContent=adaptGender('⚡ אני יודע/ת!',myGender);
   mkDots('s2-dots',total,q);
 }
 
