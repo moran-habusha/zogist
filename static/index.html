@@ -474,6 +474,13 @@ input::placeholder{color:rgba(255,255,255,.3);}
   <div id="ll-results-content" style="width:100%;display:flex;flex-direction:column;gap:16px;"></div>
   <div id="ll-after-btns" style="width:100%;margin-top:8px;display:flex;flex-direction:column;gap:12px;"></div>
 </div>
+<!-- LL MISSION (private, per-player) -->
+<div class="screen" id="sc-ll-mission" style="overflow-y:auto;max-height:92vh;padding-bottom:30px;">
+  <div class="logo" style="font-size:26px;">💌 המשימה שלך השבוע</div>
+  <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.4);margin-top:-8px;">רק לעינייך — לא להציץ!</div>
+  <div id="ll-mission-content" style="width:100%;"></div>
+  <button class="btn btn-secondary" style="margin-top:8px;" onclick="returnToExperience()">🏠 חזרה לבחירת חוויה</button>
+</div>
 </div>
 <div class="confetti" id="confetti"></div>
 
@@ -483,6 +490,7 @@ const ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://')+locatio
 /* ── STATE ── */
 let myName='', myGender='', myNum=0;
 let gameMode='full';
+let llResultsMsg=null;
 let gN={p1:'שחקן 1',p2:'שחקן 2'};
 let gG={p1:'m',p2:'m'};
 let S1Q=[], S2Q=[], S3Q=[], S4Q=[];
@@ -513,6 +521,29 @@ const LL_DEFS={
     desc:'מחווה חומרית — לאו דווקא יקרה — שמסמלת "חשבתי עליך כשלא היית איתי". המתנה עצמה היא סמל: "אני נושא/ת אותך בראש גם כשאנחנו לא ביחד". מי שמרגיש/ה אהוב/ה דרך מתנות לא בהכרח חומרני/ת — הוא/היא רגיש/ה לסימנים של מחשבה, ומתנות ריקות (בלי מחשבה מאחוריהן) מרגישות לו/לה ריקות גם ברגש.',
     tips_give:['שמור/י ב"רשימה מנטלית" דברים שהוא/היא מזכיר/ה — חטיף שאוהב/ת, ספר שרצה/רצתה, מקום שחלמ/ה לבקר','הפתע/י בדברים קטנים וספונטניים שאינם קשורים לאירוע — שוקולד, פרח בודד, פתק בכיס, הורדת שיר','ההקפדה על פרטים קטנים מדברת בעד עצמה: "קניתי לך את זה כי זכרתי שאמרת..." — זו השפה','כשמתכנן/ת כלפי קדימה, שאל/י את עצמך/עצמך: "יש משהו שאוכל להביא/לדאוג לו/לה שיגרום לחייך?"'],
     tips_receive:['לקבל דברים קטנים שהוא/היא זכר/ה — חטיף, שיר, פתק. זה לא חומרניות, זה "חשבתי עליך"','כשהוא/היא מביא/ה משהו ואומר/ת "זכרתי שאמרת" — זו ההצהרה הגדולה ביותר שלו/שלה','לשים לב לכוונה מאחורי המחווה — גם אם הדבר עצמו לא מושלם, המחשבה היא הכל']}
+};
+
+const LL_MISSIONS={
+  quality_time:[
+    'השבוע תכנן/תכנני לX דייט מפתיע — ארוחה, טיול, או סתם בילוי משותף. תן/תני לX להרגיש שאתה/את שמרת זמן במיוחד רק בשבילו/בשבילה.',
+    'השבוע תיזום/תיזמי עם X פעילות זוגית — סרט, משחק, בישול, או טיול, בלי שום הסחות דעת מסביב, זמן של שניכם לבד.'
+  ],
+  words:[
+    'השבוע שלח/שלחי לX הודעה שבה תספר/תספרי לו/לה משהו ספציפי שהוא/היא עשה/עשתה לאחרונה שגרם לך להרגיש גאה.',
+    'כתוב/כתבי לX פתק (בדף או בהודעה) עם 3 דברים שאתה/את אוהב/אוהבת בו/בה — דברים ספציפיים שרק אתה/את שם/ת לב אליהם.'
+  ],
+  service:[
+    'השבוע, בלי שX יבקש/תבקש — עשה/עשי בשבילו/בשבילה משהו שהוא/היא דוחה כבר הרבה זמן, או משימה שהוא/היא עושה בדרך כלל בעצמו/ה.',
+    'במהלך מחר, שאל/שאלי את X מה הכי יעזור לו/לה שיבוצע השבוע, ואז פשוט עשה/עשי את זה בלי שיצטרך/תצטרך לבקש שוב.'
+  ],
+  touch:[
+    'השבוע, בכל פעם שאתה/את נפגש/נפגשת עם X — תתחיל/י עם חיבוק חזק וארוך יותר מהרגיל. לא חיבוק בדרך אגבית, חיבוק שמביע כמה את/ה שמח/ה שהוא/היא פה.',
+    'מצא/מצאי רגע השבוע לשבת עם X ולעשות לו/לה עיסוי רגליים או כתפיים קצר — אפילו רק 5 דקות אבל עם רצון אמיתי לתת לו/לה מעצמך.'
+  ],
+  gifts:[
+    'השבוע קנה/קני לX משהו קטן שיזכיר לו/לה שחשבת עליו/עליה — לא חייב אירוע כדי להשקיע במי שאוהבים, דווקא כזה מגיע סתם כך זה מורגש הרבה יותר בצד השני.',
+    'שלח/שלחי לX תמונה של משהו שראית השבוע שגרם לך לחשוב עליו/עליה ולחייך לעצמך, תוסיף הסבר קצר למה זה עשה לך טוב בלב.'
+  ]
 };
 
 const LL_RECEIVING=[
@@ -730,6 +761,7 @@ function renderLLLangCard(langKey,g,tipsType){
 function saveResultsImage(){window.print();}
 
 function renderLLResults(msg){
+  llResultsMsg=msg;
   const cont=$('ll-results-content');
   cont.innerHTML='';
   const saveEl=$('ll-save-text');
@@ -769,19 +801,50 @@ function renderLLResults(msg){
 
   const btns=$('ll-after-btns');
   btns.innerHTML='';
-  const card=document.createElement('div');
-  card.className='card';card.style.textAlign='center';
-  card.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:6px;">רוצים להמשיך למשחק זוגיסט? 🎮</div>';
-  btns.appendChild(card);
-  if(myNum===1){
-    const btn=document.createElement('button');
-    btn.className='btn btn-primary';btn.textContent='בואו נשחק! ➡️';
-    btn.onclick=()=>ws.send(JSON.stringify({type:'start_zogist_after_ll'}));
-    btns.appendChild(btn);
-  } else {
-    const w=document.createElement('div');
-    w.className='waiting-answer';w.textContent='ממתינ/ה ל'+gN.p1+' להחליט...';
-    btns.appendChild(w);
+  const partnerNameForBtn=myNum===1?msg.names.p2:msg.names.p1;
+  const btnLabel=adaptGender('הדף הבא הוא לעינייך בלבד, אל תיתן/תיתני ל'+partnerNameForBtn+' להציץ! 👀',myGender);
+  const missionBtn=document.createElement('button');
+  missionBtn.className='btn btn-primary';
+  missionBtn.textContent=btnLabel;
+  missionBtn.onclick=showMission;
+  btns.appendChild(missionBtn);
+}
+
+function showMission(){
+  if(!llResultsMsg)return;
+  const partnerKey=myNum===1?'p2':'p1';
+  const partnerName=myNum===1?llResultsMsg.names.p2:llResultsMsg.names.p1;
+  const partnerRecvLang=(llResultsMsg[partnerKey].receiving||[])[0];
+  if(!partnerRecvLang){returnToExperience();return;}
+  // A/B: if both players share the same top receiving language, p1→A, p2→B
+  const p1recv=(llResultsMsg.p1.receiving||[])[0];
+  const p2recv=(llResultsMsg.p2.receiving||[])[0];
+  const idx=(p1recv===p2recv&&myNum===2)?1:0;
+  const missions=LL_MISSIONS[partnerRecvLang]||[];
+  const raw=missions[idx]||missions[0]||'';
+  const missionText=adaptGender(raw.replace(/X/g,partnerName),myGender);
+  const langDef=LL_DEFS[partnerRecvLang];
+  const langLabel=langDef?`${langDef.icon} ${langDef.name}`:'';
+  const cont=$('ll-mission-content');
+  cont.innerHTML=`<div class="ll-player-block" style="text-align:center;gap:16px;">
+    <div style="font-size:40px;">🎯</div>
+    <div>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:6px;">שפת האהבה של ${partnerName}</div>
+      <div style="font-size:21px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${langLabel}</div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.08);width:100%;"></div>
+    <div style="font-size:16px;line-height:1.8;color:rgba(255,255,255,.9);text-align:right;">${missionText}</div>
+  </div>`;
+  showSc('sc-ll-mission');
+}
+
+function returnToExperience(){
+  const expBtns=$('exp-choices');if(expBtns)expBtns.style.display='';
+  const expWait=$('exp-wait');if(expWait)expWait.classList.add('hidden');
+  showSc('sc-experience');
+  if(myNum===2){
+    if(expBtns)expBtns.style.display='none';
+    if(expWait)expWait.classList.remove('hidden');
   }
 }
 
