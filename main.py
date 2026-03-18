@@ -930,9 +930,7 @@ async def handle_ll_done(ws, data):
             'p2': room.ll_results.get(2, {}),
             'names': {'p1': room.players[1]['name'], 'p2': room.players[2]['name']}
         })
-    else:
-        other = 2 if pnum == 1 else 1
-        await room.send(other, {'type': 'll_partner_done'})
+    # else: first to finish — just wait, no message to partner
 
 
 async def handle_start_zogist_after_ll(ws, data):
