@@ -73,7 +73,8 @@ Room creation → P1 creates, P2 joins by code
   → Both answer 20 shuffled questions privately (sc-ll-q)
   → First to finish waits (sc-ll-wait)
   → When both done → results screen (sc-ll-results)
-  → P1 clicks "continue to Zogist" → same room, same flow below
+  → Each player clicks privately → personal mission screen (sc-ll-mission)
+  → Both return independently to sc-experience (same room, still connected)
 
   [If zogist chosen / after LL]
   → P1 chooses mode (sc-mode)
@@ -98,12 +99,37 @@ Room creation → P1 creates, P2 joins by code
 | S4 | Guess partner | 10 questions (sampled from 70), guess what your partner said |
 
 ### Love Languages Mini-Game
-- 20 questions: 10 receiving (`type:'r'`) + 10 giving (`type:'g'`), shuffled together
+- 20 questions: 10 receiving (`LL_RECEIVING`) + 10 giving (`LL_GIVING`), shuffled together
 - Answer options also shuffled per question at runtime
 - Each option maps to one of 5 love languages: `quality_time`, `words`, `service`, `touch`, `gifts`
-- Scoring: `topTwo(countLangs(...))` — top 2 languages by frequency, split by receiving/giving
+- Scoring: `topLangs(countLangs(...))` — shows 1 language if dominant (≥2× second place), else 2
 - Server only involved for: broadcasting `experience_chosen`, syncing `ll_done` between players, broadcasting `ll_results`
-- `LL_RECEIVING`, `LL_GIVING`, `LL_DEFS` — all defined in frontend JS
+- `LL_RECEIVING`, `LL_GIVING`, `LL_DEFS`, `LL_MISSIONS` — all defined in frontend JS
+
+#### LL Results Screen (sc-ll-results)
+- My block first (no tips) — desc only, perspective: "איך אני מרגיש/ה אהבה"
+- Partner block second (with tips) — `tips_give` for their receiving lang, `tips_receive` for their giving lang
+- `renderLLLangCard(langKey, g, tipsType)` — `tipsType`: `null`=desc only, `'give'`=tips_give, `'receive'`=tips_receive
+- Button: "הדף הבא הוא לעינייך בלבד, אל תיתן/תיתני לX להציץ!" → goes to sc-ll-mission
+- 💾 button: `window.print()` with white `@media print` CSS + `#app>#sc-ll-results` specificity fix
+
+#### LL Mission Screen (sc-ll-mission)
+- Private per-player — each player sees independently, not shared
+- Mission based on **partner's top receiving language** (from `llResultsMsg`)
+- `LL_MISSIONS` — 2 missions per language (A/B); when both players share the same receiving lang: P1→A, P2→B
+- Mission text uses `adaptGender(text, myGender)` with `X` replaced by partner name
+- Button returns to `sc-experience` via `returnToExperience()` — preserves room connection
+
+#### LL Question Format
+Questions use explicit m/f variants (same pattern as Zogist), **not** inline slash notation:
+```javascript
+{ qm: "שאלה בזכר, X = שם הזוג", qf: "שאלה בנקבה, X = שם הזוג",
+  opts: [{t: "טקסט תשובה", l: "love_language"}, ...] }
+```
+- `qm`/`qf` selected at render time by `myGender`; `X` replaced with partner's name
+- All option texts use **impersonal plural Hebrew** (e.g., "שמכינים לי אוכל") — gender-neutral, no partner gender needed
+- `llAnswering` boolean guard prevents double-click on last answer from calling `finishLL()` twice
+- `adaptText` was removed; replaced with minimal `adaptGender(text, g)` used only for `LL_DEFS` descriptions/tips in `renderLLLangCard`
 
 ---
 
@@ -112,6 +138,7 @@ Players register as `m` (זכר) or `f` (נקבה).
 All question text is stored as dual variants and selected per player's gender at render time.
 Key helpers in frontend: `gOf(n)`, `nOf(n)`, `heStr(n)`, `choseStr(n)`, `thoughtStr(n)`
 S1 question reveal uses `myNum` (not hardcoded `1`) so each player sees their own gender variant.
+LL questions use `qm`/`qf` fields — same explicit-variant pattern, no runtime regex parsing.
 
 ---
 
