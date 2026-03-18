@@ -122,8 +122,16 @@ input::placeholder{color:rgba(255,255,255,.3);}
 .ll-tips-label{font-size:12px;font-weight:700;color:var(--yellow);}
 .ll-tips{padding-right:18px;display:flex;flex-direction:column;gap:4px;}
 .ll-tips li{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:#080810!important;margin:0;padding:0;}
+  body::before{display:none!important;}
+  #app>.screen{display:none!important;}
+  #sc-ll-results{display:flex!important;max-height:none!important;overflow:visible!important;padding:20px!important;}
+  #ll-save-line{display:none!important;}
+  .ll-after-btns{display:none!important;}
+}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -710,26 +718,7 @@ function renderLLLangCard(langKey,g,tipsType){
   </div>`;
 }
 
-async function saveResultsImage(){
-  const el=$('sc-ll-results');
-  const prevMaxHeight=el.style.maxHeight;
-  const prevOverflow=el.style.overflow;
-  el.style.maxHeight='none';
-  el.style.overflow='visible';
-  await new Promise(r=>setTimeout(r,100));
-  const h=el.scrollHeight;
-  const canvas=await html2canvas(el,{backgroundColor:'#080810',useCORS:true,scale:2,width:el.offsetWidth,height:h,windowWidth:el.offsetWidth,windowHeight:h,scrollX:0,scrollY:0});
-  el.style.maxHeight=prevMaxHeight;
-  el.style.overflow=prevOverflow;
-  canvas.toBlob(async(blob)=>{
-    const file=new File([blob],'love-languages.png',{type:'image/png'});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){
-      try{await navigator.share({files:[file],title:'שפות האהבה שלנו'});}catch(e){}
-    }else{
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='love-languages.png';a.click();
-    }
-  },'image/png');
-}
+function saveResultsImage(){window.print();}
 
 function renderLLResults(msg){
   const cont=$('ll-results-content');
