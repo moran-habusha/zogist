@@ -637,12 +637,11 @@ function adaptGender(text,g){
   });
   return text;
 }
-let llAnswering=false;
 function startLLQuiz(){
   const recv=LL_RECEIVING.map(q=>({...q,opts:[...q.opts],type:'r'}));
   const give=LL_GIVING.map(q=>({...q,opts:[...q.opts],type:'g'}));
   llQuestions=shuffle([...recv,...give]).map(q=>({...q,opts:shuffle([...q.opts])}));
-  llAnswers=[];llQIdx=0;llAnswering=false;
+  llAnswers=[];llQIdx=0;
   showSc('sc-ll-q');renderLLQ();
 }
 
@@ -664,12 +663,13 @@ function renderLLQ(){
 }
 
 function answerLL(lang){
-  if(llAnswering)return;
-  llAnswering=true;
+  const el=$('ll-options');
+  if(!el||el.childElementCount===0)return; // already processing
+  el.innerHTML=''; // clear buttons immediately — no double-click possible
   llAnswers.push(lang);
   llQIdx++;
   if(llQIdx>=llQuestions.length){finishLL();}
-  else{llAnswering=false;renderLLQ();}
+  else{renderLLQ();}
 }
 
 function finishLL(){
@@ -679,8 +679,6 @@ function finishLL(){
     else gLangs.push(llAnswers[i]);
   });
   const results={receiving:topTwo(countLangs(rLangs)),giving:topTwo(countLangs(gLangs))};
-  const wmsg=$('ll-wait-msg');
-  if(wmsg)wmsg.textContent='ממתינ/ה ל'+(myNum===1?gN.p2:gN.p1)+' לסיים...';
   showSc('sc-ll-wait');
   ws.send(JSON.stringify({type:'ll_done',results}));
 }
