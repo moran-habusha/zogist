@@ -627,21 +627,17 @@ function chooseExperience(exp){
   ws.send(JSON.stringify({type:'choose_experience',experience:exp}));
 }
 
-/* ── GENDER ADAPTATION ── */
-const PARTNER_LEFT=new Set(['לו','בו','אותו','עליו','ממנו','לידו','לצידו','בשבילו','איתו','שלו','ראה','קנה','הוא','דואג','מכיר','בטוח','סומך','חושב','עסוק','ישן','מתלהב','עובד','לוקח','עומד','שכח','אמר','מתחיל','מספר','משקיע','עמד','עומדת']);
-function adaptText(text,pg,pn,partG){
-  text=text.replace(/את\/ה/g,pg==='m'?'אתה':'את');
+
+/* resolves A/B slash notation for a single gender (player only) */
+function adaptGender(text,g){
+  text=text.replace(/את\/ה/g,g==='m'?'אתה':'את');
   text=text.replace(/([\u05D0-\u05EA]+)\/([\u05D0-\u05EA]+)/g,(_,a,b)=>{
-    const isP=PARTNER_LEFT.has(a)||/^[שב]?[יו]/.test(a);
-    const g=isP?partG:pg;
     if(g==='m')return a;
-    if(b.length===1){return b==='י'?(a.endsWith('ה')?a.slice(0,-1)+'י':a+'י'):a+b;}
+    if(b.length===1)return b==='י'?(a.endsWith('ה')?a.slice(0,-1)+'י':a+'י'):a+b;
     return b;
   });
-  text=text.replace(/X/g,pn);
   return text;
 }
-
 let llAnswering=false;
 function startLLQuiz(){
   const recv=LL_RECEIVING.map(q=>({...q,opts:[...q.opts],type:'r'}));
@@ -692,8 +688,8 @@ function finishLL(){
 function renderLLLangCard(langKey,g){
   const d=LL_DEFS[langKey];
   if(!d)return'';
-  const desc=adaptText(d.desc,g,'','m');
-  const tips=d.tips.map(t=>`<li>${adaptText(t,g,'','m')}</li>`).join('');
+  const desc=adaptGender(d.desc,g);
+  const tips=d.tips.map(t=>`<li>${adaptGender(t,g)}</li>`).join('');
   return`<div class="ll-lang-card">
     <div class="ll-lang-title">${d.icon} ${d.name}</div>
     <div class="ll-lang-desc">${desc}</div>
