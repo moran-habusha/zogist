@@ -3,37 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>זוגיסט — תצוגה מקדימה</title>
+<title>זוגיסט 💑</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--pink:#FF4D8D;--purple:#7B2FFF;--yellow:#FFD93D;--teal:#00E5CC;--dark:#0D0D1A;--card:#1A1A2E;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Heebo',sans-serif;background:#080810;color:#fff;padding:40px 20px;}
-body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 20%,rgba(123,47,255,.08) 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(255,77,141,.08) 0%,transparent 50%);pointer-events:none;z-index:0;}
-
-h1{text-align:center;font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
-.subtitle{text-align:center;color:rgba(255,255,255,.4);font-size:14px;margin-bottom:40px;}
-
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:32px;max-width:1400px;margin:0 auto;position:relative;z-index:1;}
-
-.screen-wrap{display:flex;flex-direction:column;gap:10px;}
-.screen-label{font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.3);text-transform:uppercase;padding:0 4px;}
-.screen-box{background:var(--dark);border-radius:24px;padding:24px;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:18px;min-height:200px;}
-
-/* === copied styles from game === */
+body{font-family:'Heebo',sans-serif;background:var(--dark);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 70% 20%,rgba(123,47,255,.15) 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(255,77,141,.15) 0%,transparent 50%);pointer-events:none;z-index:0;}
+#app{width:100%;max-width:420px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;z-index:1;}
+.screen{width:100%;display:none;flex-direction:column;align-items:center;gap:18px;}
+.screen.active{display:flex;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .logo{font-size:52px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;text-align:center;}
 .tagline{font-size:16px;color:rgba(255,255,255,.6);text-align:center;}
 .card{background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:14px;}
-input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:14px;color:#fff;font-size:18px;font-family:'Heebo',sans-serif;text-align:center;outline:none;}
-.btn{width:100%;padding:18px;border:none;border-radius:16px;font-size:18px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;}
+input{width:100%;padding:16px 20px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);border-radius:14px;color:#fff;font-size:18px;font-family:'Heebo',sans-serif;text-align:center;outline:none;transition:border-color .2s;}
+input:focus{border-color:var(--pink);}
+input::placeholder{color:rgba(255,255,255,.3);}
+.btn{width:100%;padding:18px;border:none;border-radius:16px;font-size:18px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;transition:transform .15s;}
+.btn:active{transform:scale(.97);}
 .btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;}
 .btn-secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);}
 .btn-teal{background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--dark);}
 .gender-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.gender-btn{padding:14px;border:2px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.06);color:#fff;font-size:20px;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;text-align:center;}
+.gender-btn{padding:14px;border:2px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.06);color:#fff;font-size:20px;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
 .gender-btn.selected{border-color:var(--pink);background:rgba(255,77,141,.15);color:var(--pink);}
 .code-display{font-size:52px;font-weight:900;letter-spacing:12px;text-align:center;color:var(--yellow);padding:16px;}
-.waiting-dots span{display:inline-block;color:var(--pink);font-size:28px;}
+.waiting-dots span{display:inline-block;animation:bounce 1.2s infinite;color:var(--pink);font-size:28px;}
+.waiting-dots span:nth-child(2){animation-delay:.2s}.waiting-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}}
 .intro-card{background:var(--card);border-radius:24px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:16px;}
 .intro-emoji{font-size:56px;line-height:1;}
 .intro-title{font-size:26px;font-weight:900;}
@@ -43,7 +41,8 @@ input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px s
 .intro-rule-icon{font-size:18px;flex-shrink:0;}
 .intro-points{background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);border-radius:14px;padding:14px;font-size:13px;color:var(--yellow);font-weight:700;text-align:center;}
 .countdown-wrap{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
-.countdown-num{font-size:120px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.countdown-num{font-size:120px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation:cdPop .9s ease infinite;}
+@keyframes cdPop{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .countdown-label{font-size:18px;color:rgba(255,255,255,.5);}
 .stage-header{text-align:center;width:100%;}
 .stage-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:10px;background:rgba(255,255,255,.1);color:var(--yellow);letter-spacing:1px;}
@@ -53,9 +52,11 @@ input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px s
 .q-num{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px;letter-spacing:1px;}
 .q-text{font-size:22px;font-weight:700;line-height:1.4;margin-bottom:24px;}
 .answer-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.btn-yes{background:linear-gradient(135deg,#00E676,#00BFA5);color:var(--dark);font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;font-family:'Heebo',sans-serif;width:100%;}
-.btn-no{background:linear-gradient(135deg,#FF5252,#D50000);color:#fff;font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;font-family:'Heebo',sans-serif;width:100%;}
-.waiting-answer{padding:20px;text-align:center;color:rgba(255,255,255,.5);font-size:15px;}
+.btn-yes{background:linear-gradient(135deg,#00E676,#00BFA5);color:var(--dark);font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;transition:transform .15s;font-family:'Heebo',sans-serif;}
+.btn-no{background:linear-gradient(135deg,#FF5252,#D50000);color:#fff;font-weight:900;font-size:20px;padding:20px;border-radius:16px;border:none;cursor:pointer;transition:transform .15s;font-family:'Heebo',sans-serif;}
+.btn-yes:active,.btn-no:active{transform:scale(.95);}
+.waiting-answer{padding:20px;text-align:center;color:rgba(255,255,255,.5);font-size:15px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .result-reveal{width:100%;display:flex;flex-direction:column;gap:12px;}
 .p-ans{background:var(--card);border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,.08);}
 .p-name{font-size:14px;color:rgba(255,255,255,.6);}
@@ -69,42 +70,49 @@ input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px s
 .sc-name{font-size:12px;color:rgba(255,255,255,.5);}
 .sc-val{font-size:28px;font-weight:900;color:var(--yellow);}
 .sc-vs{font-size:16px;color:rgba(255,255,255,.3);font-weight:700;}
-.buzz-btn{width:100%;padding:40px;border-radius:28px;font-size:28px;font-weight:900;font-family:'Heebo',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--yellow),#FF9800);color:var(--dark);box-shadow:0 8px 30px rgba(255,217,61,.3);}
+.buzz-btn{width:100%;padding:40px;border-radius:28px;font-size:28px;font-weight:900;font-family:'Heebo',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--yellow),#FF9800);color:var(--dark);transition:transform .1s;box-shadow:0 8px 30px rgba(255,217,61,.3);}
+.buzz-btn:active{transform:scale(.95);}
+.buzz-btn.disabled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);box-shadow:none;cursor:not-allowed;}
 .buzz-status{text-align:center;font-size:18px;padding:16px;font-weight:700;}
 .dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
-.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s;}
 .dot.done{background:var(--pink)}.dot.cur{background:var(--yellow);transform:scale(1.3)}
 .s4-self-label{font-size:20px;font-weight:700;color:var(--yellow);margin-bottom:16px;display:block;}
-.s4-guess-label{font-size:14px;color:var(--teal);margin-bottom:16px;}
 .final-screen{text-align:center;width:100%;}
-.trophy{font-size:80px;display:block;}
+.trophy{font-size:80px;animation:wobble 1s ease infinite alternate;display:block;}
+@keyframes wobble{from{transform:rotate(-5deg) scale(1)}to{transform:rotate(5deg) scale(1.1)}}
 .winner-text{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--yellow),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0;}
 .final-scores{width:100%;display:flex;flex-direction:column;gap:10px;margin:16px 0;}
 .final-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-radius:16px;background:var(--card);border:1px solid rgba(255,255,255,.08);}
 .final-row.win{border-color:var(--yellow);background:rgba(255,217,61,.08);}
+.confetti{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;overflow:hidden;}
+.cp{position:absolute;border-radius:2px;animation:cf linear forwards;}
+@keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.err{color:#FF5252;font-size:14px;text-align:center;}
+/* Fade transitions */
+@keyframes qSlideOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-18px)}}
+@keyframes qSlideIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.slide-out{animation:qSlideOut .55s ease forwards;pointer-events:none;}
+.slide-in{animation:qSlideIn .55s ease forwards;}
+/* Stage summary */
 .summary-screen{text-align:center;width:100%;display:flex;flex-direction:column;gap:16px;}
 .summary-stat{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;padding:14px 18px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.07);}
 .summary-comment{font-size:17px;font-weight:700;color:var(--yellow);padding:14px 18px;background:rgba(255,217,61,.08);border-radius:14px;border:1px solid rgba(255,217,61,.2);}
 .compat-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 0 40px rgba(255,77,141,.35);}
 .compat-num{font-size:42px;font-weight:900;color:#fff;line-height:1;}
 .compat-label{font-size:13px;color:rgba(255,255,255,.85);margin-top:4px;}
-.highlight-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;font-size:14px;color:rgba(255,255,255,.8);text-align:right;width:100%;}
-.summary-lines{display:flex;flex-direction:column;gap:8px;text-align:right;width:100%;}
+.highlight-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;font-size:14px;color:rgba(255,255,255,.8);text-align:right;}
+.summary-lines{display:flex;flex-direction:column;gap:8px;text-align:right;}
 .summary-line{font-size:15px;color:rgba(255,255,255,.85);line-height:1.6;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
 .summary-line:last-child{border-bottom:none;}
 .streak-banner{padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;margin-top:6px;}
 .streak-agree{background:rgba(0,230,118,.12);color:#00E676;border:1px solid rgba(0,230,118,.25);}
 .streak-disagree{background:rgba(255,82,82,.12);color:#FF5252;border:1px solid rgba(255,82,82,.25);}
 .q-counter{font-size:16px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1px;margin-bottom:8px;text-align:center;}
-.scale-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px;flex-wrap:wrap;}
-.scale-btn{width:48px;height:48px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:18px;font-weight:900;cursor:pointer;font-family:'Heebo',sans-serif;}
-.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.4);padding:0 4px;}
-.s2-judge-box{background:rgba(255,255,255,.06);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;}
-.s2-ans-label{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px;}
-.s2-ans-val{font-size:22px;font-weight:900;color:var(--yellow);}
-.buzz-winner{text-align:center;padding:16px;font-size:20px;font-weight:700;color:var(--yellow);}
+.hidden{display:none!important;}
+.ll-opt{width:100%;padding:14px 18px;text-align:right;font-size:15px;line-height:1.5;white-space:normal;height:auto;}
 .ll-progress{width:100%;background:rgba(255,255,255,.1);border-radius:4px;height:4px;margin-bottom:10px;}
-.ll-progress-bar{height:100%;border-radius:4px;background:linear-gradient(135deg,var(--pink),var(--purple));}
+.ll-progress-bar{height:100%;border-radius:4px;background:linear-gradient(135deg,var(--pink),var(--purple));transition:width .3s;}
 .ll-player-block{width:100%;background:var(--card);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:12px;}
 .ll-player-name{font-size:19px;font-weight:900;text-align:center;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);}
 .ll-section-label{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:1px;margin-bottom:6px;}
@@ -117,606 +125,1134 @@ input{width:100%;padding:14px 20px;background:rgba(255,255,255,.07);border:2px s
 </style>
 </head>
 <body>
-
-<h1>זוגיסט 💑 — תצוגה מקדימה</h1>
-<p class="subtitle">כל מסכי המשחק עם נתוני דוגמה</p>
-
-<div class="grid">
-
-<!-- 1. HOME -->
-<div class="screen-wrap">
-  <div class="screen-label">1 · מסך פתיחה</div>
-  <div class="screen-box">
-    <div class="logo">זוגיסט 💑</div>
-    <div class="tagline">משחק היכרות תחרותי לזוגות</div>
-    <div class="card">
-      <span style="font-size:14px;color:rgba(255,255,255,.5)">השם שלך</span>
-      <input value="נועה" readonly>
-      <span style="font-size:14px;color:rgba(255,255,255,.5)">המגדר שלך</span>
-      <div class="gender-row">
-        <button class="gender-btn">גבר 👦</button>
-        <button class="gender-btn selected">אישה 👧</button>
-      </div>
-      <button class="btn btn-primary">✨ צור חדר חדש</button>
-      <button class="btn btn-secondary">🔗 הצטרף לחדר</button>
+<div id="app">
+<!-- HOME -->
+<div class="screen active" id="sc-home">
+  <div class="logo">זוגיסט 💑</div>
+  <div class="tagline">משחק היכרות תחרותי לזוגות</div>
+  <div class="card">
+    <span style="font-size:14px;color:rgba(255,255,255,.5)">השם שלך</span>
+    <input id="inp-name" placeholder="איך קוראים לך?" maxlength="16">
+    <span style="font-size:14px;color:rgba(255,255,255,.5)">המגדר שלך</span>
+    <div class="gender-row">
+      <button class="gender-btn" id="gb-m" onclick="setGender('m')">גבר 👦</button>
+      <button class="gender-btn" id="gb-f" onclick="setGender('f')">אישה 👧</button>
+    </div>
+    <button class="btn btn-primary" onclick="createRoom()">✨ צור חדר חדש</button>
+    <button class="btn btn-secondary" onclick="toggleJoin()">🔗 הצטרף לחדר</button>
+  </div>
+  <div id="join-wrap" style="display:none;width:100%;flex-direction:column;gap:12px;">
+    <input id="inp-code" placeholder="קוד 4 ספרות" maxlength="4" style="font-size:32px;letter-spacing:8px;font-weight:900;">
+    <button class="btn btn-teal" onclick="joinRoom()">🚀 בוא נשחק!</button>
+  </div>
+  <div id="home-err" class="err"></div>
+</div>
+<!-- WAITING -->
+<div class="screen" id="sc-wait">
+  <div class="logo" style="font-size:36px;">ממתין לשחקן השני...</div>
+  <div style="background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-size:14px;color:rgba(255,255,255,.5)">שתף את הקוד הזה</div>
+    <div class="code-display" id="disp-code">----</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.4)">השני מכניס את הקוד ומצטרף</div>
+  </div>
+  <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
+</div>
+<!-- MODE SELECT (shown to P1 after P2 joins) -->
+<div class="screen" id="sc-mode">
+  <div class="logo" style="font-size:36px;">בחר/י מצב משחק</div>
+  <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+    <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode('full')">
+      <span style="font-size:28px;">🎮</span>
+      <span><strong>משחק מלא</strong><br><small style="font-weight:400;opacity:.7">כל 4 השלבים ברצף</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(1)">
+      <span style="font-size:28px;">🤔</span>
+      <span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">10 שאלות של כן/לא על הרגלים, העדפות ואישיות</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(2)">
+      <span style="font-size:28px;">⚡</span>
+      <span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">10 שאלות טריוויה כללית - הראשון שלוחץ עונה</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(3)">
+      <span style="font-size:28px;">🔥</span>
+      <span><strong>דעות קדומות</strong><br><small style="font-weight:400;opacity:.7">10 הצהרות שנויות במחלוקת ובחירה מתוך 5 רמות הסכמה</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseMode(4)">
+      <span style="font-size:28px;">🃏</span>
+      <span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">10 שאלות אמריקאיות - ענה בהתאם אלייך ואז נחש מה בן/ת הזוג בחרו</small></span>
+    </button>
+  </div>
+</div>
+<!-- WAIT MODE (P2 waits while P1 picks mode) -->
+<div class="screen" id="sc-wait-mode">
+  <div class="logo" style="font-size:36px;">⏳ רגע...</div>
+  <div style="background:var(--card);border-radius:20px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:52px;">🎮</div>
+    <div style="font-size:20px;font-weight:700;" id="wait-mode-p1name">שחקן 1</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);">בוחר/ת את סוג המשחק...</div>
+    <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
+  </div>
+</div>
+<!-- MODE ANNOUNCE (shown to both after P1 picks mode) -->
+<div class="screen" id="sc-mode-announce">
+  <div style="background:var(--card);border-radius:24px;padding:32px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;">סוג המשחק שנבחר</div>
+    <div style="font-size:72px;line-height:1;" id="ma-emoji">🎮</div>
+    <div style="font-size:30px;font-weight:900;" id="ma-title">משחק מלא</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.6);line-height:1.5;" id="ma-desc"></div>
+    <div id="ma-btn-area" style="margin-top:8px;"></div>
+  </div>
+</div>
+<!-- COUNTDOWN -->
+<div class="screen" id="sc-countdown">
+  <div class="countdown-wrap">
+    <div class="countdown-num" id="cd-num">3</div>
+    <div class="countdown-label" id="cd-label">מתחילים!</div>
+  </div>
+</div>
+<!-- INTRO 1 -->
+<div class="screen" id="sc-intro1">
+  <div class="intro-card">
+    <div class="intro-emoji">🤔</div>
+    <div class="intro-title">מי אנחנו?</div>
+    <div class="intro-desc">שלב ההכרות – ענו בנפרד ותגלו כמה אתם מסכימים!</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">📝</span><span>10 שאלות על הרגלים ואישיות</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד – בלי לראות את תשובת השני</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🎉</span><span>אחרי ששניכם עניתם – רואים יחד את התוצאה</span></div>
+    </div>
+    <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
+    <div id="intro1-start"></div>
+  </div>
+</div>
+<!-- INTRO 2 -->
+<div class="screen" id="sc-intro2">
+  <div class="intro-card">
+    <div class="intro-emoji">⚡</div>
+    <div class="intro-title">מהיר יותר!</div>
+    <div class="intro-desc">שלב הבזק – מי יודע יותר, ומי יודע מהר יותר?</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון רשאי לענות את התשובה בקול</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">👀</span><span>השני רואה את התשובה הנכונה ושופט אם השותף צדק</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">⚠️</span><span>טעות = נקודה לצד השני!</span></div>
+    </div>
+    <div class="intro-points">🏆 לחצת ראשון וענית נכון = +2 לך | לחצת אבל טעית? = +1 לשני</div>
+    <div id="intro2-start"></div>
+  </div>
+</div>
+<!-- INTRO 3 -->
+<div class="screen" id="sc-intro3">
+  <div class="intro-card">
+    <div class="intro-emoji">🔥</div>
+    <div class="intro-title">דעות קדומות</div>
+    <div class="intro-desc">שלב הדעות – מסכים או לא? נגלה כמה אתם חושבים דומה!</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">💬</span><span>10 הצהרות שנויות במחלוקת</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד בסקאלה 1–5</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🎭</span><span>אחר כך רואים יחד – הסכמתם? 👀</span></div>
+    </div>
+    <div class="intro-points">🏆 כמות הנקודות תלויה בכם ;)<br>שימו לב, הראשון שיענה יקבל בונוס או קנס בהתאם למרחק בין הדעות שלכם!</div>
+    <div id="intro3-start"></div>
+  </div>
+</div>
+<!-- INTRO 4 -->
+<div class="screen" id="sc-intro4">
+  <div class="intro-card">
+    <div class="intro-emoji">🃏</div>
+    <div class="intro-title">אני מכיר אותך</div>
+    <div class="intro-desc">שלב הניחושים – כמה אתם באמת מכירים אחד את השני?</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">✍️</span><span>קודם עונים על עצמכם</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">🔮</span><span>אחר כך מנחשים מה השני בחר</span></div>
+      <div class="intro-rule"><span class="intro-rule-icon">😲</span><span>גלו מי הכי מכיר את מי!</span></div>
+    </div>
+    <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
+    <div id="intro4-start"></div>
+  </div>
+</div>
+<!-- STAGE 1 -->
+<div class="screen" id="sc-s1">
+  <div class="stage-header"><div class="stage-badge">שלב 1 מתוך 4</div><div class="stage-title">🤔 מי אנחנו?</div><div class="stage-subtitle">ענו בנפרד – נראה כמה אתם מסכימים</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s1n1">שחקן 1</div><div class="sc-val" id="s1v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s1n2">שחקן 2</div><div class="sc-val" id="s1v2">0</div></div>
+  </div>
+  <div id="s1-content" style="width:100%">
+    <div class="question-card" id="s1-qcard">
+      <div class="q-num" id="s1-qnum"></div>
+      <div class="dots" id="s1-dots"></div>
+      <div class="q-text" id="s1-qtext"></div>
+      <div id="s1-btns"></div>
+    </div>
+    <div id="s1-reveal" style="display:none;width:100%;">
+      <div class="result-reveal" id="s1-rev-content"></div>
+      <button class="btn btn-primary" id="s1-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(1)">הבא ➡️</button>
+      <div id="s1-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
     </div>
   </div>
 </div>
-
-<!-- 2. WAITING FOR P2 -->
-<div class="screen-wrap">
-  <div class="screen-label">2 · המתנה לשחקן 2</div>
-  <div class="screen-box">
-    <div class="logo" style="font-size:36px;">ממתין לשחקן השני...</div>
-    <div style="background:var(--card);border-radius:20px;padding:24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:12px;">
-      <div style="font-size:14px;color:rgba(255,255,255,.5)">שתף את הקוד הזה</div>
-      <div class="code-display">7382</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.4)">השני מכניס את הקוד ומצטרף</div>
-    </div>
-    <div class="waiting-dots"><span>●</span> <span>●</span> <span>●</span></div>
+<!-- STAGE 2 -->
+<div class="screen" id="sc-s2">
+  <div class="stage-header"><div class="stage-badge">שלב 2 מתוך 4</div><div class="stage-title">⚡ מהיר יותר!</div><div class="stage-subtitle">מי שלוחץ ראשון עונה</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s2n1">שחקן 1</div><div class="sc-val" id="s2v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s2n2">שחקן 2</div><div class="sc-val" id="s2v2">0</div></div>
   </div>
-</div>
-
-<!-- 3. MODE SELECT -->
-<div class="screen-wrap">
-  <div class="screen-label">3 · בחירת מצב משחק (שחקן 1)</div>
-  <div class="screen-box">
-    <div class="logo" style="font-size:32px;">בחר/י מצב משחק</div>
-    <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
-      <button class="btn btn-primary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:26px;">🎮</span>
-        <span><strong>משחק מלא</strong><br><small style="font-weight:400;opacity:.7">כל 4 השלבים ברצף</small></span>
-      </button>
-      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:26px;">🤔</span><span><strong>מי אנחנו?</strong><br><small style="font-weight:400;opacity:.7">10 שאלות של כן/לא על הרגלים, העדפות ואישיות</small></span>
-      </button>
-      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:26px;">⚡</span><span><strong>מהיר יותר!</strong><br><small style="font-weight:400;opacity:.7">10 שאלות טריוויה כללית - הראשון שלוחץ עונה</small></span>
-      </button>
-      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:26px;">🔥</span><span><strong>דעות קדומות</strong><br><small style="font-weight:400;opacity:.7">10 הצהרות שנויות במחלוקת ובחירה מתוך 5 רמות הסכמה</small></span>
-      </button>
-      <button class="btn btn-secondary" style="padding:18px;font-size:16px;text-align:right;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:26px;">🃏</span><span><strong>אני מכיר אותך</strong><br><small style="font-weight:400;opacity:.7">10 שאלות אמריקאיות - ענה בהתאם אלייך ואז נחש מה בן/ת הזוג בחרו</small></span>
-      </button>
-    </div>
+  <div class="question-card" id="s2-qcard">
+    <div class="q-num" id="s2-qnum"></div>
+    <div class="dots" id="s2-dots"></div>
+    <div class="q-text" id="s2-qtext"></div>
+    <div style="font-size:13px;color:rgba(255,255,255,.4)" id="s2-hint"></div>
   </div>
-</div>
-
-<!-- 4. P2 WAITING MODE -->
-<div class="screen-wrap">
-  <div class="screen-label">4 · שחקן 2 ממתין לבחירת מצב</div>
-  <div class="screen-box">
-    <div class="logo" style="font-size:30px;">⏳ רגע...</div>
-    <div style="background:var(--card);border-radius:20px;padding:28px 24px;width:100%;border:1px solid rgba(255,255,255,.08);text-align:center;display:flex;flex-direction:column;gap:14px;">
-      <div style="font-size:52px;">🎮</div>
-      <div style="font-size:20px;font-weight:700;">נועה</div>
-      <div style="font-size:15px;color:rgba(255,255,255,.6);">בוחרת את סוג המשחק...</div>
-      <div class="waiting-dots"><span>●</span> <span>●</span> <span>●</span></div>
+  <button class="buzz-btn" id="buzz-btn" onclick="buzz()">⚡ אני יודע!</button>
+  <div class="buzz-status" id="buzz-status"></div>
+  <div id="s2-judge-area" style="display:none;width:100%;">
+    <div style="background:rgba(255,255,255,.06);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;">
+      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px;">התשובה הנכונה:</div>
+      <div id="s2-correct-ans" style="font-size:22px;font-weight:900;color:var(--yellow);"></div>
     </div>
-  </div>
-</div>
-
-<!-- 5. MODE ANNOUNCE -->
-<div class="screen-wrap">
-  <div class="screen-label">5 · הודעת מצב משחק (לשניהם)</div>
-  <div class="screen-box">
-    <div style="background:var(--card);border-radius:24px;padding:32px 24px;width:100%;border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:14px;">
-      <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;">סוג המשחק שנבחר</div>
-      <div style="font-size:72px;line-height:1;">🎮</div>
-      <div style="font-size:30px;font-weight:900;">משחק מלא</div>
-      <div style="font-size:15px;color:rgba(255,255,255,.6);line-height:1.5;">כל 4 השלבים ברצף — כן/לא, טריוויה, דעות וניחושים!</div>
-      <button class="btn btn-primary" style="margin-top:8px;">🚀 בואו נתחיל!</button>
-    </div>
-  </div>
-</div>
-
-<!-- 6. COUNTDOWN -->
-<div class="screen-wrap">
-  <div class="screen-label">6 · ספירה לאחור</div>
-  <div class="screen-box" style="justify-content:center;min-height:260px;">
-    <div class="countdown-wrap">
-      <div class="countdown-num">3</div>
-      <div class="countdown-label">מתחילים!</div>
-    </div>
-  </div>
-</div>
-
-<!-- 7. INTRO S1 -->
-<div class="screen-wrap">
-  <div class="screen-label">7 · מבוא שלב 1 — מי אנחנו?</div>
-  <div class="screen-box">
-    <div class="intro-card">
-      <div class="intro-emoji">🤔</div>
-      <div class="intro-title">מי אנחנו?</div>
-      <div class="intro-desc">שלב ההכרות – ענו בנפרד ותגלו כמה אתם מסכימים!</div>
-      <div class="intro-rules">
-        <div class="intro-rule"><span class="intro-rule-icon">📝</span><span>10 שאלות על הרגלים ואישיות</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד – בלי לראות את תשובת השני</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">🎉</span><span>אחרי ששניכם עניתם – רואים יחד את התוצאה</span></div>
-      </div>
-      <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
-      <button class="btn btn-primary">▶️ התחל שלב</button>
-    </div>
-  </div>
-</div>
-
-<!-- 8. S1 QUESTION -->
-<div class="screen-wrap">
-  <div class="screen-label">8 · שלב 1 — שאלה</div>
-  <div class="screen-box">
-    <div class="stage-header">
-      <div class="stage-badge">שלב 1 מתוך 4</div>
-      <div class="stage-title">🤔 מי אנחנו?</div>
-      <div class="stage-subtitle">ענו בנפרד – נראה כמה אתם מסכימים</div>
-    </div>
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">5</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">3</div></div>
-    </div>
-    <div class="question-card">
-      <div class="q-num">שאלה 3 מתוך 10</div>
-      <div class="dots">
-        <div class="dot done"></div><div class="dot done"></div><div class="dot cur"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-      <div class="q-text">את אוהבת לבשל</div>
-      <div class="answer-row">
-        <button class="btn-yes">כן ✓</button>
-        <button class="btn-no">לא ✗</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 9. S1 REVEAL -->
-<div class="screen-wrap">
-  <div class="screen-label">9 · שלב 1 — חשיפת תשובות</div>
-  <div class="screen-box">
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
-    </div>
-    <div class="result-reveal">
-      <div class="q-counter">שאלה 3 מתוך 10</div>
-      <div style="font-size:20px;font-weight:700;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;">את אוהבת לבשל</div>
-      <div class="p-ans"><span class="p-name">נועה</span><span class="p-val">כן ✅</span></div>
-      <div class="p-ans"><span class="p-name">יואב</span><span class="p-val">כן ✅</span></div>
-      <div class="match-banner match-yes">💞 הסכמתם! נועה ענתה ראשונה</div>
-      <div class="streak-banner streak-agree">3 הסכמות ברצף! 🔥 אתם כאילו חשבתם יחד</div>
-    </div>
-    <button class="btn btn-primary">הבא ➡️</button>
-  </div>
-</div>
-
-<!-- 10. INTRO S2 -->
-<div class="screen-wrap">
-  <div class="screen-label">10 · מבוא שלב 2 — מהיר יותר!</div>
-  <div class="screen-box">
-    <div class="intro-card">
-      <div class="intro-emoji">⚡</div>
-      <div class="intro-title">מהיר יותר!</div>
-      <div class="intro-desc">שלב הבזק – מי יודע יותר, ומי יודע מהר יותר?</div>
-      <div class="intro-rules">
-        <div class="intro-rule"><span class="intro-rule-icon">🔔</span><span>מי שלוחץ "אני יודע!" ראשון רשאי לענות את התשובה בקול</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">👀</span><span>השני רואה את התשובה הנכונה ושופט אם השותף צדק</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">⚠️</span><span>טעות = נקודה לצד השני!</span></div>
-      </div>
-      <div class="intro-points">🏆 לחצת ראשון וענית נכון = +2 לך | לחצת אבל טעית? = +1 לשני</div>
-      <button class="btn btn-primary">▶️ התחל שלב</button>
-    </div>
-  </div>
-</div>
-
-<!-- 11. S2 QUESTION + BUZZ -->
-<div class="screen-wrap">
-  <div class="screen-label">11 · שלב 2 — שאלת טריוויה + כפתור באז</div>
-  <div class="screen-box">
-    <div class="stage-header">
-      <div class="stage-badge">שלב 2 מתוך 4</div>
-      <div class="stage-title">⚡ מהיר יותר!</div>
-      <div class="stage-subtitle">מי שלוחץ ראשון עונה</div>
-    </div>
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
-    </div>
-    <div class="question-card">
-      <div class="q-num">שאלה 5 מתוך 10</div>
-      <div class="dots">
-        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
-        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-      <div class="q-text">מה הבירה של אוסטרליה?</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.4)">רמז: לא סידני ולא מלבורן!</div>
-    </div>
-    <button class="buzz-btn">⚡ אני יודע!</button>
-  </div>
-</div>
-
-<!-- 12. S2 BUZZ RESULT + JUDGE -->
-<div class="screen-wrap">
-  <div class="screen-label">12 · שלב 2 — לאחר לחיצת באז (שופט)</div>
-  <div class="screen-box">
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
-    </div>
-    <div class="buzz-winner">⚡ נועה לחצה ראשונה!</div>
-    <div style="font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-top:4px;">נועה לחצה מהר יותר ב-0.23 שניות</div>
-    <div class="s2-judge-box">
-      <div class="s2-ans-label">התשובה הנכונה:</div>
-      <div class="s2-ans-val">קנברה</div>
-    </div>
-    <div style="font-size:15px;color:rgba(255,255,255,.7);text-align:center;margin-bottom:10px;">נועה אמרה — האם צדקה?</div>
+    <div style="font-size:15px;color:rgba(255,255,255,.7);text-align:center;margin-bottom:10px;" id="s2-judge-label"></div>
     <div class="answer-row">
-      <button class="btn-yes">צודק ✅</button>
-      <button class="btn-no">לא צודק ❌</button>
+      <button class="btn-yes" id="s2-judge-yes" onclick="judgeS2(true)">צודק ✅</button>
+      <button class="btn-no" id="s2-judge-no" onclick="judgeS2(false)">לא צודק ❌</button>
+    </div>
+  </div>
+  <div id="s2-wait-area" style="display:none;width:100%;"><div class="waiting-answer">⏳ ממתין לשחקן השני לשפוט...</div></div>
+</div>
+<!-- STAGE 3 -->
+<div class="screen" id="sc-s3">
+  <div class="stage-header"><div class="stage-badge">שלב 3 מתוך 4</div><div class="stage-title">🔥 דעות קדומות</div><div class="stage-subtitle">מסכים או לא? נגלה יחד</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s3n1">שחקן 1</div><div class="sc-val" id="s3v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s3n2">שחקן 2</div><div class="sc-val" id="s3v2">0</div></div>
+  </div>
+  <div id="s3-content" style="width:100%">
+    <div class="question-card" id="s3-qcard">
+      <div class="q-num" id="s3-qnum"></div>
+      <div class="dots" id="s3-dots"></div>
+      <div class="q-text" id="s3-qtext"></div>
+      <div id="s3-btns"></div>
+    </div>
+    <div id="s3-reveal" style="display:none;width:100%;">
+      <div class="result-reveal" id="s3-rev-content"></div>
+      <button class="btn btn-primary" id="s3-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(3)">הבא ➡️</button>
+      <div id="s3-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
     </div>
   </div>
 </div>
-
-<!-- 13. INTRO S3 -->
-<div class="screen-wrap">
-  <div class="screen-label">13 · מבוא שלב 3 — דעות חמות</div>
-  <div class="screen-box">
-    <div class="intro-card">
-      <div class="intro-emoji">🔥</div>
-      <div class="intro-title">דעות קדומות</div>
-      <div class="intro-desc">שלב הדעות – מסכים או לא? נגלה כמה אתם חושבים דומה!</div>
-      <div class="intro-rules">
-        <div class="intro-rule"><span class="intro-rule-icon">💬</span><span>10 הצהרות שנויות במחלוקת</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">🙈</span><span>כל אחד עונה בנפרד בסקאלה 1–5</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">🎭</span><span>אחר כך רואים יחד – הסכמתם? 👀</span></div>
+<!-- STAGE 4 -->
+<div class="screen" id="sc-s4">
+  <div class="stage-header"><div class="stage-badge">שלב 4 מתוך 4</div><div class="stage-title">🃏 אני מכיר אותך</div><div class="stage-subtitle">ענה/י על עצמך + נחש/י את השני</div></div>
+  <div class="score-bar">
+    <div class="sc-item"><div class="sc-name" id="s4n1">שחקן 1</div><div class="sc-val" id="s4v1">0</div></div>
+    <div class="sc-vs">VS</div>
+    <div class="sc-item"><div class="sc-name" id="s4n2">שחקן 2</div><div class="sc-val" id="s4v2">0</div></div>
+  </div>
+  <div id="s4-content" style="width:100%">
+    <div id="s4-qarea" style="width:100%;">
+      <div class="question-card">
+        <div class="q-num" id="s4-qnum"></div>
+        <div class="dots" id="s4-dots"></div>
+        <div class="q-text" id="s4-qtext"></div>
+        <span class="s4-self-label" id="s4-self-label">קודם ענה על עצמך:</span>
+        <div id="s4-ans-area"></div>
       </div>
-      <div class="intro-points">🏆 כמות הנקודות תלויה בכם ;)<br>שימו לב, הראשון שיענה יקבל בונוס או קנס בהתאם למרחק בין הדעות שלכם!</div>
-      <button class="btn btn-primary">▶️ התחל שלב</button>
+    </div>
+    <div id="s4-guess-area" style="display:none;width:100%;">
+      <div class="question-card">
+        <div class="q-text" id="s4-guess-text"></div>
+        <div style="font-size:14px;color:var(--teal);margin-bottom:16px;" id="s4-guess-label"></div>
+        <div id="s4-guess-opts"></div>
+      </div>
+    </div>
+    <div id="s4-reveal" style="display:none;width:100%;">
+      <div class="result-reveal" id="s4-rev-content"></div>
+      <button class="btn btn-primary" id="s4-next" style="margin-top:12px;display:none;" onclick="p1AdvQ(4)">הבא ➡️</button>
+      <div id="s4-wait-next" class="waiting-answer" style="display:none;">ממתין לשחקן 1 להמשיך...</div>
     </div>
   </div>
 </div>
-
-<!-- 14. S3 QUESTION -->
-<div class="screen-wrap">
-  <div class="screen-label">14 · שלב 3 — הצהרה + סקאלה</div>
-  <div class="screen-box">
-    <div class="stage-header">
-      <div class="stage-badge">שלב 3 מתוך 4</div>
-      <div class="stage-title">🔥 דעות קדומות</div>
-      <div class="stage-subtitle">מסכים או לא? נגלה יחד</div>
-    </div>
+<!-- STAGE SUMMARY -->
+<div class="screen" id="sc-stage-summary">
+  <div class="summary-screen">
+    <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;" id="ss-stage-label">סיכום שלב</div>
+    <div style="font-size:26px;font-weight:900;" id="ss-title"></div>
     <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">14</div></div>
+      <div class="sc-item"><div class="sc-name" id="ss-n1">שחקן 1</div><div class="sc-val" id="ss-v1">0</div></div>
       <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">11</div></div>
+      <div class="sc-item"><div class="sc-name" id="ss-n2">שחקן 2</div><div class="sc-val" id="ss-v2">0</div></div>
     </div>
-    <div class="question-card">
-      <div class="q-num">הצהרה 4 מתוך 10</div>
-      <div class="dots">
-        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
-        <div class="dot cur"></div><div class="dot"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-      <div class="q-text">כסף קונה אושר</div>
-      <div class="scale-row">
-        <button class="scale-btn">1</button>
-        <button class="scale-btn">2</button>
-        <button class="scale-btn">3</button>
-        <button class="scale-btn">4</button>
-        <button class="scale-btn">5</button>
-      </div>
-      <div class="scale-labels"><span>מתנגד/ת בחריפות</span><span>מסכים/ה מאוד</span></div>
-    </div>
+    <div class="summary-stat" id="ss-stats"></div>
+    <div class="summary-comment" id="ss-comment"></div>
+    <div id="ss-btn-area" style="margin-top:4px;"></div>
   </div>
 </div>
-
-<!-- 15. S3 REVEAL -->
-<div class="screen-wrap">
-  <div class="screen-label">15 · שלב 3 — חשיפת דעות</div>
-  <div class="screen-box">
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">17</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">11</div></div>
-    </div>
-    <div class="result-reveal">
-      <div class="q-counter">הצהרה 4 מתוך 10</div>
-      <div style="font-size:20px;font-weight:700;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;">כסף קונה אושר</div>
-      <div class="p-ans"><span class="p-name">נועה</span><span class="p-val">4 – מסכימה <small style="font-size:13px;color:#00E676">(+3)</small></span></div>
-      <div class="p-ans"><span class="p-name">יואב</span><span class="p-val">4 – מסכים <small style="font-size:13px;color:#00E676">(+3)</small></span></div>
-      <div class="match-banner" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);">הפרש בין התשובות: 0</div>
-      <div class="match-banner match-yes">🎯 פגיעה בול! +3 נקודות לשניכם</div>
-      <div class="match-banner" style="background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);color:var(--yellow);">⚡ נועה ענתה ראשונה – בונוס: +2</div>
-    </div>
-    <button class="btn btn-primary">הבא ➡️</button>
+<!-- FINAL -->
+<div class="screen" id="sc-final">
+  <div class="final-screen">
+    <span class="trophy">🏆</span>
+    <div class="winner-text" id="final-winner"></div>
+    <div style="color:rgba(255,255,255,.5);font-size:15px;">תוצאות המשחק</div>
+    <div id="final-extra"></div>
+    <div class="final-scores" id="final-scores"></div>
+    <button class="btn btn-primary" onclick="restartGame()">🔄 משחק חדש</button>
   </div>
 </div>
-
-<!-- 16. INTRO S4 -->
-<div class="screen-wrap">
-  <div class="screen-label">16 · מבוא שלב 4 — אני מכיר אותך</div>
-  <div class="screen-box">
-    <div class="intro-card">
-      <div class="intro-emoji">🃏</div>
-      <div class="intro-title">אני מכיר אותך</div>
-      <div class="intro-desc">שלב הניחושים – כמה אתם באמת מכירים אחד את השני?</div>
-      <div class="intro-rules">
-        <div class="intro-rule"><span class="intro-rule-icon">✍️</span><span>קודם עונים על עצמכם</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">🔮</span><span>אחר כך מנחשים מה השני בחר</span></div>
-        <div class="intro-rule"><span class="intro-rule-icon">😲</span><span>גלו מי הכי מכיר את מי!</span></div>
-      </div>
-      <div class="intro-points">🏆 הסכמתם? הראשון שענה +2 | השני +1 &nbsp;|&nbsp; לא הסכמתם? 0 לשניכם</div>
-      <button class="btn btn-primary">▶️ התחל שלב</button>
+<!-- EXPERIENCE SELECT -->
+<div class="screen" id="sc-experience">
+  <div class="logo" style="font-size:30px;">👋 ברוכים הבאים!</div>
+  <div style="text-align:center;font-size:15px;color:rgba(255,255,255,.6);">היי <span id="exp-names"></span> — במה תרצו לשחק?</div>
+  <div id="exp-choices" style="width:100%;display:flex;flex-direction:column;gap:14px;">
+    <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseExperience('zogist')">
+      <span style="font-size:28px;">🎮</span>
+      <span><strong>זוגיסט</strong><br><small style="font-weight:400;opacity:.7">בואו לגלות כמה אתם מתאימים, ומי יותר תחרותי ;)</small></span>
+    </button>
+    <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;" onclick="chooseExperience('love_languages')">
+      <span style="font-size:28px;">💬</span>
+      <span><strong>שפות האהבה</strong><br><small style="font-weight:400;opacity:.7">אתם כבר יודעים מה שפות האהבה שלכם?</small></span>
+    </button>
+  </div>
+  <div id="exp-wait" class="hidden waiting-answer">ממתינ/ה ל<span id="exp-p1-name"></span> לבחור...</div>
+</div>
+<!-- LL INTRO -->
+<div class="screen" id="sc-ll-intro">
+  <div class="logo" style="font-size:32px;">💬 שפות האהבה</div>
+  <div class="card" style="text-align:center;font-size:15px;line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:12px;">
+    לכולנו יש שפה רגשית משלנו — הדרך הייחודית שבה אנחנו מרגישים אהובים ומביעים אהבה.<br>
+    בעזרת המשחק הזה תוכלו להבין יותר אחד את השני — ואיך להראות אהבה כמו שהצד השני באמת צריך.
+  </div>
+  <div class="intro-card">
+    <div class="intro-emoji">❤️</div>
+    <div class="intro-title">20 שאלות אישיות</div>
+    <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תגלו מה הן שפות האהבה העיקריות שלכם ושל בן/בת זוגכם.</div>
+    <div class="intro-rules">
+      <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענו בכנות — אין תשובות נכונות</span></div>
     </div>
   </div>
+  <button class="btn btn-primary" onclick="startLLQuiz()">בואו נתחיל! ➡️</button>
 </div>
-
-<!-- 17. S4 SELF ANSWER -->
-<div class="screen-wrap">
-  <div class="screen-label">17 · שלב 4 — תשובה על עצמך</div>
-  <div class="screen-box">
-    <div class="stage-header">
-      <div class="stage-badge">שלב 4 מתוך 4</div>
-      <div class="stage-title">🃏 אני מכיר אותך</div>
-      <div class="stage-subtitle">ענה/י על עצמך + נחש/י את השני</div>
-    </div>
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">19</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">14</div></div>
-    </div>
-    <div class="question-card">
-      <div class="q-num">שאלה 2 מתוך 10</div>
-      <div class="dots">
-        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-      <div class="q-text">מה הייתם קונים עם מיליון שקל?</div>
-      <span class="s4-self-label">קודם ענה על עצמך:</span>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">דירה 🏠</button>
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">טיול בעולם ✈️</button>
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">רכב יוקרה 🚗</button>
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">השקעות 📈</button>
-      </div>
-    </div>
+<!-- LL QUESTION -->
+<div class="screen" id="sc-ll-q">
+  <div style="width:100%;">
+    <div class="ll-progress"><div class="ll-progress-bar" id="ll-prog-bar" style="width:0%"></div></div>
+    <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;" id="ll-q-num">שאלה 1 מתוך 20</div>
   </div>
+  <div class="question-card" style="margin-bottom:12px;"><div class="q-text" style="font-size:18px;" id="ll-q-text"></div></div>
+  <div id="ll-options" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
 </div>
-
-<!-- 18. S4 GUESS PHASE -->
-<div class="screen-wrap">
-  <div class="screen-label">18 · שלב 4 — שלב הניחוש</div>
-  <div class="screen-box">
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">19</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">14</div></div>
-    </div>
-    <div class="question-card">
-      <div class="q-num">שאלה 2 מתוך 10</div>
-      <div class="dots">
-        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
-      <div class="q-text">מה הייתם קונים עם מיליון שקל?</div>
-      <span class="s4-self-label" style="color:var(--teal)">עכשיו נחש/י מה יואב ענה:</span>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">דירה 🏠</button>
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">טיול בעולם ✈️</button>
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">רכב יוקרה 🚗</button>
-        <button class="btn btn-secondary" style="text-align:right;padding:16px;">השקעות 📈</button>
-      </div>
-    </div>
-  </div>
+<!-- LL WAIT -->
+<div class="screen" id="sc-ll-wait">
+  <div style="font-size:64px;text-align:center;">✅</div>
+  <div style="font-size:22px;font-weight:900;text-align:center;">סיימת!</div>
+  <div class="waiting-answer" id="ll-wait-msg">ממתינ/ה ל<span id="ll-wait-name"></span> לסיים...</div>
 </div>
-
-<!-- 19. S4 REVEAL -->
-<div class="screen-wrap">
-  <div class="screen-label">19 · שלב 4 — חשיפת תשובות וניחושים</div>
-  <div class="screen-box">
-    <div class="score-bar">
-      <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">21</div></div>
-      <div class="sc-vs">VS</div>
-      <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">15</div></div>
-    </div>
-    <div class="result-reveal">
-      <div class="q-counter">שאלה 2 מתוך 10</div>
-      <div style="font-size:20px;font-weight:700;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;">מה הייתם קונים עם מיליון שקל?</div>
-      <div class="p-ans"><span class="p-name">נועה ענתה על עצמה</span><span class="p-val" style="font-size:14px">דירה 🏠</span></div>
-      <div class="p-ans"><span class="p-name">יואב ענה על עצמו</span><span class="p-val" style="font-size:14px">טיול בעולם ✈️</span></div>
-      <div class="story-card">💬 נועה ניחשה "דירה 🏠" אבל יואב ענה "טיול בעולם ✈️" — פספוס!</div>
-      <div class="match-banner match-yes">נועה: ✅ ניחוש נכון! +2</div>
-      <div class="match-banner match-no">יואב: ❌ טעות</div>
-    </div>
-    <button class="btn btn-primary">הבא ➡️</button>
-  </div>
+<!-- LL RESULTS -->
+<div class="screen" id="sc-ll-results" style="overflow-y:auto;max-height:92vh;padding-bottom:30px;">
+  <div class="logo" style="font-size:26px;">💬 שפות האהבה שלכם</div>
+  <div id="ll-results-content" style="width:100%;display:flex;flex-direction:column;gap:16px;"></div>
+  <div id="ll-after-btns" style="width:100%;margin-top:8px;display:flex;flex-direction:column;gap:12px;"></div>
 </div>
-
-<!-- 20. STAGE SUMMARY -->
-<div class="screen-wrap">
-  <div class="screen-label">20 · סיכום שלב</div>
-  <div class="screen-box">
-    <div class="summary-screen">
-      <div style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:2px;">סיכום שלב 1</div>
-      <div style="font-size:26px;font-weight:900;">מי אנחנו? 🤔</div>
-      <div class="score-bar">
-        <div class="sc-item"><div class="sc-name">נועה</div><div class="sc-val">7</div></div>
-        <div class="sc-vs">VS</div>
-        <div class="sc-item"><div class="sc-name">יואב</div><div class="sc-val">5</div></div>
-      </div>
-      <div class="summary-stat">7 הסכמות מתוך 10 שאלות (70%)</div>
-      <div class="summary-comment">הסכמתם יותר ממה שחשבתם – ביחד עדיף מלבד 🤝</div>
-      <button class="btn btn-primary">המשך ➡️</button>
-    </div>
-  </div>
 </div>
+<div class="confetti" id="confetti"></div>
 
-<!-- 21. FINAL -->
-<div class="screen-wrap">
-  <div class="screen-label">21 · מסך סיום</div>
-  <div class="screen-box">
-    <div class="final-screen">
-      <span class="trophy">🏆</span>
-      <div class="winner-text">נועה ניצחה! 🎉</div>
-      <div style="color:rgba(255,255,255,.5);font-size:15px;">תוצאות המשחק</div>
-      <div style="text-align:center;margin:8px 0;">
-        <div class="compat-circle">
-          <div class="compat-num">74%</div>
-          <div class="compat-label">התאמה</div>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;width:100%;margin-bottom:8px;">
-        <div class="highlight-box"><span style="color:#00E676;font-size:12px;font-weight:700;">✅ הכי הסכמתם על: </span>כלבים עדיפים על חתולים</div>
-        <div class="highlight-box"><span style="color:#FF5252;font-size:12px;font-weight:700;">🔥 הכי חלקתם על:</span> כסף קונה אושר</div>
-      </div>
-      <div class="summary-lines">
-        <div class="summary-line">רמת התאמה 74% – לא תאומים, אבל גם לא מדינות שונות.</div>
-        <div class="summary-line">נועה ניצחה בהפרש קטן – יואב כנראה כבר מתכנן נקמה.</div>
-        <div class="summary-line">ועכשיו אתם יודעים. ממש יודעים.</div>
-      </div>
-      <div class="final-scores">
-        <div class="final-row win"><span style="font-size:18px;font-weight:700">👑 נועה</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">38</span></div>
-        <div class="final-row"><span style="font-size:18px;font-weight:700">יואב</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">31</span></div>
-      </div>
-      <button class="btn btn-primary">🔄 משחק חדש</button>
-    </div>
-  </div>
-</div>
+<script>
+const ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
 
-<!-- 22. EXPERIENCE SELECT -->
-<div class="screen-wrap">
-  <div class="screen-label">22 · בחירת חוויה (אחרי חיבור שניהם)</div>
-  <div class="screen-box">
-    <div class="logo" style="font-size:30px;">👋 ברוכים הבאים!</div>
-    <div style="text-align:center;font-size:15px;color:rgba(255,255,255,.6);">היי נועה ויואב — במה תרצו לשחק?</div>
-    <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
-      <button class="btn btn-primary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;">
-        <span style="font-size:28px;">🎮</span>
-        <span><strong>זוגיסט</strong><br><small style="font-weight:400;opacity:.7">בואו לגלות כמה אתם מתאימים, ומי יותר תחרותי ;)</small></span>
-      </button>
-      <button class="btn btn-secondary" style="padding:22px;font-size:17px;text-align:right;display:flex;align-items:center;gap:14px;">
-        <span style="font-size:28px;">💬</span>
-        <span><strong>שפות האהבה</strong><br><small style="font-weight:400;opacity:.7">אתם כבר יודעים מה שפות האהבה שלכם?</small></span>
-      </button>
-    </div>
-  </div>
-</div>
+/* ── STATE ── */
+let myName='', myGender='', myNum=0;
+let gameMode='full';
+let gN={p1:'שחקן 1',p2:'שחקן 2'};
+let gG={p1:'m',p2:'m'};
+let S1Q=[], S2Q=[], S3Q=[], S4Q=[];
+let rStage=-1, rReveal=false;
+let currentQ=0;
+let stageRendered={};  // {1: bool, 2: bool, ...}
+let llQuestions=[], llAnswers=[], llQIdx=0;
 
-<!-- 23. LL INTRO -->
-<div class="screen-wrap">
-  <div class="screen-label">23 · מבוא שפות האהבה</div>
-  <div class="screen-box">
-    <div class="logo" style="font-size:32px;">💬 שפות האהבה</div>
-    <div class="card" style="text-align:center;font-size:15px;line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:12px;">
-      לכולנו יש שפה רגשית משלנו — הדרך הייחודית שבה אנחנו מרגישים אהובים ומביעים אהבה.<br>
-      כשאנחנו ובן/בת הזוג שלנו מדברים באותה שפה — הכל זורם.<br>
-      כשהשפות שונות, גם כוונה טובה לא תמיד מגיעה למקום.
-    </div>
-    <div class="intro-card">
-      <div class="intro-emoji">❤️</div>
-      <div class="intro-title">20 שאלות אישיות</div>
-      <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תוכלו לגלות מה שפות האהבה העיקריות שלכם ושל בן/בת זוגכם.</div>
-      <div class="intro-rules">
-        <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענו בכנות — אין תשובות נכונות</span></div>
-      </div>
-    </div>
-    <button class="btn btn-primary">בואו נתחיל! ➡️</button>
-  </div>
-</div>
+/* ── LOVE LANGUAGES DATA ── */
+const LL_DEFS={
+  quality_time:{name:'זמן איכות',icon:'⏰',
+    desc:'נוכחות מלאה ותשומת לב בלתי מחולקת — לא סתם להיות באותו חדר, אלא להיות ממוקד/ת בשני בלבד. בלי טלפון, בלי מסך ברקע, בלי "רגע אחד". מי שמרגיש/ה אהוב/ה דרך זמן איכות לא בהכרח צריך/ה אירועים גדולים — גם עשר דקות שלמות ומחוברות שוות לו/לה יותר משעה של ישיבה זה ליד זה.',
+    tips:['כבה/י את הטלפון — לא רק בשקט, ממש עם המסך הפוך — כשאת/ה שומע/ת שהשני מתחיל לדבר על משהו שחשוב לו/לה','הצע/י זמן שהוא רק שלכם: "בא לנו לצאת ביחד בסוף השבוע — רק שנינו?" גם שעה אחת בשבוע עושה הבדל','כשאת/ה נמצא/ת לידו/לידה, אך נוכח/ת — גם בלי שיחה. לפעמים הישיבה ביחד בשקט, מחוברים, היא עצמה ה"שפה"','שאל/י שאלות אמיתיות על היום שלו/שלה — לא רק "איך היה" אלא "מה היה הרגע הכי טוב? מה הרגיז אותך?"']},
+  words:{name:'מילים מאשרות',icon:'💬',
+    desc:'מילים ספציפיות של הערכה, אהבה ועידוד — לא סתם "אני אוהב/ת אותך" אלא "אני אוהב/ת אותך כי...". מי שמרגיש/ה אהוב/ה דרך מילים זקוק/ה לשמוע אותן כדי להאמין להן. שתיקה, גם כשהכוונות טובות, מרגישה לו/לה כחוסר. מה שמשפיע עליו/עליה הם לא רק מילות אהבה — אלא גם הוקרה, הכרה ועידוד ספציפי.',
+    tips:['שלח/י הודעה אחת ביום שאומרת משהו ספציפי: "ראיתי אותך אמש מתמודד/ת עם זה וממש התרגשתי"','אמור/י בקול מה מוצא/ת חן בעיניך — לא "את/ה נהדר/ת" אלא "אהבתי שעשית את זה"','כשמבקרים בחברה, מצא/י רגע לומר משהו גאה על השני — ולא מאחורי גבו/גבה, אלא אליו/אליה ישירות','כתוב/כתבי פתק קצר ותשאיר/י במקום שימצא/תמצא — בכיס, על הכרית, על המכונה של קפה']},
+  service:{name:'מעשים ושירות',icon:'🤝',
+    desc:'לעשות דברים בשביל השני — בלי שביקש/ה, מתוך מחשבה על מה שיקל עליו/עליה או ישמח אותו/אותה. הפעולה עצמה היא ההודעה: "ראיתי שזה עומד עליך, ודאגתי". מי שמרגיש/ה אהוב/ה דרך מעשים לא מחפש/ת מתנות יקרות — הוא/היא שם/ה לב לדברים שנעשו (ולדברים שלא נעשו) בדיוק רב.',
+    tips:['שים/י לב למה שחוזר ברשימת המטלות שלו/שלה ועשה/י לפני שמבקשים — כביסה, תשלום חשבון, קניות','כשיש/ה עסוק/ה בדבר גדול, מצא/י דרך להוריד עומס מהצד: "אני מטפל/ת בארוחת הערב היום, תתמקד/י במה שחשוב לך"','טפל/י בפרטים בלי לדווח — תן/י לתוצאה לדבר. לא "כל הכבוד לי" אלא פשוט לעשות','שאל/י פעם בשבוע: "יש משהו שמכביד עליך שאני יכול/ה להוריד לך?"']},
+  touch:{name:'מגע פיזי',icon:'🤗',
+    desc:'קרבה גופנית — חיבוקים, מגע אגבי, ישיבה צמודה, יד על הגב — שאומרת "אני כאן" בלי מילים. זה לא בהכרח רומנטי, וזה לא רק ביחסי מין — מגע פיזי הוא כל געגוע פיזי קטן לאורך היום שמזכיר לשני שאת/ה רואה אותו/אותה. מי שמרגיש/ה אהוב/ה דרך מגע שם/ה לב כשהוא/היא לא מגיע.',
+    tips:['יזום/י מגע קטן ויומיומי שאינו קשור לרגעים מיוחדים — יד על הכתף בזמן שיחה, נשיקה בצאת מהבית','כשמדברים על דבר כבד, שב/י קרוב/ה יותר — הפיזיות אומרת "אני איתך" גם בלי שתגיד/י מילה','אל תניח/י שמגע מפריע — שאל/י. "בא לי לאחוז בידך, זה בסדר?" עצם השאלה נחמדה','בזמנים קשים, גם חיבוק שקט ממושך יכול לאמר יותר מכל דבר אחר']},
+  gifts:{name:'מתנות',icon:'🎁',
+    desc:'מחווה חומרית — לאו דווקא יקרה — שמסמלת "חשבתי עליך כשלא היית איתי". המתנה עצמה היא סמל: "אני נושא/ת אותך בראש גם כשאנחנו לא ביחד". מי שמרגיש/ה אהוב/ה דרך מתנות לא בהכרח חומרני/ת — הוא/היא רגיש/ה לסימנים של מחשבה, ומתנות ריקות (בלי מחשבה מאחוריהן) מרגישות לו/לה ריקות גם ברגש.',
+    tips:['שמור/י ב"רשימה מנטלית" דברים שהוא/היא מזכיר/ה — חטיף שאוהב/ת, ספר שרצה/רצתה, מקום שחלמ/ה לבקר','הפתע/י בדברים קטנים וספונטניים שאינם קשורים לאירוע — שוקולד, פרח בודד, פתק בכיס, הורדת שיר','ההקפדה על פרטים קטנים מדברת בעד עצמה: "קניתי לך את זה כי זכרתי שאמרת..." — זו השפה','כשמתכנן/ת כלפי קדימה, שאל/י את עצמך/עצמך: "יש משהו שאוכל להביא/לדאוג לו/לה שיגרום לחייך?"']}
+};
 
-<!-- 24. LL QUESTION -->
-<div class="screen-wrap">
-  <div class="screen-label">24 · שאלת שפות האהבה</div>
-  <div class="screen-box">
-    <div style="width:100%;">
-      <div class="ll-progress"><div class="ll-progress-bar" style="width:35%"></div></div>
-      <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;">שאלה 7 מתוך 20</div>
-    </div>
-    <div class="question-card" style="margin-bottom:12px;"><div class="q-text" style="font-size:18px;">כשאת עצובה, מה הכי מרגיע אותך?</div></div>
-    <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
-      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">חיבוק ארוך ושקט</button>
-      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שישבו איתי ופשוט יהיו שם</button>
-      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שיגידו לי שהכל יהיה בסדר</button>
-      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שיכינו לי משהו טעים</button>
-      <button class="btn btn-secondary" style="width:100%;padding:14px 18px;text-align:right;font-size:15px;">שיביאו לי פרח קטן או מתנה מפתיעה</button>
-    </div>
-  </div>
-</div>
+const LL_RECEIVING=[
+  {qm:'במהלך היום סיפרת לX שעובר עליך יום ממש לא טוב. איזו פעולה של X כשתגיע הביתה תגרום לך להרגיש שאכפת?',qf:'במהלך היום סיפרת לX שעובר עליך יום ממש לא טוב. איזו פעולה של X כשתגיעי הביתה תגרום לך להרגיש שאכפת?',opts:[
+    {t:'שיושבים מולי, מניחים בצד את הטלפון ושואלים "ספר לי מה קרה"',l:'quality_time'},
+    {t:'שאומרים לי "תמיד יודעים למצוא את הדרך, זה קטן עליך, סומכים עליך"',l:'words'},
+    {t:'שמכינים לי אוכל חם בלי שאבקש',l:'service'},
+    {t:'שיושבים לידי קרוב ומניחים עלי יד בשקט',l:'touch'},
+    {t:'שמביאים לי משהו קטן שקנו לפני שהגעתי — שוקולד, פרח, כל דבר',l:'gifts'}]},
+  {qm:'אתה לחוץ רגע לפני אירוע חשוב. מה הכי יעזור לך שX יעשה?',qf:'את לחוצה רגע לפני אירוע חשוב. מה הכי יעזור לך שX תעשה?',opts:[
+    {t:'שנמצאים לידי ממש עד שזה מתחיל, גם אם בשקט',l:'quality_time'},
+    {t:'שתומכים בי ואומרים לי בדיוק למה בטוחים שאצליח',l:'words'},
+    {t:'שדואגים מראש שכל מה שצריך יהיה מסודר כדי שלא אצטרך לחשוב',l:'service'},
+    {t:'שמחזיקים לי את היד עד ממש שנייה לפני שהאירוע מתחיל',l:'touch'},
+    {t:'שמביאים לי משהו קטן שיעזור להרגיע — סוכריית מנטה, מים קרים, כל דבר כזה',l:'gifts'}]},
+  {qm:'אתה שוכב חולה. מה הכי יגרום לך להרגיש שX דואג לך?',qf:'את שוכבת חולה. מה הכי יגרום לך להרגיש שX דואגת לך?',opts:[
+    {t:'שיושבים לידי ורואים סדרה ביחד גם אם כבר ראו אותה',l:'quality_time'},
+    {t:'שבודקים אותי כמה פעמים באמצע היום: "חשבתי עליך, איך אתה?"',l:'words'},
+    {t:'שדואגים שלא אצטרך לקום בשביל כלום',l:'service'},
+    {t:'שמלטפים אותי עד שארדם',l:'touch'},
+    {t:'שמזמינים לי בדיוק את האוכל שרציתי',l:'gifts'}]},
+  {qm:'אתה עם X בחברת אנשים שאתה לא מכיר. מה יגרום לך להרגיש שרואים אותך?',qf:'את עם X בחברת אנשים שאת לא מכירה. מה יגרום לך להרגיש שרואים אותך?',opts:[
+    {t:'שנשארים קרוב אלי כל הערב גם אם מדברים עם אחרים',l:'quality_time'},
+    {t:'שמספרים לאחרים משהו שמראה שממש מכירים אותי או גאים בי',l:'words'},
+    {t:'ששמים לב אם אני לא בנוח ומציעים ללכת עוד לפני שאבקש',l:'service'},
+    {t:'שנוגעים לי בגב קלות בזמן שמדברים עם אחרים — סימן שקט שנמצאים שם',l:'touch'},
+    {t:'שמגיעים פתאום עם משקה או נשנוש שיודעים שאני שותה',l:'gifts'}]},
+  {qm:'אתה וX אחרי ריב שנפתר. מה יגרום לך להרגיש שזה באמת מאחוריכם?',qf:'את וX אחרי ריב שנפתר. מה יגרום לך להרגיש שזה באמת מאחוריכם?',opts:[
+    {t:'שיושבים ביחד בשקט מרגיע, בלי להמשיך לדבר',l:'quality_time'},
+    {t:'שאומרים לי משהו ספציפי שמראה שמבינים מה כאב לי',l:'words'},
+    {t:'שעושים משהו שיודעים שאני צריך — גם בלי קשר לריב',l:'service'},
+    {t:'שמתקרבים ומזמינים מגע — כמו הזמנה לשחרר ולהתקרב',l:'touch'},
+    {t:'שמביאים לי משהו — גם הכי קטן — שיגרום לי להתעודד',l:'gifts'}]},
+  {qm:'זה יום ההולדת שלך. מה יגרום לך להרגיש שX ממש מכיר אותך?',qf:'זה יום ההולדת שלך. מה יגרום לך להרגיש שX ממש מכירה אותך?',opts:[
+    {t:'שדואגים לזמן שהוא רק של שנינו, בלי טלפונים ובלי הסחות דעת',l:'quality_time'},
+    {t:'שכותבים לי ברכה, בפתק או בהודעה, שמסבירה בדיוק למה אוהבים אותי',l:'words'},
+    {t:'שדואגים לכל הפרטים הקטנים של היום, ככה שלא צריך לחשוב על כלום',l:'service'},
+    {t:'שמתעוררים לידי וזה יהיה החיבוק הראשון שאקבל היום',l:'touch'},
+    {t:'שמביאים לי דבר ספציפי שציינתי פעם ולא חשבתי ששמו לב',l:'gifts'}]},
+  {qm:'אתה עצוב בלי סיבה ברורה. מה הכי יעזור לך שX יעשה?',qf:'את עצובה בלי סיבה ברורה. מה הכי יעזור לך שX תעשה?',opts:[
+    {t:'שפשוט יושבים לידי — לא מנסים לתקן, רק נמצאים שם',l:'quality_time'},
+    {t:'שמנסים לדובב אותי ואומרים לי "את/ה לא לבד, אני כאן"',l:'words'},
+    {t:'שמטפלים בדברים שהיו ברשימת המטלות שלי להיום מבלי שביקשתי',l:'service'},
+    {t:'שנותנים לי לשים את הראש ועושים לי נעים בשיער',l:'touch'},
+    {t:'שמביאים לי משהו שיגרום לי להרגיש שתמיד חושבים עלי',l:'gifts'}]},
+  {qm:'הצלחת משהו שעבדת עליו הרבה זמן. מה התגובה של X שתגרום לך להרגיש הכי מוערך?',qf:'הצלחת משהו שעבדת עליו הרבה זמן. מה התגובה של X שתגרום לך להרגיש הכי מוערכת?',opts:[
+    {t:'שמציעים לצאת להרים לחיים הערב — רק שנינו, לחגוג את ההצלחה',l:'quality_time'},
+    {t:'שאומרים לי שגאים בי ושמגיעה לי ההצלחה הזאת אחרי כל ההשקעה',l:'words'},
+    {t:'שדואגים לקחת על עצמם את הטיפול בדברים מסביב, שאוכל להנות מההרגשה עוד קצת',l:'service'},
+    {t:'שמרוב התרגשות תופסים לי את היד ומסתכלים לי בעיניים — מבט מלא גאווה',l:'touch'},
+    {t:'שמביאים לי משהו שיציין את ההצלחה — פרחים או מתנה בעיצוב אישי כמו ספל עם כיתוב',l:'gifts'}]},
+  {qm:'אתה וX נסעתם לסוף שבוע. מה יגרום לך להרגיש מחובר?',qf:'את וX נסעתם לסוף שבוע. מה יגרום לך להרגיש מחוברת?',opts:[
+    {t:'לא צריך לתכנן יותר מדי — העיקר שאנחנו ביחד',l:'quality_time'},
+    {t:'שיושבים על כוס יין ואומרים לי כמה מעריכים אותי',l:'words'},
+    {t:'שמתכננים את כל הדברים שצריך לסדר ואני מגיע כמו לחופשה',l:'service'},
+    {t:'שנהיה צמודים פיזית לאורך כל הסוף שבוע — על הספה, בהליכה, מחזיקים ידיים ברכב',l:'touch'},
+    {t:'שדואגים שיחכה לי משהו שווה בחדר — פרחים, יין, בלונים או פירות',l:'gifts'}]},
+  {qm:'רגע לפני שהולכים לישון. מה יגרום לך להירדם בתחושה הכי טובה?',qf:'רגע לפני שהולכים לישון. מה יגרום לך להירדם בתחושה הכי טובה?',opts:[
+    {t:'שאני וX נדבר קצת על היום — גם אם בקצרה — לפני שמכבים את האור',l:'quality_time'},
+    {t:'שמספרים לי על משהו שגרם להם לחשוב עלי היום — גם אם זה משפט אחד',l:'words'},
+    {t:'שדואגים לכל מה שצריך ללכת לישון — לנעול דלת, לכבות אורות — כדי שאוכל להיכנס למיטה',l:'service'},
+    {t:'חיבוק ארוך או להירדם בכפיות — להרגיש חום לפני שארדם',l:'touch'},
+    {t:'שמפתיעים אותי בדבר קטן — תה חם ליד המיטה, פלייליסט מיוחד או שוקולד לסיום היום',l:'gifts'}]}
+];
 
-<!-- 25. LL WAIT -->
-<div class="screen-wrap">
-  <div class="screen-label">25 · המתנה לשותף/ה (שסיים ראשון)</div>
-  <div class="screen-box" style="justify-content:center;text-align:center;gap:16px;">
-    <div style="font-size:64px;">✅</div>
-    <div style="font-size:22px;font-weight:900;">סיימת!</div>
-    <div class="waiting-answer">ממתינ/ה ליואב לסיים...</div>
-  </div>
-</div>
+const LL_GIVING=[
+  {qm:'זה יום רגיל לחלוטין. איך אתה מראה לX שאתה אוהב אותו?',qf:'זה יום רגיל לחלוטין. איך את מראה לX שאת אוהבת אותו?',opts:[
+    {t:'מתישהו במהלך היום עוצרים את מה שעושים ומציעים לשבת ביחד בלי הסחות דעת — גם אם רק לרבע שעה',l:'quality_time'},
+    {t:'אומרים משהו ספציפי שהבחנו בו היום — "יפה עליך היום, אהבתי את הבגדים שבחרת"',l:'words'},
+    {t:'עושים משהו קטן שיודעים שיקל עליו — מבלי שביקש',l:'service'},
+    {t:'עוברים לידו ונוגעים ב"דרך אגב" — שידע שאנחנו שמחים שהוא לידינו',l:'touch'},
+    {t:'מביאים משהו קטן שגרם לנו לחשוב עליו — גם אם זה רק החטיף שאוהב מהסופר',l:'gifts'}]},
+  {qm:'X עסוק ולחוץ ואין לך אפשרות לעזור ממש. מה תעשה?',qf:'X עסוקה ולחוצה ואין לך אפשרות לעזור ממש. מה תעשי?',opts:[
+    {t:'נשארים פיזית בקרבת מקום בלי להפריע — רק כדי שידע שנמצאים שם',l:'quality_time'},
+    {t:'שולחים הודעה קצרה במהלך היום שמזכירה שחושבים עליו',l:'words'},
+    {t:'מוצאים דבר קטן להוריד מהראש — גם משהו שולי כמו לעשות כביסה',l:'service'},
+    {t:'עוברים לידו ומניחים לרגע יד על הכתף או נותנים נשיקה קטנה בראש',l:'touch'},
+    {t:'מביאים משהו קטן בזמן שעסוק — קפה, חטיף, כל דבר שאומר "ראיתי אותך"',l:'gifts'}]},
+  {qm:'X עומד לפגוש את המשפחה שלך בפעם הראשונה. מה תעשה כדי להרגיע אותו לפני שמגיעים?',qf:'X עומדת לפגוש את המשפחה שלך בפעם הראשונה. מה תעשי כדי להרגיע אותה לפני שמגיעים?',opts:[
+    {t:'מוודאים שיהיה קצת זמן ביחד לבד לפני — רק שירגיש שאנחנו ביחד בזה',l:'quality_time'},
+    {t:'אומרים שאוהבים ולמה גאים להציג אותו למשפחה',l:'words'},
+    {t:'מכינים אותו לאירוע — מי יהיה שם, למה לצפות, מה חשוב לדעת מראש',l:'service'},
+    {t:'מחזיקים לו את היד כשנכנסים — שידע שאנחנו איתו',l:'touch'},
+    {t:'דואגים שיהיה לו משהו שאוהב בדרך — משקה אהוב, מאכל מתוק, שירים אהובים ברכב',l:'gifts'}]},
+  {qm:'X התעורר בבוקר במצב רוח ירוד — לא אמר כלום, אבל רואים. מה תעשה?',qf:'X התעוררה בבוקר במצב רוח ירוד — לא אמרה כלום, אבל רואים. מה תעשי?',opts:[
+    {t:'מתיישבים לידו ומחכים — בלי לדחוף, בזמן שלו',l:'quality_time'},
+    {t:'אומרים לו משהו שמזכיר כמה אהוב ושרואים אותו — זה לא חמק',l:'words'},
+    {t:'מפנקים בדברים הקטנים של הבוקר — קפה, ארוחה, מדליקים דוד למקלחת חמה — בלי לבקש',l:'service'},
+    {t:'יוצרים מגע קצר אבל מלא הכלה — חיבוק או ליטוף — שירגיש שנמצאים שם',l:'touch'},
+    {t:'יוצאים לסיבוב וחוזרים עם משהו שיגרום לחייך — פרחים, קינוח אהוב, ספר שרצה',l:'gifts'}]},
+  {qm:'שבת בבוקר, X עדיין ישן והתעוררת לפניו. מה תעשה?',qf:'שבת בבוקר, X עדיין ישן והתעוררת לפניו. מה תעשי?',opts:[
+    {t:'נשארים לידו במיטה — מוצאים תעסוקה עד שיקום, העיקר שנהיה שם כשיתעורר',l:'quality_time'},
+    {t:'שולחים הודעה שתחכה כשיקום — משהו שיגרום לחייך לפני שקם מהמיטה',l:'words'},
+    {t:'מנצלים את הזמן לסדר את הבית כדי שיקומו עם קצת פחות משימות להיום',l:'service'},
+    {t:'כשנשמע שמתחיל להתעורר, רצים לחדר לחיבוק ארוך ונשיקה של בוקר טוב',l:'touch'},
+    {t:'יוצאים לקנות מאפה קטן שיהיה לאכול עם הקפה של בוקר',l:'gifts'}]},
+  {qm:'X שכח לספר לך על משהו חשוב שקרה לו — ויצא שגילית ממישהו אחר. מה תעשה?',qf:'X שכחה לספר לך על משהו חשוב שקרה לה — ויצא שגילית ממישהו אחר. מה תעשי?',opts:[
+    {t:'נשארים באותו חלל מבלי ללחוץ ונותנים את הזמן לספר בקצב שלו',l:'quality_time'},
+    {t:'אומרים שנמצאים שם ושרוצים לשמוע — בלי ביקורת',l:'words'},
+    {t:'מוצאים דרך מעשית לעזור עם מה שקרה — גם בלי שביקש',l:'service'},
+    {t:'מתקרבים פיזית — שירגיש שלא משנה מה יאמר, לא הולכים',l:'touch'},
+    {t:'מביאים משהו שיגרום להרגיש בנוח — קפה ושמיכה, כוס יין — כדי להקל על האווירה',l:'gifts'}]},
+  {qm:'X מתלהב ומספר לך על משהו חדש שממש לא מעניין אותך. מה תעשה?',qf:'X מתלהבת ומספרת לך על משהו חדש שממש לא מעניין אותך. מה תעשי?',opts:[
+    {t:'מניחים את הטלפון ומסתכלים עליו — ההתלהבות שלו מספיקה כדי להיות נוכחים',l:'quality_time'},
+    {t:'שואלים שאלות המשך — כדי שירגיש שבאמת מקשיבים',l:'words'},
+    {t:'מחפשים דרך לעזור עם זה — גם אם לא מבינים בנושא',l:'service'},
+    {t:'מניחים יד עליו בזמן שמדבר — שירגיש את הנוכחות והקשב',l:'touch'},
+    {t:'מחפשים להביא משהו קטן שקשור לתחום שמתלהב ממנו',l:'gifts'}]},
+  {qm:'X לוקח החלטה גדולה ולא ביקש את דעתך. מה תעשה?',qf:'X לוקחת החלטה גדולה ולא ביקשה את דעתך. מה תעשי?',opts:[
+    {t:'ממתינים ונותנים מקום — נהיה שם כשיצטרך',l:'quality_time'},
+    {t:'אומרים שמאמינים בו ושיהיה מה שיהיה, אנחנו לצידו',l:'words'},
+    {t:'מנסים לעזור בפרטים המעשיים — גם בלי שביקש',l:'service'},
+    {t:'תומכים בחיבוק ושקט — שירגיש שאנחנו איתו',l:'touch'},
+    {t:'מביאים משהו שתומך בהחלטה — חוברת לתחילת לימודים, פריט שקשור לתחביב החדש',l:'gifts'}]},
+  {qm:'X עובד על פרויקט גדול כבר שבועות ועדיין לא סיים. מה תעשה?',qf:'X עובדת על פרויקט גדול כבר שבועות ועדיין לא סיימה. מה תעשי?',opts:[
+    {t:'מציעים לשבת לידו בזמן שעובד — גם בשקט, רק שלא ירגיש לבד בזה',l:'quality_time'},
+    {t:'אומרים שרואים כמה משקיע, שמאמינים בו ושמגיע לו שיצא טוב',l:'words'},
+    {t:'מוצאים דרך להוריד עומס מהצד — לבשל, לסדר, כל דבר שיפנה זמן לפרויקט',l:'service'},
+    {t:'נותנים עידוד פיזי במהלך היום — חיבוקים, נשיקות — רק שידע שנמצאים שם',l:'touch'},
+    {t:'מביאים משהו קטן שיגרום להרגיש שחושבים עליו גם כשעסוק — קפה מהמקום האהוב',l:'gifts'}]},
+  {qm:'אתה וX בסוף יום ארוך. מה הדרך הטבעית שלך להגיד "אני שמח שאתה קיים"?',qf:'את וX בסוף יום ארוך. מה הדרך הטבעית שלך להגיד "אני שמחה שאתה קיים"?',opts:[
+    {t:'מציעים לשבת קצת ביחד — גם אם רק כמה דקות, לחיות את הרגע הזה עוד קצת',l:'quality_time'},
+    {t:'אומרים שהיה לשנינו יום לא פשוט, אבל שמחים שיש לנו אותו ברגעים כאלו',l:'words'},
+    {t:'למרות שגם היה יום ארוך, מטפלים בדבר אחד שיודעים שמכביד עליו — מגיע לו',l:'service'},
+    {t:'מחבקים חיבוק ארוך וחזק, שלא יהיה לו ספק שנמצאים שם בשבילו',l:'touch'},
+    {t:'מביאים פינוק קטן שיגרום לחייך לפני שנגמר היום — יין, קינוח טוב, קרם בריח אהוב',l:'gifts'}]}
+];
 
-<!-- 26. LL RESULTS -->
-<div class="screen-wrap" style="grid-column:1/-1;">
-  <div class="screen-label">26 · תוצאות שפות האהבה</div>
-  <div class="screen-box" style="align-items:flex-start;gap:20px;">
-    <div class="logo" style="font-size:28px;width:100%;text-align:center;">💬 שפות האהבה שלכם</div>
-    <div class="ll-player-block">
-      <div class="ll-player-name">❤️ נועה</div>
-      <div>
-        <div class="ll-section-label">איך אוהבת לקבל אהבה</div>
-        <div class="ll-lang-card">
-          <div class="ll-lang-title">🤝 מגע פיזי</div>
-          <div class="ll-lang-desc">נגיעה, חיבוק, קרבה פיזית — אלו שמגיעים מהלב ומרגישים הכי בטוח ואוהבים.</div>
-          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-          <ul class="ll-tips"><li>חיבוק בהפתעה</li><li>לשבת צמוד</li><li>ליטוף קל</li></ul>
-        </div>
-        <div class="ll-lang-card" style="margin-top:10px;">
-          <div class="ll-lang-title">⏰ זמן איכות</div>
-          <div class="ll-lang-desc">להיות נוכח/ת לחלוטין — בלי מסכים, עם תשומת לב מלאה.</div>
-          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-          <ul class="ll-tips"><li>טיול בלי טלפון</li><li>ארוחה משותפת</li><li>פשוט לשבת יחד</li></ul>
-        </div>
-      </div>
-      <div>
-        <div class="ll-section-label">איך אוהבת להראות אהבה</div>
-        <div class="ll-lang-card">
-          <div class="ll-lang-title">🛠 מעשים ושירות</div>
-          <div class="ll-lang-desc">לעזור, לארגן, לדאוג — אהבה שמתבטאת בדברים שעושים, לא רק אומרים.</div>
-          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-          <ul class="ll-tips"><li>לזכור מה מתאים לה</li><li>לסדר לו/לה בלי שיבקש/תבקש</li><li>לפתור בעיה שמדאיגה</li></ul>
-        </div>
-      </div>
-    </div>
-    <div class="ll-player-block">
-      <div class="ll-player-name">❤️ יואב</div>
-      <div>
-        <div class="ll-section-label">איך אוהב לקבל אהבה</div>
-        <div class="ll-lang-card">
-          <div class="ll-lang-title">💬 מילים מאשרות</div>
-          <div class="ll-lang-desc">מילה טובה, מחמאה כנה, ביטוי מילולי של אהבה — אלו שנשמעים ומרגישים חשוב.</div>
-          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-          <ul class="ll-tips"><li>להגיד "אני אוהב/ת אותך" בפשטות</li><li>לציין מה מיוחד בו/בה</li><li>להודות על דברים קטנים</li></ul>
-        </div>
-      </div>
-      <div>
-        <div class="ll-section-label">איך אוהב להראות אהבה</div>
-        <div class="ll-lang-card">
-          <div class="ll-lang-title">🎁 מתנות</div>
-          <div class="ll-lang-desc">לא בהכרח יקרות — אלא כאלו שמראות שחשבת עליו/עליה.</div>
-          <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
-          <ul class="ll-tips"><li>לזכור מה היא/הוא אוהב/ת</li><li>מתנת הפתעה קטנה</li><li>משהו שמסמל רגע ביניכם</li></ul>
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-primary" style="width:100%;">🎮 המשיכו לזוגיסט ➡️</button>
-  </div>
-</div>
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function countLangs(langs){const c={quality_time:0,words:0,service:0,touch:0,gifts:0};langs.forEach(l=>{if(c[l]!==undefined)c[l]++;});return c;}
+function topTwo(counts){return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);}
 
-</div><!-- /grid -->
+function chooseExperience(exp){
+  if(myNum!==1)return;
+  ws.send(JSON.stringify({type:'choose_experience',experience:exp}));
+}
+
+
+/* resolves A/B slash notation for a single gender (player only) */
+function adaptGender(text,g){
+  text=text.replace(/את\/ה/g,g==='m'?'אתה':'את');
+  text=text.replace(/([\u05D0-\u05EA]+)\/([\u05D0-\u05EA]+)/g,(_,a,b)=>{
+    if(g==='m')return a;
+    if(b.length===1)return b==='י'?(a.endsWith('ה')?a.slice(0,-1)+'י':a+'י'):a+b;
+    return b;
+  });
+  return text;
+}
+let llAnswering=false;
+function startLLQuiz(){
+  const recv=LL_RECEIVING.map(q=>({...q,opts:[...q.opts],type:'r'}));
+  const give=LL_GIVING.map(q=>({...q,opts:[...q.opts],type:'g'}));
+  llQuestions=shuffle([...recv,...give]).map(q=>({...q,opts:shuffle([...q.opts])}));
+  llAnswers=[];llQIdx=0;llAnswering=false;
+  showSc('sc-ll-q');renderLLQ();
+}
+
+function renderLLQ(){
+  const q=llQuestions[llQIdx];
+  $('ll-q-num').textContent='שאלה '+(llQIdx+1)+' מתוך 20';
+  $('ll-prog-bar').style.width=(llQIdx/20*100)+'%';
+  const pn=myNum===1?gN.p2:gN.p1;
+  const qtext=q.qm?(myGender==='m'?q.qm:q.qf):q.q;
+  $('ll-q-text').textContent=qtext.replace(/X/g,pn);
+  const el=$('ll-options');el.innerHTML='';
+  q.opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='btn btn-secondary ll-opt';
+    btn.textContent=opt.t;
+    btn.onclick=()=>answerLL(opt.l);
+    el.appendChild(btn);
+  });
+}
+
+function answerLL(lang){
+  if(llAnswering)return;
+  llAnswering=true;
+  llAnswers.push(lang);
+  llQIdx++;
+  if(llQIdx>=llQuestions.length){finishLL();}
+  else{llAnswering=false;renderLLQ();}
+}
+
+function finishLL(){
+  const rLangs=[],gLangs=[];
+  llQuestions.forEach((q,i)=>{
+    if(q.type==='r')rLangs.push(llAnswers[i]);
+    else gLangs.push(llAnswers[i]);
+  });
+  const results={receiving:topTwo(countLangs(rLangs)),giving:topTwo(countLangs(gLangs))};
+  const wmsg=$('ll-wait-msg');
+  if(wmsg)wmsg.textContent='ממתינ/ה ל'+(myNum===1?gN.p2:gN.p1)+' לסיים...';
+  showSc('sc-ll-wait');
+  ws.send(JSON.stringify({type:'ll_done',results}));
+}
+
+function renderLLLangCard(langKey,g){
+  const d=LL_DEFS[langKey];
+  if(!d)return'';
+  const desc=adaptGender(d.desc,g);
+  const tips=d.tips.map(t=>`<li>${adaptGender(t,g)}</li>`).join('');
+  return`<div class="ll-lang-card">
+    <div class="ll-lang-title">${d.icon} ${d.name}</div>
+    <div class="ll-lang-desc">${desc}</div>
+    <div class="ll-tips-label">איך לדבר בשפה הזו:</div>
+    <ul class="ll-tips">${tips}</ul>
+  </div>`;
+}
+
+function renderLLResults(msg){
+  const cont=$('ll-results-content');
+  cont.innerHTML='';
+  [{key:'p1',name:msg.names.p1,g:gG.p1},{key:'p2',name:msg.names.p2,g:gG.p2}].forEach(({key,name,g})=>{
+    const r=msg[key];
+    const recvCards=(r.receiving||[]).map(k=>renderLLLangCard(k,g)).join('');
+    const giveCards=(r.giving||[]).map(k=>renderLLLangCard(k,g)).join('');
+    const recvLbl=g==='m'?'איך אוהב לקבל אהבה':'איך אוהבת לקבל אהבה';
+    const giveLbl=g==='m'?'איך אוהב להראות אהבה':'איך אוהבת להראות אהבה';
+    const block=document.createElement('div');
+    block.className='ll-player-block';
+    block.innerHTML=`<div class="ll-player-name">❤️ ${name}</div>
+      <div><div class="ll-section-label">${recvLbl}</div>${recvCards}</div>
+      <div><div class="ll-section-label">${giveLbl}</div>${giveCards}</div>`;
+    cont.appendChild(block);
+  });
+  const btns=$('ll-after-btns');
+  btns.innerHTML='';
+  const card=document.createElement('div');
+  card.className='card';card.style.textAlign='center';
+  card.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:6px;">רוצים להמשיך למשחק זוגיסט? 🎮</div>';
+  btns.appendChild(card);
+  if(myNum===1){
+    const btn=document.createElement('button');
+    btn.className='btn btn-primary';btn.textContent='בואו נשחק! ➡️';
+    btn.onclick=()=>ws.send(JSON.stringify({type:'start_zogist_after_ll'}));
+    btns.appendChild(btn);
+  } else {
+    const w=document.createElement('div');
+    w.className='waiting-answer';w.textContent='ממתינ/ה ל'+gN.p1+' להחליט...';
+    btns.appendChild(w);
+  }
+}
+
+/* ── BEFOREUNLOAD ── */
+window.addEventListener('beforeunload',e=>{
+  if(myNum>0&&rStage>0&&rStage<5){
+    e.preventDefault();
+    e.returnValue='רענון הדף יסגור את המשחק';
+    return 'רענון הדף יסגור את המשחק';
+  }
+});
+
+/* ── DOM UTILS ── */
+const $=id=>document.getElementById(id);
+function showSc(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+function mkDots(id,tot,cur){
+  const c=$(id);if(!c)return;c.innerHTML='';
+  for(let i=0;i<tot;i++){const d=document.createElement('div');d.className='dot'+(i<cur?' done':i===cur?' cur':'');c.appendChild(d);}
+}
+function syncScores(sc){
+  if(!sc)return;
+  ['s1','s2','s3','s4'].forEach(s=>{
+    const n1=$(s+'n1'),n2=$(s+'n2'),v1=$(s+'v1'),v2=$(s+'v2');
+    if(n1)n1.textContent=gN.p1;if(n2)n2.textContent=gN.p2;
+    if(v1)v1.textContent=sc.p1;if(v2)v2.textContent=sc.p2;
+  });
+}
+function fireConfetti(){
+  const c=$('confetti');c.innerHTML='';
+  const cols=['#FF4D8D','#7B2FFF','#FFD93D','#00E5CC','#FF9800'];
+  for(let i=0;i<60;i++){
+    const p=document.createElement('div');p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}vw;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*2+1.5}s;animation-delay:${Math.random()}s;width:${Math.random()*10+6}px;height:${Math.random()*10+6}px`;
+    c.appendChild(p);
+  }
+  setTimeout(()=>c.innerHTML='',4000);
+}
+
+function fadeTransition(wrapEl, cb) {
+    if (!wrapEl) { cb(); return; }
+    wrapEl.classList.add('slide-out');
+    setTimeout(() => {
+        wrapEl.classList.remove('slide-out');
+        cb();
+        wrapEl.classList.add('slide-in');
+        setTimeout(() => wrapEl.classList.remove('slide-in'), 550);
+    }, 550);
+}
+
+/* ── GENDER HELPERS ── */
+const gOf=num=>gG[num===1?'p1':'p2']||'m';
+const nOf=num=>gN[num===1?'p1':'p2'];
+const heStr=num=>gOf(num)==='f'?'היא':'הוא';
+const choseStr=num=>gOf(num)==='f'?'בחרה':'בחר';
+const thoughtStr=num=>gOf(num)==='f'?'חשבה':'חשב';
+const prefersStr=num=>gOf(num)==='f'?'מעדיפה':'מעדיף';
+const answeredStr=num=>gOf(num)==='f'?'ענתה':'ענה';
+const selfStr=num=>gOf(num)==='f'?'עצמה':'עצמו';
+const selfLabel=num=>gOf(num)==='f'?'קודם ענה/י על עצמך:':'קודם ענה על עצמך:';
+const judgeLabel=num=>`האם ${nOf(num)} ${gOf(num)==='f'?'צודקת':'צודק'}?`;
+const judgeBtnYes=num=>gOf(num)==='f'?'צודקת ✅':'צודק ✅';
+const judgeBtnNo=num=>gOf(num)==='f'?'לא צודקת ❌':'לא צודק ❌';
+const lchatzta=num=>gOf(num)==='f'?'לחצת ראשונה':'לחצת ראשון';
+const answerVerb=num=>gOf(num)==='f'?'ענה/י:':'ענה:';
+const winnerStr=num=>gOf(num)==='f'?`🏆 ${nOf(num)} ניצחה!`:`🏆 ${nOf(num)} ניצח!`;
+
+function buildS1Q(item,mn){
+  const g=gOf(mn);
+  const base=g==='f'?item.f:item.m;
+  return item.wo?`${base} עם ${nOf(mn===1?2:1)}?`:`${base}?`;
+}
+
+function s4Story(gn,an,gi,ai,opts,readerNum){
+  if(gi===ai)return null;
+  const guessedOpt=opts[gi], actualOpt=opts[ai];
+  if(readerNum===gn){
+    return `ניסית לנחש ש${nOf(an)} ${choseStr(an)} ${guessedOpt}, אבל ${heStr(an)} ${choseStr(an)} ${actualOpt}`;
+  } else {
+    return `${nOf(gn)} ${thoughtStr(gn)} שאת/ה ${prefersStr(an)} ${guessedOpt}, אבל בחרת ${actualOpt}`;
+  }
+}
+
+/* ── MODE ANNOUNCE ── */
+function showModeAnnounce(mode,p1name){
+  const modes={
+    'full':{emoji:'🎮',title:'משחק מלא',desc:'כל 4 השלבים ברצף'},
+    '1':{emoji:'🤔',title:'מי אנחנו?',desc:'שאלות כן/לא על הרגלים ואישיות'},
+    '2':{emoji:'⚡',title:'מהיר יותר!',desc:'טריוויה – מי לוחץ ראשון עונה'},
+    '3':{emoji:'🔥',title:'דעות קדומות',desc:'10 הצהרות שנויות במחלוקת - בחירה בסקאלה של 1-5'},
+    '4':{emoji:'🃏',title:'אני מכיר אותך',desc:'ענה/י על עצמך ונחש/י את השני/ה'}
+  };
+  const m=modes[String(mode)]||modes['full'];
+  $('ma-emoji').textContent=m.emoji;
+  $('ma-title').textContent=m.title;
+  $('ma-desc').textContent=m.desc;
+  $('ma-btn-area').innerHTML=myNum===1
+    ?'<button class="btn btn-primary" onclick="startGameFromAnnounce()">בואו נתחיל! 🚀</button>'
+    :'<div class="waiting-answer">ממתינ/ה ל'+(p1name||'שחקן 1')+' להתחיל...</div>';
+  showSc('sc-mode-announce');
+}
+
+/* ── COUNTDOWN ── */
+function startCountdown(stageNum,onDone){
+  showSc('sc-countdown');
+  const names={1:'מי אנחנו 🤔',2:'מהיר יותר ⚡',3:'דעות קדומות 🔥',4:'אני מכיר אותך 🃏'};
+  $('cd-label').textContent=names[stageNum]||'';
+  let n=3;$('cd-num').textContent=n;
+  const iv=setInterval(()=>{n--;if(n>0){$('cd-num').textContent=n;}else{clearInterval(iv);onDone();}},1000);
+}
+
+/* ── RENDER INTRO start area ── */
+function renderIntroStart(stageNum){
+  const el=$('intro'+stageNum+'-start');
+  if(!el)return;
+  if(myNum===1){
+    el.innerHTML=`<button class="btn btn-primary" onclick="p1StartStage(${stageNum})">בואו נתחיל! ➡️</button>`;
+  } else {
+    el.innerHTML=`<div class="waiting-answer">ממתין לשחקן 1 להתחיל...</div>`;
+  }
+}
+
+/* ── GENDER PICKER ── */
+window.setGender=function(g){
+  myGender=g;
+  $('gb-m').classList.toggle('selected',g==='m');
+  $('gb-f').classList.toggle('selected',g==='f');
+};
+
+window.toggleJoin=function(){
+  const w=$('join-wrap');w.style.display=w.style.display==='none'?'flex':'none';
+};
+
+/* ── WEBSOCKET ACTIONS ── */
+window.createRoom=function(){
+  const name=$('inp-name').value.trim();
+  if(!name){$('home-err').textContent='הכנס/י שם קודם!';return;}
+  if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
+  myName=name;myNum=1;
+  ws.send(JSON.stringify({type:'create_room',name,gender:myGender}));
+};
+
+window.joinRoom=function(){
+  const name=$('inp-name').value.trim();
+  const code=$('inp-code').value.trim();
+  if(!name){$('home-err').textContent='הכנס/י שם קודם!';return;}
+  if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
+  if(code.length!==4){$('home-err').textContent='קוד לא תקין';return;}
+  myName=name;myNum=2;
+  ws.send(JSON.stringify({type:'join_room',name,gender:myGender,code}));
+};
+
+window.chooseMode=function(mode){
+  ws.send(JSON.stringify({type:'choose_mode',mode}));
+};
+
+window.startGameFromAnnounce=function(){
+  ws.send(JSON.stringify({type:'start_game'}));
+};
+
+window.p1StartStage=function(stageNum){
+  ws.send(JSON.stringify({type:'start_stage',stage:stageNum}));
+};
+
+window.p1AdvQ=function(stage){
+  const btn=$('s'+stage+'-next');
+  if(btn){btn.disabled=true;}
+  ws.send(JSON.stringify({type:'next_question',stage}));
+};
+
+window.answerS1=function(ans){
+  $('s1-btns').innerHTML='<div class="waiting-answer">ממתין לתשובת השני... ⏳</div>';
+  ws.send(JSON.stringify({type:'answer_s1',answer:ans}));
+};
+
+window.buzz=function(){
+  const btn=$('buzz-btn');
+  if(btn.classList.contains('disabled'))return;
+  btn.className='buzz-btn disabled';
+  ws.send(JSON.stringify({type:'buzz'}));
+};
+
+window.judgeS2=function(correct){
+  $('s2-judge-area').style.display='none';
+  ws.send(JSON.stringify({type:'judge_s2',correct}));
+};
+
+window.answerS3=function(val){
+  $('s3-btns').innerHTML='<div class="waiting-answer">ממתין לתשובת השני... ⏳</div>';
+  ws.send(JSON.stringify({type:'answer_s3',value:val}));
+};
+
+window.answerS4=function(idx){
+  document.querySelectorAll('#s4-ans-area button').forEach(b=>{b.disabled=true;b.style.opacity='.35';});
+  ws.send(JSON.stringify({type:'answer_s4',idx}));
+};
+
+window.guessS4=function(idx){
+  document.querySelectorAll('#s4-ans-area button').forEach(b=>{b.disabled=true;b.style.opacity='.35';});
+  ws.send(JSON.stringify({type:'guess_s4',idx}));
+};
+
+window.restartGame=function(){
+  ws.send(JSON.stringify({type:'restart'}));
+};
+
+window.ackSummary=function(){
+  ws.send(JSON.stringify({type:'ack_summary'}));
+};
+
+/* ── RENDER FUNCTIONS ── */
+function renderS1Q(q,qdata){
+  $('s1-qnum').textContent='שאלה '+(q+1)+' מתוך '+S1Q.length;
+  $('s1-qtext').textContent=buildS1Q(qdata,myNum);
+  mkDots('s1-dots',S1Q.length,q);
+  $('s1-qcard').style.display='block';
+  $('s1-btns').innerHTML='<div class="answer-row"><button class="btn-yes" onclick="answerS1(\'yes\')">כן ✅</button><button class="btn-no" onclick="answerS1(\'no\')">לא ❌</button></div>';
+  $('s1-reveal').style.display='none';
+}
+
+function showRevealS1(msg){
+  const {q,qdata,answers,pts1,pts2,match,streak_msg}=msg;
+  const total=S1Q.length;
+  const counter='<div class="q-counter">שאלה '+(q+1)+' מתוך '+total+'</div>';
+  const s1qTxt='<div class="q-text" style="font-size:20px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+buildS1Q(qdata,myNum)+'</div>';
+  let banner=match
+    ?'🎉 התאמה! '+nOf(pts1>=2?1:2)+' +2 | '+nOf(pts1>=2?2:1)+' +1'
+    :'🔥 לא הסכמתם – 0 נקודות לשניכם';
+  const streakHtml=streak_msg?'<div class="streak-banner '+(match?'streak-agree':'streak-disagree')+'">'+streak_msg+'</div>':'';
+  $('s1-rev-content').innerHTML=counter+s1qTxt+
+    '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+(answers.p1==='yes'?'כן ✅':'לא ❌')+(pts1>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts1+'</small>':'')+'</span></div>'+
+    '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+(answers.p2==='yes'?'כן ✅':'לא ❌')+(pts2>0?' <small style="font-size:14px;color:var(--yellow)">+'+pts2+'</small>':'')+'</span></div>'+
+    '<div class="match-banner '+(match?'match-yes':'match-no')+'">'+banner+'</div>'+
+    streakHtml;
+  $('s1-qcard').style.display='none';
+  $('s1-reveal').style.display='block';
+  $('s1-next').style.display=myNum===1?'block':'none';
+  $('s1-wait-next').style.display=myNum===2?'block':'none';
+}
+
+function renderS2Q(q,qdata,total){
+  $('s2-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
+  $('s2-qtext').textContent=qdata.q;
+  $('s2-hint').textContent='רמז: '+qdata.h;
+  $('buzz-status').textContent='';
+  $('s2-judge-area').style.display='none';
+  $('s2-wait-area').style.display='none';
+  const btn=$('buzz-btn');btn.className='buzz-btn';btn.textContent='⚡ אני יודע!';
+  mkDots('s2-dots',total,q);
+}
+
+function showBuzzResult(msg){
+  const {buzzer,buzzer_name,buzzer_gender}=msg;
+  const btn=$('buzz-btn');btn.className='buzz-btn disabled';
+  if(buzzer===myNum){
+    $('buzz-status').innerHTML='<div style="color:var(--yellow)">🎯 '+lchatzta(myNum)+'! '+answerVerb(myNum)+'</div>';
+    if(msg.both_buzzed && msg.time_diff !== null){
+      $('buzz-status').innerHTML += '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;">לחצת מהר יותר ב-'+msg.time_diff+' שניות</div>';
+    }
+    $('s2-wait-area').style.display='block';
+    $('s2-judge-area').style.display='none';
+    btn.textContent=gOf(myNum)==='f'?'את עונה!':'אתה עונה!';
+  } else {
+    $('buzz-status').innerHTML='<div style="color:rgba(255,255,255,.5)">'+buzzer_name+' '+(buzzer_gender==='f'?'לחצה':'לחץ')+' ראשונ'+(buzzer_gender==='f'?'ה':'')+' ...</div>';
+    if(msg.both_buzzed && msg.time_diff !== null){
+      $('buzz-status').innerHTML += '<div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;">'+buzzer_name+' לחץ/ה מהר יותר ב-'+msg.time_diff+' שניות</div>';
+    }
+    $('s2-correct-ans').textContent=S2Q[currentQ]?S2Q[currentQ].a:'';
+    $('s2-judge-label').textContent=judgeLabel(buzzer);
+    $('s2-judge-yes').textContent=judgeBtnYes(buzzer);
+    $('s2-judge-no').textContent=judgeBtnNo(buzzer);
+    $('s2-judge-area').style.display='block';
+    $('s2-wait-area').style.display='none';
+    btn.textContent='🔒 נעול';
+  }
+}
+
+function showS2Result(msg){
+  const {correct,answer}=msg;
+  $('s2-judge-area').style.display='none';
+  $('s2-wait-area').style.display='none';
+  $('buzz-status').innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:4px;">'+(correct?'✅ נכון!':'❌ לא נכון!')+'</div><div style="color:rgba(255,255,255,.5);font-size:14px;">התשובה: '+answer+'</div></div>';
+}
+
+function renderS3Q(q,qdata,total){
+  $('s3-qnum').textContent='הצהרה '+(q+1)+' מתוך '+total;
+  $('s3-qtext').textContent=qdata;
+  mkDots('s3-dots',total,q);
+  $('s3-qcard').style.display='block';
+  const colors=['#D32F2F','#E57373','#888888','#66BB6A','#2E7D32'];
+  let btns='<div style="display:flex;gap:6px;justify-content:center;direction:rtl;">';
+  for(let i=1;i<=5;i++){
+    btns+='<button onclick="answerS3('+i+')" style="flex:1;padding:10px 2px;border:none;border-radius:12px;background:'+colors[i-1]+';color:#fff;font-family:Heebo,sans-serif;font-size:13px;font-weight:700;cursor:pointer;line-height:1.3;white-space:pre-line;">'+i+'\n'+(['מתנגד/ת\nבחריפות','לא\nמסכים/ה','ניטרלי/ת','מסכים/ה','מסכים/ה\nמאוד'][i-1])+'</button>';
+  }
+  btns+='</div>';
+  $('s3-btns').innerHTML=btns;
+  $('s3-reveal').style.display='none';
+}
+
+function showRevealS3(msg){
+  const {q,qdata,answers,pts1,pts2,diff,base,speed,first}=msg;
+  const total=S3Q.length;
+  const counter='<div class="q-counter">הצהרה '+(q+1)+' מתוך '+total+'</div>';
+  const ptsColor=(pts)=>pts>0?'#00E676':pts<0?'#FF5252':'#888888';
+  const ptsFmt=p=>p>0?'+'+p:String(p);
+  const firstNm=nOf(first);
+  const firstVerb=gOf(first)==='f'?'ענתה':'ענה';
+  const firstSuf=gOf(first)==='f'?'ראשונה':'ראשון';
+  const s3ScoreLabel=(pts)=>{
+    if(pts===3)return'🎯 פגיעה בול! +3 נקודות לשניכם';
+    if(pts===1)return'✨ קרוב מאוד! +1 נקודה לשניכם';
+    if(pts===0)return'😐 הפרש 2 – אפס נקודות לשניכם';
+    if(pts===-1)return'😬 הפרש 3 – מינוס נקודה לשניכם';
+    return'💥 הפרש 4 – מינוס 2 נקודות לשניכם';
+  };
+  const speedLine=speed!==0?'<div class="match-banner" style="background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);color:var(--yellow);">⚡ '+firstNm+' '+firstVerb+' '+firstSuf+' – בונוס/קנס: '+(speed>0?'+':'')+speed+'</div>':'';
+  const s3qTxt='<div class="q-text" style="font-size:20px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata+'</div>';
+  $('s3-rev-content').innerHTML=counter+s3qTxt+
+    '<div class="p-ans"><span class="p-name">'+gN.p1+'</span><span class="p-val">'+answers.p1+' – '+answers.p1_label+'<small style="font-size:13px;color:'+ptsColor(pts1)+'"> ('+ptsFmt(pts1)+')</small></span></div>'+
+    '<div class="p-ans"><span class="p-name">'+gN.p2+'</span><span class="p-val">'+answers.p2+' – '+answers.p2_label+'<small style="font-size:13px;color:'+ptsColor(pts2)+'"> ('+ptsFmt(pts2)+')</small></span></div>'+
+    '<div class="match-banner" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);">הפרש בין התשובות: '+diff+'</div>'+
+    '<div class="match-banner '+(base>0?'match-yes':base<0?'match-no':'')+'">'+s3ScoreLabel(base)+'</div>'+
+    speedLine;
+  $('s3-qcard').style.display='none';
+  $('s3-reveal').style.display='block';
+  $('s3-next').style.display=myNum===1?'block':'none';
+  $('s3-wait-next').style.display=myNum===2?'block':'none';
+}
+
+function renderS4Q(q,qdata,total){
+  $('s4-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
+  $('s4-qtext').textContent=qdata.q;
+  mkDots('s4-dots',total,q);
+  $('s4-self-label').textContent=selfLabel(myNum);
+  $('s4-self-label').style.color='var(--yellow)';
+  $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="answerS4('+i+')">'+o+'</button>').join('');
+  $('s4-qarea').style.display='block';
+  $('s4-reveal').style.display='none';
+}
+
+function showGuessS4(msg){
+  const {qdata}=msg;
+  const on=myNum===1?2:1;
+  // Update label only — same design, no layout shift
+  $('s4-self-label').textContent='עכשיו נחש/י מה '+nOf(on)+' '+answeredStr(on)+':';
+  $('s4-self-label').style.color='var(--teal)';
+  $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="guessS4('+i+')">'+o+'</button>').join('');
+}
+
+function showRevealS4(msg){
+  const {q,qdata,answers,guesses,pts1,pts2}=msg;
+  const total=S4Q.length;
+  const counter='<div class="q-counter">שאלה '+(q+1)+' מתוך '+total+'</div>';
+  const s4qTxt='<div class="q-text" style="font-size:20px;margin-bottom:12px;padding:12px 16px;background:rgba(255,255,255,.05);border-radius:12px;">'+qdata.q+'</div>';
+  const opts=qdata.o;
+  let stories='';
+  if(!guesses.g1ok){const s=s4Story(1,2,guesses.g1,answers.p2,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
+  if(!guesses.g2ok){const s=s4Story(2,1,guesses.g2,answers.p1,opts,myNum);if(s)stories+='<div class="story-card">💬 '+s+'</div>';}
+  $('s4-rev-content').innerHTML=counter+s4qTxt+
+    '<div class="p-ans"><span class="p-name">'+gN.p1+' '+answeredStr(1)+' על '+selfStr(1)+'</span><span class="p-val" style="font-size:14px">'+opts[answers.p1]+'</span></div>'+
+    '<div class="p-ans"><span class="p-name">'+gN.p2+' '+answeredStr(2)+' על '+selfStr(2)+'</span><span class="p-val" style="font-size:14px">'+opts[answers.p2]+'</span></div>'+
+    stories+
+    '<div class="match-banner '+(guesses.g1ok?'match-yes':'match-no')+'">'+gN.p1+': '+(guesses.g1ok?'✅ ניחוש נכון! +'+pts1:'❌ טעות')+'</div>'+
+    '<div class="match-banner '+(guesses.g2ok?'match-yes':'match-no')+'">'+gN.p2+': '+(guesses.g2ok?'✅ ניחוש נכון! +'+pts2:'❌ טעות')+'</div>';
+  $('s4-qarea').style.display='none';
+  $('s4-reveal').style.display='block';
+  $('s4-next').style.display=myNum===1?'block':'none';
+  $('s4-wait-next').style.display=myNum===2?'block':'none';
+}
+
+function renderFinal(msg){
+  const {p1,p2,winner,scores,compatibility,summary_lines,highlights}=msg;
+  $('final-winner').textContent=winner?winnerStr(winner):'🤝 תיקו מושלם!';
+
+  // Compatibility circle
+  const compatHtml=compatibility!=null?
+    '<div style="text-align:center;margin:8px 0;"><div class="compat-circle"><div class="compat-num">'+compatibility+'%</div><div class="compat-label">התאמה</div></div></div>':'';
+
+  // Highlights
+  let hlHtml='';
+  if(highlights){
+    if(highlights.agreed) hlHtml+='<div class="highlight-box" style="border-color:rgba(0,230,118,.2);"><span style="color:#00E676;font-size:12px;font-weight:700;">✅ הכי הסכמתם על: </span>'+highlights.agreed+'</div>';
+    if(highlights.disputed) hlHtml+='<div class="highlight-box" style="border-color:rgba(255,82,82,.2);"><span style="color:#FF5252;font-size:12px;font-weight:700;">🔥 הכי חלקתם על:</span>'+highlights.disputed+'</div>';
+  }
+
+  // Summary lines
+  let summaryHtml='';
+  if(summary_lines&&summary_lines.length){
+    summaryHtml='<div class="summary-lines">'+summary_lines.map(l=>'<div class="summary-line">'+l+'</div>').join('')+'</div>';
+  }
+
+  $('final-extra').innerHTML='<div style="width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:8px;">'+compatHtml+hlHtml+summaryHtml+'</div>';
+
+  const rows=[{name:p1.name,score:scores.p1,win:scores.p1>=scores.p2},{name:p2.name,score:scores.p2,win:scores.p2>=scores.p1}].sort((a,b)=>b.score-a.score);
+  $('final-scores').innerHTML=rows.map(r=>'<div class="final-row '+(r.win?'win':'')+'"><span style="font-size:18px;font-weight:700">'+(r.win?'👑 ':'')+r.name+'</span><span style="font-size:28px;font-weight:900;color:var(--yellow)">'+r.score+'</span></div>').join('');
+
+  showSc('sc-final');
+  fireConfetti();
+}
+
+/* ── MESSAGE HANDLERS ── */
+const MSG_HANDLERS={
+  room_created:(msg)=>{
+    $('disp-code').textContent=msg.code;
+    showSc('sc-wait');
+  },
+  player_joined:(msg)=>{
+    gN.p1=msg.p1.name;gN.p2=msg.p2.name;
+    gG.p1=msg.p1.gender;gG.p2=msg.p2.gender;
+    S1Q=msg.questions.s1;S2Q=msg.questions.s2;
+    S3Q=msg.questions.s3;S4Q=msg.questions.s4;
+    const en=$('exp-names');if(en)en.textContent=gN.p1+' ו'+gN.p2;
+    // Reset experience screen state (handles replaying as different role)
+    const expBtns=$('exp-choices');if(expBtns)expBtns.style.display='';
+    const expWait=$('exp-wait');if(expWait)expWait.classList.add('hidden');
+    showSc('sc-experience');
+    if(myNum===2){
+      if(expBtns)expBtns.style.display='none';
+      if(expWait)expWait.classList.remove('hidden');
+      const wn=$('exp-p1-name');if(wn)wn.textContent=gN.p1;
+    }
+  },
+  experience_chosen:(msg)=>{
+    if(msg.experience==='love_languages'){
+      showSc('sc-ll-intro');
+    } else {
+      if(myNum===1)showSc('sc-mode');
+      else{showSc('sc-wait-mode');const n=$('wait-mode-p1name');if(n)n.textContent=gN.p1;}
+    }
+  },
+  ll_partner_done:(msg)=>{
+    const w=$('ll-wait-msg');
+    if(w)w.textContent='הצד השני סיים! ממתינ/ה לתוצאות...';
+  },
+  ll_results:(msg)=>{
+    renderLLResults(msg);showSc('sc-ll-results');
+  },
+  mode_announced:(msg)=>{
+    gameMode=msg.mode;
+    showModeAnnounce(msg.mode,gN.p1);
+  },
+  stage_intro:(msg)=>{
+    rStage=msg.stage;rReveal=false;
+    showSc('sc-intro'+msg.stage);
+    renderIntroStart(msg.stage);
+  },
+  countdown_done:(msg)=>{
+    stageRendered[msg.stage]=false;
+    startCountdown(msg.stage,()=>{ showSc('sc-s'+msg.stage); });
+  },
+  question:(msg)=>{
+    rReveal=false;
+    currentQ=msg.q;
+    syncScores(msg.scores);
+    const doRender=()=>{
+      stageRendered[msg.stage]=true;
+      if(msg.stage===1)renderS1Q(msg.q,msg.qdata);
+      else if(msg.stage===2)renderS2Q(msg.q,msg.qdata,msg.total);
+      else if(msg.stage===3)renderS3Q(msg.q,msg.qdata,msg.total);
+      else if(msg.stage===4)renderS4Q(msg.q,msg.qdata,msg.total);
+    };
+    if(!stageRendered[msg.stage]){
+      doRender();
+    } else {
+      const wrapId={1:'s1-content',2:'s2-qcard',3:'s3-content',4:'s4-content'}[msg.stage];
+      fadeTransition($(wrapId),doRender);
+    }
+  },
+  reveal:(msg)=>{
+    rReveal=true;
+    syncScores(msg.scores);
+    if(msg.stage===1)showRevealS1(msg);
+    else if(msg.stage===3)showRevealS3(msg);
+    else if(msg.stage===4)showRevealS4(msg);
+  },
+  guess_phase:(msg)=>{
+    showGuessS4(msg);
+  },
+  buzz_result:(msg)=>{
+    showBuzzResult(msg);
+  },
+  s2_result:(msg)=>{
+    syncScores(msg.scores);
+    showS2Result(msg);
+  },
+  stage_summary:(msg)=>{
+    const stageNames={1:'מי אנחנו? 🤔',2:'מהיר יותר! ⚡',3:'דעות קדומות 🔥',4:'אני מכיר אותך 🃏'};
+    $('ss-stage-label').textContent='סיכום שלב '+msg.stage;
+    $('ss-title').textContent=stageNames[msg.stage]||'';
+    if(msg.scores){
+      $('ss-n1').textContent=gN.p1;$('ss-n2').textContent=gN.p2;
+      $('ss-v1').textContent=msg.scores.p1;$('ss-v2').textContent=msg.scores.p2;
+    }
+    $('ss-stats').textContent=msg.stats||'';
+    $('ss-comment').textContent=msg.comment||'';
+    if(myNum===1){
+      $('ss-btn-area').innerHTML='<button class="btn btn-primary" onclick="ackSummary()">המשך ➡️</button>';
+    } else {
+      $('ss-btn-area').innerHTML='<div class="waiting-answer">ממתינ/ה ל'+gN.p1+' להמשיך...</div>';
+    }
+    showSc('sc-stage-summary');
+  },
+  game_over:(msg)=>{
+    renderFinal(msg);
+  },
+  restarted:()=>{
+    myGender='';myNum=0;
+    stageRendered={};
+    $('final-extra').innerHTML='';
+    $('gb-m').classList.remove('selected');$('gb-f').classList.remove('selected');
+    showSc('sc-home');
+  },
+  error:(msg)=>{
+    $('home-err').textContent=msg.message;
+  }
+};
+
+ws.onmessage=(evt)=>{
+  const msg=JSON.parse(evt.data);
+  const h=MSG_HANDLERS[msg.type];
+  if(h)h(msg);
+};
+ws.onclose=()=>{
+  if(myNum>0)$('home-err').textContent='החיבור נותק. רענן את הדף.';
+};
+</script>
 </body>
 </html>

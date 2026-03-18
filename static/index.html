@@ -422,13 +422,12 @@ input::placeholder{color:rgba(255,255,255,.3);}
   <div class="logo" style="font-size:32px;">💬 שפות האהבה</div>
   <div class="card" style="text-align:center;font-size:15px;line-height:1.7;color:rgba(255,255,255,.85);margin-bottom:12px;">
     לכולנו יש שפה רגשית משלנו — הדרך הייחודית שבה אנחנו מרגישים אהובים ומביעים אהבה.<br>
-    כשאנחנו ובן/בת הזוג שלנו מדברים באותה שפה — הכל זורם.<br>
-    כשהשפות שונות, גם כוונה טובה לא תמיד מגיעה למקום.
+    בעזרת המשחק הזה תוכלו להבין יותר אחד את השני — ואיך להראות אהבה כמו שהצד השני באמת צריך.
   </div>
   <div class="intro-card">
     <div class="intro-emoji">❤️</div>
     <div class="intro-title">20 שאלות אישיות</div>
-    <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תוכלו לגלות מה שפות האהבה העיקריות שלכם ושל בן/בת זוגכם.</div>
+    <div class="intro-desc">לכל אחד מכם יופיעו 20 שאלות למענה עצמי — לא להציץ!<br>בסוף תגלו מה הן שפות האהבה העיקריות שלכם ושל בן/בת זוגכם.</div>
     <div class="intro-rules">
       <div class="intro-rule"><span class="intro-rule-icon">🤫</span><span>ענו בכנות — אין תשובות נכונות</span></div>
     </div>
@@ -680,7 +679,8 @@ function finishLL(){
     else gLangs.push(llAnswers[i]);
   });
   const results={receiving:topTwo(countLangs(rLangs)),giving:topTwo(countLangs(gLangs))};
-  $('ll-wait-name').textContent=myNum===1?gN.p2:gN.p1;
+  const wmsg=$('ll-wait-msg');
+  if(wmsg)wmsg.textContent='ממתינ/ה ל'+(myNum===1?gN.p2:gN.p1)+' לסיים...';
   showSc('sc-ll-wait');
   ws.send(JSON.stringify({type:'ll_done',results}));
 }
