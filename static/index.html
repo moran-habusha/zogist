@@ -382,7 +382,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div id="s4-guess-area" style="display:none;width:100%;">
       <div class="question-card">
         <div class="q-text" id="s4-guess-text"></div>
-        <div style="font-size:14px;color:var(--teal);margin-bottom:16px;" id="s4-guess-label"></div>
+        <div style="font-size:20px;font-weight:700;color:var(--teal);margin-bottom:16px;" id="s4-guess-label"></div>
         <div id="s4-guess-opts"></div>
       </div>
     </div>
@@ -748,7 +748,7 @@ function renderLLLangCard(langKey,g,tipsType){
   </div>`;
   const tips=(tipsType==='give'?d.tips_give:d.tips_receive)||[];
   const tipsLabel=tipsType==='give'
-    ?(g==='m'?'איך לדבר בשפה שהוא יבין:':'איך לדבר בשפה שהיא תבין:')
+    ?(g==='m'?'איך לדבר בשפה שהוא אוהב?':'איך לדבר בשפה שהיא אוהבת?')
     :'איך אהבה כזו מרגישה בפועל:';
   const tipsHtml=tips.map(t=>`<li>${adaptGender(t,g)}</li>`).join('');
   return`<div class="ll-lang-card">
@@ -802,10 +802,10 @@ function renderLLResults(msg){
   const btns=$('ll-after-btns');
   btns.innerHTML='';
   const partnerNameForBtn=myNum===1?msg.names.p2:msg.names.p1;
-  const btnLabel=adaptGender('הדף הבא הוא לעינייך בלבד, אל תיתן/תיתני ל'+partnerNameForBtn+' להציץ! 👀',myGender);
+  const btnLabel=adaptGender('הדף הבא הוא לעינייך בלבד,<br>אל תיתן/תיתני ל'+partnerNameForBtn+' להציץ! 👀',myGender);
   const missionBtn=document.createElement('button');
   missionBtn.className='btn btn-primary';
-  missionBtn.textContent=btnLabel;
+  missionBtn.innerHTML=btnLabel;
   missionBtn.onclick=showMission;
   btns.appendChild(missionBtn);
 }
