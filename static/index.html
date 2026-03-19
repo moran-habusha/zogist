@@ -458,8 +458,10 @@ input::placeholder{color:rgba(255,255,255,.3);}
     <div class="ll-progress"><div class="ll-progress-bar" id="ll-prog-bar" style="width:0%"></div></div>
     <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;" id="ll-q-num">שאלה 1 מתוך 20</div>
   </div>
-  <div class="question-card" style="margin-bottom:12px;"><div class="q-text" style="font-size:18px;" id="ll-q-text"></div></div>
-  <div id="ll-options" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
+  <div id="ll-q-wrap" style="width:100%;display:flex;flex-direction:column;gap:10px;">
+    <div class="question-card" style="margin-bottom:12px;"><div class="q-text" style="font-size:18px;" id="ll-q-text"></div></div>
+    <div id="ll-options" style="width:100%;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
 </div>
 <!-- LL WAIT -->
 <div class="screen" id="sc-ll-wait">
@@ -724,7 +726,7 @@ function answerLL(lang){
   llAnswers.push(lang);
   llQIdx++;
   if(llQIdx>=llQuestions.length){finishLL();}
-  else{renderLLQ();}
+  else{fadeTransition($('ll-q-wrap'),renderLLQ);}
 }
 
 function finishLL(){
