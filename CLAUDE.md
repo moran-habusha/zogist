@@ -42,6 +42,7 @@ Backend (main.py — FastAPI + asyncio)
   - `s1_ans`, `s2_state`, `s3_ans`, `s4_state`
   - `ll_results` — `{1: {receiving:[...], giving:[...]}, 2: {...}}` (love languages results)
 - 16 WebSocket message handlers: `create_room`, `join_room`, `choose_experience`, `ll_done`, `start_zogist_after_ll`, `choose_mode`, `start_game`, `start_stage`, `next_question`, `answer_s1`, `buzz`, `judge_s2`, `answer_s3`, `answer_s4`, `guess_s4`, `restart`
+- `restart` handler still exists in server but the button was removed from the frontend — `game_over` screen now uses `returnToExperience()` (client-side only, same as sc-ll-mission)
 - Buzz race resolved with `asyncio.sleep(0.15)` cooperative yield + guard
 
 ### Frontend (`static/index.html`)
@@ -54,6 +55,7 @@ Backend (main.py — FastAPI + asyncio)
 - No scoring logic on client — only rendering
 - Hebrew RTL UI with full gender-adapted text helpers
 - Love languages quiz is entirely **client-side** (shuffle, scoring, rendering) — only final results sent to server
+- Screen transitions: all `showSc()` calls use `fadeIn .4s` CSS animation; question-to-question transitions within stages use `fadeTransition()` (slide-out/in 0.55s) — applies to **all 4 Zogist stages and LL questions** (`ll-q-wrap`)
 
 ### Legacy file
 - `index.html` (root level) — original Firebase version, kept in repo but not served
@@ -81,7 +83,8 @@ Room creation → P1 creates, P2 joins by code
   → P2 sees waiting screen (sc-wait-mode)
   → Both see mode announcement (sc-mode-announce)
   → Stages play in order based on mode
-  → Final score screen
+  → Final score screen (sc-final)
+  → "🏠 חזרה לבחירת חוויה" button → returnToExperience() — client-side only, same room preserved
 ```
 
 ### Game Modes (Zogist)
@@ -110,7 +113,9 @@ Room creation → P1 creates, P2 joins by code
 - My block first (no tips) — desc only, perspective: "איך אני מרגיש/ה אהבה"
 - Partner block second (with tips) — `tips_give` for their receiving lang, `tips_receive` for their giving lang
 - `renderLLLangCard(langKey, g, tipsType)` — `tipsType`: `null`=desc only, `'give'`=tips_give, `'receive'`=tips_receive
-- Button: "הדף הבא הוא לעינייך בלבד, אל תיתן/תיתני לX להציץ!" → goes to sc-ll-mission
+- `tipsLabel` for `tipsType='give'`: `g==='m' ? 'איך לדבר בשפה שהוא אוהב?' : 'איך לדבר בשפה שהיא אוהבת?'`
+- Tips use **reversed slash order** for partner-gender references: female form first (for male player viewing female partner), male form second
+- Button (2 lines): "הדף הבא הוא לעינייך בלבד,`<br>`אל תיתן/תיתני לX להציץ! 👀" — uses `innerHTML` (not `textContent`) → goes to sc-ll-mission
 - 💾 button: `window.print()` with white `@media print` CSS + `#app>#sc-ll-results` specificity fix
 
 #### LL Mission Screen (sc-ll-mission)
@@ -180,7 +185,10 @@ websockets==12.0
 ## Local Testing
 - Local Python: `C:\Users\moran\AppData\Local\Programs\Python\Python38-32\python.exe`
 - Run server: `python.exe -m uvicorn main:app --port 8765`
-- Simulation script: `simulate.py` — tests full LL flow + Zogist mode select with 2 WebSocket clients
+- `simulate_full.py` — full LL flow (P1/P2 finish first) + Zogist all 4 stages × 2 scenarios
+- `simulate_edge.py` — direct Zogist modes 2/3/4, S2 no-buzz (hangs — known), restart edge cases
+- `simulate_comprehensive.py` — 14 scenarios: all mode combinations, returnToExperience loops, simultaneous answers, rapid fire, buzz race
+- `simulate_stress.py` — 50 rooms × 2 players (100 concurrent connections), all pass ✅
 
 ---
 
@@ -192,3 +200,5 @@ websockets==12.0
 - The frontend has **no Zogist question banks** — all questions served by backend per session
 - Love languages questions live entirely in the frontend JS
 - Two concurrent users max on free tier (by design — game is 2-player)
+- Server handles **many rooms concurrently** (tested: 50 rooms / 100 connections simultaneously, all pass) — no room limit in code, bounded only by Render RAM (~512MB)
+- **Known bug (not fixed):** S2 no-buzz — server hangs indefinitely if neither player buzzes (no timeout/auto-advance)
