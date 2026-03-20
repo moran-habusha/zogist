@@ -1082,6 +1082,7 @@ function showRevealS1(msg){
     streakHtml;
   $('s1-qcard').style.display='none';
   $('s1-reveal').style.display='block';
+  $('s1-next').disabled=false;
   $('s1-next').style.display=myNum===1?'block':'none';
   $('s1-wait-next').style.display=myNum===2?'block':'none';
 }
@@ -1171,6 +1172,7 @@ function showRevealS3(msg){
     speedLine;
   $('s3-qcard').style.display='none';
   $('s3-reveal').style.display='block';
+  $('s3-next').disabled=false;
   $('s3-next').style.display=myNum===1?'block':'none';
   $('s3-wait-next').style.display=myNum===2?'block':'none';
 }
@@ -1212,6 +1214,7 @@ function showRevealS4(msg){
     '<div class="match-banner '+(guesses.g2ok?'match-yes':'match-no')+'">'+gN.p2+': '+(guesses.g2ok?'✅ ניחוש נכון! +'+pts2:'❌ טעות')+'</div>';
   $('s4-qarea').style.display='none';
   $('s4-reveal').style.display='block';
+  $('s4-next').disabled=false;
   $('s4-next').style.display=myNum===1?'block':'none';
   $('s4-wait-next').style.display=myNum===2?'block':'none';
 }
