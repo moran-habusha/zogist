@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>זוגיסט 💑 — טוען...</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#FF4D8D;--purple:#7B2FFF;--dark:#0D0D1A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Heebo',sans-serif;
+  background:var(--dark);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;
+  top:-50%;right:-50%;
+  width:200%;height:200%;
+  background:
+    radial-gradient(ellipse at 70% 20%,rgba(123,47,255,.18) 0%,transparent 50%),
+    radial-gradient(ellipse at 20% 80%,rgba(255,77,141,.18) 0%,transparent 50%);
+  pointer-events:none;
+}
+#wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:28px;
+  padding:24px;
+  max-width:360px;
+  width:100%;
+  position:relative;
+  z-index:1;
+}
+.logo{
+  font-size:56px;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  line-height:1;
+  text-align:center;
+  animation:pop 2.4s ease infinite;
+}
+@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.tagline{
+  font-size:15px;
+  color:rgba(255,255,255,.5);
+  text-align:center;
+}
+
+/* spinner ring */
+.ring{
+  width:64px;height:64px;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,.08);
+  border-top-color:var(--pink);
+  border-right-color:var(--purple);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* status text */
+#status{
+  font-size:17px;
+  font-weight:700;
+  color:rgba(255,255,255,.7);
+  text-align:center;
+  min-height:28px;
+  transition:opacity .4s;
+}
+#sub{
+  font-size:13px;
+  color:rgba(255,255,255,.35);
+  text-align:center;
+  min-height:20px;
+}
+
+/* progress dots */
+.dots{display:flex;gap:10px;justify-content:center;}
+.dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+}
+.dot.done{background:var(--pink);}
+.dot.pulse{
+  background:var(--purple);
+  animation:dotpulse .8s ease infinite alternate;
+}
+@keyframes dotpulse{from{opacity:.3}to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="logo">זוגיסט 💑</div>
+  <div class="tagline">משחק הזוגות האולטימטיבי</div>
+  <div class="ring"></div>
+  <div id="status">מתחבר לשרת...</div>
+  <div id="sub"></div>
+  <div class="dots">
+    <div class="dot pulse" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+  </div>
+</div>
+
+<script>
+const RENDER_URL = 'https://zogist.onrender.com';
+const status = document.getElementById('status');
+const sub    = document.getElementById('sub');
+const d1 = document.getElementById('d1');
+const d2 = document.getElementById('d2');
+const d3 = document.getElementById('d3');
+
+let attempts = 0;
+let slowMsgShown = false;
+let redirecting = false;
+
+function setDots(n){
+  [d1,d2,d3].forEach((d,i)=>{
+    d.className = 'dot' + (i<n?' done': i===n?' pulse':'');
+  });
+}
+
+async function ping(){
+  if(redirecting) return;
+  attempts++;
+
+  if(attempts === 4 && !slowMsgShown){
+    slowMsgShown = true;
+    status.textContent = 'השרת מתעורר משינה...';
+    sub.textContent = 'זה לוקח עד 30 שניות, חכו קצת 🙏';
+    setDots(1);
+  } else if(attempts === 12){
+    status.textContent = 'עוד רגע...';
+    setDots(2);
+  }
+
+  try{
+    const res = await fetch(RENDER_URL + '/ping', {mode:'cors', cache:'no-store'});
+    if(res.ok){
+      redirecting = true;
+      status.textContent = '✅ מחובר! מכניס אתכם...';
+      sub.textContent = '';
+      setDots(3);
+      setTimeout(()=>{ window.location.replace(RENDER_URL); }, 600);
+    }
+  } catch(e){
+    // server not ready yet, keep trying
+  }
+}
+
+// start pinging every 2s
+ping();
+setInterval(ping, 2000);
+</script>
+</body>
+</html>

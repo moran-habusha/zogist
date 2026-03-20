@@ -1,9 +1,11 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import json, random, time, asyncio
 
 app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
 
 # ── QUESTION BANKS ──
 S1_BANK = [
@@ -1009,6 +1011,10 @@ async def websocket_endpoint(ws: WebSocket):
             pass
         await handle_disconnect(ws)
 
+
+@app.get("/ping")
+async def ping():
+    return JSONResponse({"ok": True})
 
 @app.get("/")
 async def root():
