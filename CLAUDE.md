@@ -210,3 +210,6 @@ websockets==12.0
 - Two concurrent users max on free tier (by design — game is 2-player)
 - Server handles **many rooms concurrently** (tested: 50 rooms / 100 connections simultaneously, all pass) — no room limit in code, bounded only by Render RAM (~512MB)
 - **Known bug (not fixed):** S2 no-buzz — server hangs indefinitely if neither player buzzes (no timeout/auto-advance)
+- `rStage` is cleared on `game_over` and `returnToExperience()` — prevents false `beforeunload` warning on final screen or during LL after Zogist
+- Disconnect/error during gameplay: shows full-screen `#err-toast` overlay (not `home-err` which is invisible mid-game); `ws.onclose` also routes to toast; `home-err` still used for pre-game errors (name/code validation)
+- `#err-toast` is a fixed-position overlay with a reload button — always visible regardless of active screen

@@ -485,6 +485,11 @@ input::placeholder{color:rgba(255,255,255,.3);}
 </div>
 </div>
 <div class="confetti" id="confetti"></div>
+<div id="err-toast" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(13,13,26,.92);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;">
+  <div style="font-size:48px;">😕</div>
+  <div id="err-toast-msg" style="font-size:18px;font-weight:700;text-align:center;color:#fff;line-height:1.6;"></div>
+  <button class="btn btn-secondary" style="max-width:280px;" onclick="location.reload()">🔄 רענן את הדף</button>
+</div>
 
 <script>
 const ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
@@ -841,6 +846,7 @@ function showMission(){
 }
 
 function returnToExperience(){
+  rStage=-1;
   const expBtns=$('exp-choices');if(expBtns)expBtns.style.display='';
   const expWait=$('exp-wait');if(expWait)expWait.classList.add('hidden');
   showSc('sc-experience');
@@ -848,6 +854,12 @@ function returnToExperience(){
     if(expBtns)expBtns.style.display='none';
     if(expWait)expWait.classList.remove('hidden');
   }
+}
+
+function showErrToast(msg){
+  const t=$('err-toast');
+  $('err-toast-msg').textContent=msg;
+  t.style.display='flex';
 }
 
 /* ── BEFOREUNLOAD ── */
@@ -1352,6 +1364,7 @@ const MSG_HANDLERS={
     showSc('sc-stage-summary');
   },
   game_over:(msg)=>{
+    rStage=-1;
     renderFinal(msg);
   },
   restarted:()=>{
@@ -1362,7 +1375,8 @@ const MSG_HANDLERS={
     showSc('sc-home');
   },
   error:(msg)=>{
-    $('home-err').textContent=msg.message;
+    if(myNum>0)showErrToast(msg.message);
+    else $('home-err').textContent=msg.message;
   }
 };
 
@@ -1372,7 +1386,7 @@ ws.onmessage=(evt)=>{
   if(h)h(msg);
 };
 ws.onclose=()=>{
-  if(myNum>0)$('home-err').textContent='החיבור נותק. רענן את הדף.';
+  if(myNum>0)showErrToast('החיבור נותק. רענן את הדף.');
 };
 </script>
 </body>
