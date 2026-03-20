@@ -147,6 +147,13 @@ LL questions use `qm`/`qf` fields — same explicit-variant pattern, no runtime 
 
 ---
 
+## Entry Point (User-Facing URL)
+- **`https://moran-habusha.github.io/zogist/`** — GitHub Pages loading screen (always available, never sleeps)
+  - Shows branded loading screen while Render server wakes up
+  - Pings `/ping` every 2 seconds; auto-redirects to Render once up
+  - Source: `docs/index.html` in `main` branch
+- `https://zogist.onrender.com` — actual game server (shows Render's black spinner if server is sleeping — do NOT share this URL directly)
+
 ## Deployment (Render.com)
 - Config: `render.yaml` (declarative, no manual env vars needed)
 - Build: `pip install -r requirements.txt`
@@ -155,6 +162,7 @@ LL questions use `qm`/`qf` fields — same explicit-variant pattern, no runtime 
 - Python 3.11
 - Free tier: sleeps after 15 min inactivity, single instance
 - Auto-deploys on every push to `main`
+- `/ping` GET endpoint — health check with CORS (`*`), used by GitHub Pages loader
 
 ### `render.yaml`
 ```yaml
