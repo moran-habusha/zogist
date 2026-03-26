@@ -1359,6 +1359,18 @@ const MSG_HANDLERS={
   guess_phase:(msg)=>{
     showGuessS4(msg);
   },
+  no_buzz:(msg)=>{
+    const btn=$('buzz-btn');if(btn)btn.className='buzz-btn disabled';
+    $('s2-judge-area').style.display='none';
+    $('s2-wait-area').style.display='none';
+    $('buzz-status').innerHTML=
+      '<div style="text-align:center">'+
+      '<div style="font-size:22px;margin-bottom:6px;">⏰ הזמן נגמר!</div>'+
+      '<div style="color:rgba(255,255,255,.6);font-size:15px;margin-bottom:4px;">אף אחד לא לחץ על הבאזר</div>'+
+      '<div style="color:rgba(255,255,255,.4);font-size:13px;">התשובה הייתה: '+msg.answer+'</div>'+
+      '<div style="color:rgba(255,255,255,.3);font-size:12px;margin-top:8px;">עוברים לשאלה הבאה... ⏳</div>'+
+      '</div>';
+  },
   buzz_result:(msg)=>{
     showBuzzResult(msg);
   },

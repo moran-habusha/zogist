@@ -317,6 +317,7 @@ class GameRoom:
         self.pending_next = None    # next stage to go to after summary ack
         self.ll_results = {}       # {1: {receiving:[...], giving:[...]}, 2: {...}}
         self.pending_disconnects = {}  # {player_num: asyncio.Task}
+        self.s2_buzz_task = None   # asyncio.Task for S2 no-buzz timeout
 
     async def send(self, pnum, msg):
         ws = self.ws.get(pnum)
@@ -482,6 +483,9 @@ async def handle_start_game(ws, data):
     room.s1_streak = 0
     room.players[1]['score'] = 0
     room.players[2]['score'] = 0
+    if room.s2_buzz_task:
+        room.s2_buzz_task.cancel()
+        room.s2_buzz_task = None
     await room.broadcast({'type': 'stage_intro', 'stage': start_stage})
 
 
@@ -509,6 +513,31 @@ async def send_question(room, stage, q):
         'qdata': qdata,
         'scores': scores_payload(room)
     })
+    if stage == 2:
+        await start_s2_buzz_timer(room, q)
+
+
+async def start_s2_buzz_timer(room, q):
+    if room.s2_buzz_task:
+        room.s2_buzz_task.cancel()
+
+    async def _timeout():
+        await asyncio.sleep(60)
+        if room.stage != 2 or room.q != q:
+            return
+        qstate = room.s2_state.get(q, {})
+        if 'buzzer' in qstate or qstate.get('skipped'):
+            return
+        qstate['skipped'] = True
+        qs = room.questions['s2']
+        answer = qs[q].get('a', '') if q < len(qs) else ''
+        room.s2_history.append({'q': qs[q].get('q', ''), 'correct': None, 'buzzer': None})
+        await room.broadcast({'type': 'no_buzz', 'q': q, 'answer': answer})
+        await asyncio.sleep(3)
+        if room.stage == 2 and room.q == q:
+            await handle_next_question_internal(room)
+
+    room.s2_buzz_task = asyncio.ensure_future(_timeout())
 
 
 async def handle_next_question(ws, data):
@@ -753,8 +782,11 @@ async def handle_buzz(ws, data):
         return
     q = room.q
     qstate = room.s2_state.setdefault(q, {})
-    if 'buzzer' in qstate:
+    if 'buzzer' in qstate or qstate.get('skipped'):
         return
+    if room.s2_buzz_task:
+        room.s2_buzz_task.cancel()
+        room.s2_buzz_task = None
     ts_key = f'buzz_ts_{pnum}'
     qstate[ts_key] = time.monotonic()
     await asyncio.sleep(0.15)

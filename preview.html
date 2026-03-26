@@ -376,6 +376,32 @@ input::placeholder{color:rgba(255,255,255,.3);}
   </div>
 </div>
 
+<!-- 13b. STAGE 2 — NO BUZZ TIMEOUT -->
+<div class="phone">
+  <div class="screen-label">13b. sc-s2 — שלב 2: דילוג (אף אחד לא buzzed)</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:18px;">
+    <div class="stage-header"><div class="stage-badge">שלב 2 מתוך 4</div><div class="stage-title">⚡ מהיר יותר!</div></div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">עידן</div><div class="sc-val">6</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">מורן</div><div class="sc-val">3</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">שאלה 4 מתוך 10</div>
+      <div class="q-text">מה הבירה של אוסטרליה?</div>
+    </div>
+    <button class="buzz-btn" style="opacity:.4;cursor:default;">🔒 נעול</button>
+    <div class="buzz-status">
+      <div style="text-align:center">
+        <div style="font-size:22px;margin-bottom:6px;">⏰ הזמן נגמר!</div>
+        <div style="color:rgba(255,255,255,.6);font-size:15px;margin-bottom:4px;">אף אחד לא לחץ על הבאזר</div>
+        <div style="color:rgba(255,255,255,.4);font-size:13px;">התשובה הייתה: קנברה</div>
+        <div style="color:rgba(255,255,255,.3);font-size:12px;margin-top:8px;">עוברים לשאלה הבאה... ⏳</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 14. INTRO 3 -->
 <div class="phone">
   <div class="screen-label">14. sc-intro3 — הסבר שלב 3</div>
@@ -692,6 +718,47 @@ input::placeholder{color:rgba(255,255,255,.3);}
       </div>
     </div>
     <button class="btn btn-secondary">🏠 חזרה לבחירת חוויה</button>
+  </div>
+</div>
+
+<!-- 28. ERR TOAST -->
+<div class="phone">
+  <div class="screen-label">28. err-toast — שגיאת התנתקות</div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;background:rgba(13,13,26,.92);border-radius:24px;min-height:340px;">
+    <div style="font-size:48px;">😕</div>
+    <div style="font-size:16px;font-weight:700;text-align:center;color:#fff;line-height:1.6;">השחקן השני התנתק מהמשחק</div>
+    <button class="btn btn-secondary" style="max-width:280px;">🔄 רענן את הדף</button>
+  </div>
+</div>
+
+<!-- 29. RECONNECT OVERLAY (disconnected player) -->
+<div class="phone">
+  <div class="screen-label">29. reconnect-overlay — מתחבר מחדש אוטומטית</div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;background:rgba(13,13,26,.92);border-radius:24px;min-height:340px;">
+    <div style="font-size:48px;">🔄</div>
+    <div style="font-size:20px;font-weight:700;text-align:center;color:#fff;line-height:1.6;">מתחבר מחדש...</div>
+    <div class="waiting-dots"><span>● </span><span>● </span><span>●</span></div>
+  </div>
+</div>
+
+<!-- 30. PARTNER RECONNECT BANNER (partner's screen) -->
+<div class="phone">
+  <div class="screen-label">30. partner-reconnect-banner — שחקן שני מתחבר (על המסך של הצד השני)</div>
+  <div style="position:relative;border-radius:24px;overflow:hidden;">
+    <div style="background:rgba(180,120,0,.95);padding:12px;text-align:center;font-size:14px;font-weight:700;color:#fff;">⏳ השחקן השני מתחבר מחדש... ממתינ/ה (עד 5 דקות)</div>
+    <!-- game screen behind the banner -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:16px;">
+      <div class="stage-header"><div class="stage-badge">שלב 3 מתוך 4</div><div class="stage-title">🔥 דעות קדומות</div></div>
+      <div class="score-bar">
+        <div class="sc-item"><div class="sc-name">עידן</div><div class="sc-val">10</div></div>
+        <div class="sc-vs">VS</div>
+        <div class="sc-item"><div class="sc-name">מורן</div><div class="sc-val">7</div></div>
+      </div>
+      <div class="question-card" style="opacity:.4;">
+        <div class="q-text">כסף קונה אושר</div>
+        <div class="waiting-answer">ממתין לתשובת השני... ⏳</div>
+      </div>
+    </div>
   </div>
 </div>
 
