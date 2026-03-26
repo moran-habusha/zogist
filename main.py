@@ -316,6 +316,7 @@ class GameRoom:
         self.s4_history = []        # list of {q, g1ok, g2ok}
         self.pending_next = None    # next stage to go to after summary ack
         self.ll_results = {}       # {1: {receiving:[...], giving:[...]}, 2: {...}}
+        self.pending_disconnects = {}  # {player_num: asyncio.Task}
 
     async def send(self, pnum, msg):
         ws = self.ws.get(pnum)
@@ -965,7 +966,7 @@ async def handle_restart(ws, data):
     await ws.send_json({'type': 'restarted'})
 
 
-# ── DISCONNECT ──
+# ── DISCONNECT / RECONNECT ──
 async def handle_disconnect(ws):
     info = connections.pop(ws, None)
     if not info:
@@ -973,12 +974,160 @@ async def handle_disconnect(ws):
     room = rooms.get(info['room_code'])
     if not room:
         return
-    other = 2 if info['player_num'] == 1 else 1
-    await room.send(other, {'type': 'error', 'message': 'השחקן השני התנתק מהמשחק'})
-    code = room.code
-    for w in list(room.ws.values()):
-        connections.pop(w, None)
-    rooms.pop(code, None)
+    pnum = info['player_num']
+    other = 2 if pnum == 1 else 1
+
+    # Clear this player's WS but keep the room alive
+    if room.ws.get(pnum) is ws:
+        room.ws[pnum] = None
+
+    # Notify partner
+    await room.send(other, {'type': 'partner_reconnecting'})
+
+    # Grace period — destroy room after 30s if player doesn't rejoin
+    async def grace_period():
+        await asyncio.sleep(30)
+        if rooms.get(room.code) and room.ws.get(pnum) is None:
+            await room.send(other, {'type': 'error', 'message': 'השחקן השני התנתק מהמשחק'})
+            other_ws = room.ws.get(other)
+            if other_ws:
+                connections.pop(other_ws, None)
+            rooms.pop(room.code, None)
+
+    task = asyncio.ensure_future(grace_period())
+    room.pending_disconnects[pnum] = task
+
+
+async def resend_state_to_player(room, pnum):
+    """Re-send the current game state to a reconnecting player."""
+    ws = room.ws.get(pnum)
+    if not ws:
+        return
+    stage = room.stage
+    q = room.q
+
+    if stage == 0:
+        await ws.send_json({'type': 'rejoin_ok', 'stage': 0})
+        return
+
+    qs = room.questions.get(f's{stage}', [])
+    if not qs or q >= len(qs):
+        await ws.send_json({'type': 'rejoin_ok', 'stage': stage})
+        return
+
+    qdata = qs[q]
+
+    if stage == 1:
+        qd = room.s1_ans.get(q, {})
+        if 'p1' in qd and 'p2' in qd:
+            pts1, pts2, match = score_s1(qd)
+            sk = room.s1_streak
+            streak_msg = None
+            if sk >= 5: streak_msg = "5 הסכמות ברצף! 🏆 כמעט מפחיד כמה אתם דומים"
+            elif sk >= 4: streak_msg = "4 ברצף! אתם ממש על אותו גל 💞"
+            elif sk >= 3: streak_msg = "3 הסכמות ברצף! 🔥 אתם כאילו חשבתם יחד"
+            elif sk <= -5: streak_msg = "5 אי-הסכמות ברצף 😅 אולי כדאי לדבר קצת?"
+            elif sk <= -4: streak_msg = "4 ברצף... אחד מכם צריך לוותר 🤔"
+            elif sk <= -3: streak_msg = "3 אי-הסכמות ברצף 😬 הניגודים נמשכים?"
+            await ws.send_json({
+                'type': 'reveal', 'stage': 1, 'q': q, 'qdata': qdata,
+                'answers': {'p1': qd['p1'], 'p2': qd['p2']},
+                'pts1': pts1, 'pts2': pts2, 'match': match,
+                'scores': scores_payload(room),
+                'streak': room.s1_streak, 'streak_msg': streak_msg
+            })
+        else:
+            await ws.send_json({'type': 'question', 'stage': 1, 'q': q, 'total': len(qs), 'qdata': qdata, 'scores': scores_payload(room)})
+
+    elif stage == 2:
+        s2 = room.s2_state.get(q, {})
+        if 'buzzer' in s2:
+            winner = s2['buzzer']
+            both_buzzed = 'buzz_ts_1' in s2 and 'buzz_ts_2' in s2
+            t1 = s2.get('buzz_ts_1', float('inf'))
+            t2 = s2.get('buzz_ts_2', float('inf'))
+            time_diff = round(abs(t1 - t2) * 1000) if both_buzzed else None
+            await ws.send_json({
+                'type': 'buzz_result',
+                'buzzer': winner,
+                'buzzer_name': room.players[winner]['name'],
+                'buzzer_gender': room.players[winner]['gender'],
+                'q': q, 'both_buzzed': both_buzzed, 'time_diff': time_diff
+            })
+        else:
+            await ws.send_json({'type': 'question', 'stage': 2, 'q': q, 'total': len(qs), 'qdata': qdata, 'scores': scores_payload(room)})
+
+    elif stage == 3:
+        qd = room.s3_ans.get(q, {})
+        if 'p1' in qd and 'p2' in qd:
+            v1, v2 = qd['p1'], qd['p2']
+            pts1, pts2, diff, base, speed, first = score_s3(v1, v2, qd.get('p1_ts', 0), qd.get('p2_ts', 0))
+            await ws.send_json({
+                'type': 'reveal', 'stage': 3, 'q': q, 'qdata': qdata,
+                'answers': {'p1': v1, 'p2': v2, 'p1_label': str(v1), 'p2_label': str(v2)},
+                'pts1': pts1, 'pts2': pts2,
+                'diff': diff, 'base': base, 'speed': speed, 'first': first,
+                'scores': scores_payload(room)
+            })
+        else:
+            await ws.send_json({'type': 'question', 'stage': 3, 'q': q, 'total': len(qs), 'qdata': qdata, 'scores': scores_payload(room)})
+
+    elif stage == 4:
+        qd = room.s4_state.get(q, {})
+        key = 'p1' if pnum == 1 else 'p2'
+        if 'g1' in qd and 'g2' in qd:
+            pts1, pts2, g1ok, g2ok = score_s4(qd)
+            await ws.send_json({
+                'type': 'reveal', 'stage': 4, 'q': q, 'qdata': qdata,
+                'answers': {'p1': qd.get('p1'), 'p2': qd.get('p2')},
+                'guesses': {'g1': qd.get('g1'), 'g2': qd.get('g2'), 'g1ok': g1ok, 'g2ok': g2ok},
+                'pts1': pts1, 'pts2': pts2, 'scores': scores_payload(room)
+            })
+        elif key in qd:
+            await ws.send_json({'type': 'guess_phase', 'stage': 4, 'q': q, 'qdata': qdata})
+        else:
+            await ws.send_json({'type': 'question', 'stage': 4, 'q': q, 'total': len(qs), 'qdata': qdata, 'scores': scores_payload(room)})
+
+    else:
+        await ws.send_json({'type': 'rejoin_ok', 'stage': stage})
+
+
+async def handle_rejoin(ws, data):
+    code = str(data.get('code', ''))
+    name = data.get('name', '')
+    try:
+        pnum = int(data.get('player_num', 0))
+    except (TypeError, ValueError):
+        await ws.send_json({'type': 'rejoin_failed', 'message': 'נתונים לא תקינים'})
+        return
+
+    room = rooms.get(code)
+    if not room:
+        await ws.send_json({'type': 'rejoin_failed', 'message': 'החדר כבר לא קיים — התחילו משחק חדש'})
+        return
+
+    if pnum not in [1, 2] or room.players.get(pnum, {}).get('name') != name:
+        await ws.send_json({'type': 'rejoin_failed', 'message': 'לא ניתן לחזור לחדר'})
+        return
+
+    # Cancel grace period timer
+    task = room.pending_disconnects.pop(pnum, None)
+    if task:
+        task.cancel()
+
+    # Restore connection
+    old_ws = room.ws.get(pnum)
+    if old_ws and old_ws is not ws:
+        connections.pop(old_ws, None)
+    room.ws[pnum] = ws
+    connections[ws] = {'room_code': code, 'player_num': pnum}
+
+    # Notify partner
+    other = 2 if pnum == 1 else 1
+    await room.send(other, {'type': 'partner_reconnected'})
+
+    # Re-send current game state to this player
+    await resend_state_to_player(room, pnum)
 
 
 # ── MAIN WEBSOCKET ──
@@ -1001,6 +1150,7 @@ HANDLERS = {
     'restart': handle_restart,
     'ack_summary': handle_ack_summary,
     'ping': lambda ws, data: asyncio.sleep(0),
+    'rejoin': handle_rejoin,
 }
 
 

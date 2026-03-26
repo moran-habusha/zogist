@@ -490,12 +490,19 @@ input::placeholder{color:rgba(255,255,255,.3);}
   <div id="err-toast-msg" style="font-size:18px;font-weight:700;text-align:center;color:#fff;line-height:1.6;"></div>
   <button class="btn btn-secondary" style="max-width:280px;" onclick="location.reload()">🔄 רענן את הדף</button>
 </div>
+<div id="reconnect-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(13,13,26,.92);z-index:9998;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;">
+  <div style="font-size:48px;">🔄</div>
+  <div style="font-size:20px;font-weight:700;text-align:center;color:#fff;line-height:1.6;">מתחבר מחדש...</div>
+  <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
+</div>
+<div id="partner-reconnect-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:rgba(180,120,0,.95);z-index:9990;padding:12px;text-align:center;font-size:14px;font-weight:700;color:#fff;">
+  ⏳ השחקן השני מתחבר מחדש... ממתינ/ה (עד 30 שניות)
+</div>
 
 <script>
-const ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
-
 /* ── STATE ── */
 let myName='', myGender='', myNum=0;
+let roomCode='';
 let gameMode='full';
 let llResultsMsg=null;
 let gN={p1:'שחקן 1',p2:'שחקן 2'};
@@ -1013,7 +1020,7 @@ window.joinRoom=function(){
   if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
   if(code.length!==4){$('home-err').textContent='קוד לא תקין';return;}
   if(ws.readyState!==1){$('home-err').textContent='אין חיבור לשרת — רענן את הדף';return;}
-  myName=name;myNum=2;
+  myName=name;myNum=2;roomCode=code;
   ws.send(JSON.stringify({type:'join_room',name,gender:myGender,code}));
 };
 
@@ -1274,6 +1281,7 @@ function renderFinal(msg){
 /* ── MESSAGE HANDLERS ── */
 const MSG_HANDLERS={
   room_created:(msg)=>{
+    roomCode=msg.code;
     $('disp-code').textContent=msg.code;
     showSc('sc-wait');
   },
@@ -1389,18 +1397,65 @@ const MSG_HANDLERS={
   error:(msg)=>{
     if(myNum>0)showErrToast(msg.message);
     else $('home-err').textContent=msg.message;
+  },
+  partner_reconnecting:()=>{
+    const b=$('partner-reconnect-banner');if(b)b.style.display='block';
+  },
+  partner_reconnected:()=>{
+    const b=$('partner-reconnect-banner');if(b)b.style.display='none';
+  },
+  rejoin_ok:()=>{},
+  rejoin_failed:(msg)=>{
+    showErrToast(msg.message||'לא ניתן לחזור למשחק');
   }
 };
 
-ws.onmessage=(evt)=>{
-  const msg=JSON.parse(evt.data);
-  const h=MSG_HANDLERS[msg.type];
-  if(h)h(msg);
-};
-ws.onclose=()=>{
-  if(myNum>0)showErrToast('החיבור נותק. רענן את הדף.');
-};
-setInterval(()=>{if(ws.readyState===1)ws.send(JSON.stringify({type:'ping'}));},20000);
+/* ── WEBSOCKET SETUP & RECONNECT ── */
+let ws;
+let _reconnecting=false;
+
+function _setupWS(socket){
+  socket.onmessage=(evt)=>{
+    const msg=JSON.parse(evt.data);
+    if(_reconnecting){
+      _reconnecting=false;
+      const o=$('reconnect-overlay');if(o)o.style.display='none';
+    }
+    const h=MSG_HANDLERS[msg.type];
+    if(h)h(msg);
+  };
+  socket.onclose=()=>{
+    if(myNum>0&&!_reconnecting)_startReconnect();
+  };
+}
+
+function _startReconnect(){
+  _reconnecting=true;
+  const o=$('reconnect-overlay');if(o)o.style.display='flex';
+  let attempts=0;
+  function tryOnce(){
+    if(attempts>=10){
+      _reconnecting=false;
+      const o=$('reconnect-overlay');if(o)o.style.display='none';
+      showErrToast('החיבור נותק. רענן את הדף.');
+      return;
+    }
+    attempts++;
+    const newWS=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
+    newWS.onopen=()=>{
+      ws=newWS;
+      _setupWS(ws);
+      ws.send(JSON.stringify({type:'rejoin',code:roomCode,player_num:myNum,name:myName}));
+    };
+    newWS.onclose=()=>setTimeout(tryOnce,2000);
+    newWS.onerror=()=>{};
+  }
+  setTimeout(tryOnce,500);
+}
+
+ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
+_setupWS(ws);
+setInterval(()=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:'ping'}));},20000);
 </script>
 </body>
 </html>
