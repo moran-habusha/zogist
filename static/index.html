@@ -1297,8 +1297,10 @@ const MSG_HANDLERS={
     if(msg.experience==='love_languages'){
       showSc('sc-ll-intro');
     } else {
-      if(myNum===1)showSc('sc-mode');
-      else{showSc('sc-wait-mode');const n=$('wait-mode-p1name');if(n)n.textContent=gN.p1;}
+      if(myNum===1){
+        document.querySelectorAll('#sc-mode button').forEach(b=>b.disabled=false);
+        showSc('sc-mode');
+      } else{showSc('sc-wait-mode');const n=$('wait-mode-p1name');if(n)n.textContent=gN.p1;}
     }
   },
   ll_partner_done:(msg)=>{
@@ -1398,6 +1400,7 @@ ws.onmessage=(evt)=>{
 ws.onclose=()=>{
   if(myNum>0)showErrToast('החיבור נותק. רענן את הדף.');
 };
+setInterval(()=>{if(ws.readyState===1)ws.send(JSON.stringify({type:'ping'}));},20000);
 </script>
 </body>
 </html>
