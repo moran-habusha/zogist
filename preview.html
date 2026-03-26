@@ -743,21 +743,44 @@ input::placeholder{color:rgba(255,255,255,.3);}
 
 <!-- 30. PARTNER RECONNECT BANNER (partner's screen) -->
 <div class="phone">
-  <div class="screen-label">30. partner-reconnect-banner — שחקן שני מתחבר (על המסך של הצד השני)</div>
+  <div class="screen-label">30. partner-reconnect-banner — שחקן שני מתחבר (מופיע מעל כל מסך)</div>
   <div style="position:relative;border-radius:24px;overflow:hidden;">
     <div style="background:rgba(180,120,0,.95);padding:12px;text-align:center;font-size:14px;font-weight:700;color:#fff;">⏳ השחקן השני מתחבר מחדש... ממתינ/ה (עד 5 דקות)</div>
-    <!-- game screen behind the banner -->
+    <!-- example: could be any game screen behind the banner -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:16px;">
-      <div class="stage-header"><div class="stage-badge">שלב 3 מתוך 4</div><div class="stage-title">🔥 דעות קדומות</div></div>
+      <div class="stage-header"><div class="stage-badge">כל שלב</div><div class="stage-title">הבאנר מופיע על כל מסך</div></div>
       <div class="score-bar">
         <div class="sc-item"><div class="sc-name">עידן</div><div class="sc-val">10</div></div>
         <div class="sc-vs">VS</div>
         <div class="sc-item"><div class="sc-name">מורן</div><div class="sc-val">7</div></div>
       </div>
       <div class="question-card" style="opacity:.4;">
-        <div class="q-text">כסף קונה אושר</div>
+        <div class="q-text">...המשחק ממשיך ברקע...</div>
         <div class="waiting-answer">ממתין לתשובת השני... ⏳</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 31. STAGE 4 — WAITING AFTER GUESS -->
+<div class="phone">
+  <div class="screen-label">31. sc-s4 — שלב 4: ממתין אחרי ניחוש</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:18px;">
+    <div class="stage-header"><div class="stage-badge">שלב 4 מתוך 4</div><div class="stage-title">🃏 אני מכיר אותך</div></div>
+    <div class="score-bar">
+      <div class="sc-item"><div class="sc-name">עידן</div><div class="sc-val">16</div></div>
+      <div class="sc-vs">VS</div>
+      <div class="sc-item"><div class="sc-name">מורן</div><div class="sc-val">14</div></div>
+    </div>
+    <div class="question-card">
+      <div class="q-num">שאלה 5 מתוך 10</div>
+      <div class="dots">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+        <div class="dot done"></div><div class="dot cur"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="q-text">אם היית צריך לאכול רק מטבח אחד לכל החיים, מה היית בוחר?</div>
+      <div class="waiting-answer">ממתין למורן... ⏳</div>
     </div>
   </div>
 </div>

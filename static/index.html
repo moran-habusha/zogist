@@ -1073,7 +1073,9 @@ window.answerS4=function(idx){
 };
 
 window.guessS4=function(idx){
-  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתין לשני... ⏳</div>';
+  const pname=nOf(myNum===1?2:1);
+  $('s4-self-label').style.display='none';
+  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתין ל'+pname+'... ⏳</div>';
   ws.send(JSON.stringify({type:'guess_s4',idx}));
 };
 
@@ -1210,6 +1212,7 @@ function renderS4Q(q,qdata,total){
   $('s4-qnum').textContent='שאלה '+(q+1)+' מתוך '+total;
   $('s4-qtext').textContent=qdata.q;
   mkDots('s4-dots',total,q);
+  $('s4-self-label').style.display='';
   $('s4-self-label').textContent=selfLabel(myNum);
   $('s4-self-label').style.color='var(--yellow)';
   $('s4-ans-area').innerHTML=qdata.o.map((o,i)=>'<button class="btn btn-secondary" style="margin-bottom:8px;text-align:right;padding:16px;" onclick="answerS4('+i+')">'+o+'</button>').join('');
