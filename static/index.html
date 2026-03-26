@@ -1060,7 +1060,7 @@ window.answerS4=function(idx){
 };
 
 window.guessS4=function(idx){
-  document.querySelectorAll('#s4-ans-area button').forEach(b=>{b.disabled=true;b.style.opacity='.35';});
+  $('s4-ans-area').innerHTML='<div class="waiting-answer">ממתין לשני... ⏳</div>';
   ws.send(JSON.stringify({type:'guess_s4',idx}));
 };
 

@@ -870,13 +870,11 @@ async def handle_answer_s4(ws, data):
     if key in qd:
         return
     qd[key] = int(data.get('idx'))
-    # If both have answered self, signal guess phase
-    if 'p1' in qd and 'p2' in qd and 'g1' not in qd:
-        await room.broadcast({
-            'type': 'guess_phase', 'stage': 4, 'q': q,
-            'answers': {'p1': qd['p1'], 'p2': qd['p2']},
-            'qdata': room.questions['s4'][q]
-        })
+    # Send guess_phase immediately to this player only (don't wait for partner)
+    await ws.send_json({
+        'type': 'guess_phase', 'stage': 4, 'q': q,
+        'qdata': room.questions['s4'][q]
+    })
 
 
 async def handle_guess_s4(ws, data):
