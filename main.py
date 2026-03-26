@@ -1000,7 +1000,7 @@ HANDLERS = {
     'guess_s4': handle_guess_s4,
     'restart': handle_restart,
     'ack_summary': handle_ack_summary,
-    'ping': lambda ws, data: None,
+    'ping': lambda ws, data: asyncio.sleep(0),
 }
 
 
