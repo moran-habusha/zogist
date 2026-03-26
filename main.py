@@ -986,7 +986,7 @@ async def handle_disconnect(ws):
 
     # Grace period — destroy room after 30s if player doesn't rejoin
     async def grace_period():
-        await asyncio.sleep(30)
+        await asyncio.sleep(300)
         if rooms.get(room.code) and room.ws.get(pnum) is None:
             await room.send(other, {'type': 'error', 'message': 'השחקן השני התנתק מהמשחק'})
             other_ws = room.ws.get(other)

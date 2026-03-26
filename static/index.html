@@ -496,7 +496,7 @@ input::placeholder{color:rgba(255,255,255,.3);}
   <div class="waiting-dots"><span>●</span><span>●</span><span>●</span></div>
 </div>
 <div id="partner-reconnect-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:rgba(180,120,0,.95);z-index:9990;padding:12px;text-align:center;font-size:14px;font-weight:700;color:#fff;">
-  ⏳ השחקן השני מתחבר מחדש... ממתינ/ה (עד 30 שניות)
+  ⏳ השחקן השני מתחבר מחדש... ממתינ/ה (עד 5 דקות)
 </div>
 
 <script>
@@ -1413,12 +1413,15 @@ const MSG_HANDLERS={
 /* ── WEBSOCKET SETUP & RECONNECT ── */
 let ws;
 let _reconnecting=false;
+let _reconnectTimer=null;
+let _reconnectAttempts=0;
 
 function _setupWS(socket){
   socket.onmessage=(evt)=>{
     const msg=JSON.parse(evt.data);
     if(_reconnecting){
       _reconnecting=false;
+      _reconnectAttempts=0;
       const o=$('reconnect-overlay');if(o)o.style.display='none';
     }
     const h=MSG_HANDLERS[msg.type];
@@ -1430,28 +1433,39 @@ function _setupWS(socket){
 }
 
 function _startReconnect(){
+  if(_reconnecting)return;
   _reconnecting=true;
+  _reconnectAttempts=0;
   const o=$('reconnect-overlay');if(o)o.style.display='flex';
-  let attempts=0;
-  function tryOnce(){
-    if(attempts>=10){
-      _reconnecting=false;
-      const o=$('reconnect-overlay');if(o)o.style.display='none';
-      showErrToast('החיבור נותק. רענן את הדף.');
-      return;
-    }
-    attempts++;
-    const newWS=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
-    newWS.onopen=()=>{
-      ws=newWS;
-      _setupWS(ws);
-      ws.send(JSON.stringify({type:'rejoin',code:roomCode,player_num:myNum,name:myName}));
-    };
-    newWS.onclose=()=>setTimeout(tryOnce,2000);
-    newWS.onerror=()=>{};
-  }
-  setTimeout(tryOnce,500);
+  _scheduleReconnect(500);
 }
+
+function _scheduleReconnect(delay){
+  if(_reconnectTimer)clearTimeout(_reconnectTimer);
+  _reconnectTimer=setTimeout(_doReconnect,delay);
+}
+
+function _doReconnect(){
+  if(!_reconnecting)return;
+  if(_reconnectAttempts>=150){
+    _reconnecting=false;
+    const o=$('reconnect-overlay');if(o)o.style.display='none';
+    showErrToast('החיבור נותק. רענן את הדף.');
+    return;
+  }
+  _reconnectAttempts++;
+  const newWS=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
+  newWS.onopen=()=>{
+    ws=newWS;_setupWS(ws);
+    ws.send(JSON.stringify({type:'rejoin',code:roomCode,player_num:myNum,name:myName}));
+  };
+  newWS.onclose=()=>{if(_reconnecting)_scheduleReconnect(2000);};
+  newWS.onerror=()=>{};
+}
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&_reconnecting)_scheduleReconnect(100);
+});
 
 ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
 _setupWS(ws);
