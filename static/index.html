@@ -848,7 +848,11 @@ function showMission(){
 
 function returnToExperience(){
   rStage=-1;
-  const expBtns=$('exp-choices');if(expBtns)expBtns.style.display='';
+  const expBtns=$('exp-choices');
+  if(expBtns){
+    expBtns.style.display='';
+    expBtns.querySelectorAll('button').forEach(b=>b.disabled=false);
+  }
   const expWait=$('exp-wait');if(expWait)expWait.classList.add('hidden');
   showSc('sc-experience');
   if(myNum===2){
@@ -997,6 +1001,7 @@ window.createRoom=function(){
   const name=$('inp-name').value.trim();
   if(!name){$('home-err').textContent='הכנס/י שם קודם!';return;}
   if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
+  if(ws.readyState!==1){$('home-err').textContent='אין חיבור לשרת — רענן את הדף';return;}
   myName=name;myNum=1;
   ws.send(JSON.stringify({type:'create_room',name,gender:myGender}));
 };
@@ -1007,6 +1012,7 @@ window.joinRoom=function(){
   if(!name){$('home-err').textContent='הכנס/י שם קודם!';return;}
   if(!myGender){$('home-err').textContent='בחר/י מגדר קודם!';return;}
   if(code.length!==4){$('home-err').textContent='קוד לא תקין';return;}
+  if(ws.readyState!==1){$('home-err').textContent='אין חיבור לשרת — רענן את הדף';return;}
   myName=name;myNum=2;
   ws.send(JSON.stringify({type:'join_room',name,gender:myGender,code}));
 };
