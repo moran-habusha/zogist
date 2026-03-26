@@ -685,6 +685,7 @@ function topLangs(counts){const sorted=Object.entries(counts).sort((a,b)=>b[1]-a
 
 function chooseExperience(exp){
   if(myNum!==1)return;
+  document.querySelectorAll('#exp-choices button').forEach(b=>b.disabled=true);
   ws.send(JSON.stringify({type:'choose_experience',experience:exp}));
 }
 
@@ -1011,14 +1012,17 @@ window.joinRoom=function(){
 };
 
 window.chooseMode=function(mode){
+  document.querySelectorAll('#sc-mode button').forEach(b=>b.disabled=true);
   ws.send(JSON.stringify({type:'choose_mode',mode}));
 };
 
 window.startGameFromAnnounce=function(){
+  const btn=event&&event.target;if(btn)btn.disabled=true;
   ws.send(JSON.stringify({type:'start_game'}));
 };
 
 window.p1StartStage=function(stageNum){
+  const btn=event&&event.target;if(btn)btn.disabled=true;
   ws.send(JSON.stringify({type:'start_stage',stage:stageNum}));
 };
 

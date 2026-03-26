@@ -389,9 +389,9 @@ def score_s4(qd):
         else:
             pts1, pts2 = 1, 2
     elif g1ok:
-        pts1 = 2 if gt1 <= gt2 else 1
+        pts1 = 2
     elif g2ok:
-        pts2 = 2 if gt2 <= gt1 else 1
+        pts2 = 2
     return pts1, pts2, g1ok, g2ok
 
 
@@ -469,6 +469,18 @@ async def handle_start_game(ws, data):
     room.stage = start_stage
     room.q = 0
     room.intro_acked = False
+    room.pending_next = None
+    room.s1_ans = {}
+    room.s2_state = {}
+    room.s3_ans = {}
+    room.s4_state = {}
+    room.s1_history = []
+    room.s2_history = []
+    room.s3_history = []
+    room.s4_history = []
+    room.s1_streak = 0
+    room.players[1]['score'] = 0
+    room.players[2]['score'] = 0
     await room.broadcast({'type': 'stage_intro', 'stage': start_stage})
 
 
@@ -917,6 +929,8 @@ async def handle_choose_experience(ws, data):
     if not room or pnum != 1:
         return
     experience = data.get('experience', 'zogist')
+    if experience == 'love_languages':
+        room.ll_results = {}
     await room.broadcast({'type': 'experience_chosen', 'experience': experience})
 
 
